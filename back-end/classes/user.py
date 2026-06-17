@@ -16,10 +16,10 @@ class User(Base):
     Class representing a user of the app
     '''
     __tablename__ = 'users'
-    id = Column(Integer, nullable=False, primary_key=True)
-    name = Column(String(128), nullable=True)
-    password = Column(Integer, nullable=True)
-    coach = Column(Boolean, nullable=False)
+    id       = Column(Integer,     nullable=False, primary_key=True)
+    name     = Column(String(128), nullable=True)
+    password = Column(String(255), nullable=True)
+    coach    = Column(Boolean,     nullable=False)
 
     def __init__(self, name=None, pwd=None, coach = False):
         '''
@@ -27,21 +27,32 @@ class User(Base):
 
         :param name: name of the user (None for guests)
         :param pwd: user's password (None for guests)
-        :param coach: is the user a coach (false for clients and guests)
+        :param coach: is the user a coach (false for customers and guests)
         '''
+
+        # Generate a guest profile
         if name == None:
-            self.name = None
+            self.name     = None
             self.password = None
-            self.coach = False
+            self.coach    = False
             return
-        if pwd != None:
-            self.password = generate_password_hash(pwd)
-        # TODO
-        else:
+        
+        # verify the name
+        if (type(name) is not str or
+            len(name) < 5):
+            raise Exception("name empty")
+        
+        # verify the password
+        if (type(pwd) is not str or
+            len(pwd) < 8):
             raise Exception("no password given")
-        self.name = name
-        self.coach = coach
+        
+        # set name, password and status
+        self.password = generate_password_hash(pwd)
+        self.name     = name
+        self.coach    = coach
     
+
     def register(self, name, pwd):
         '''
         register the profile of a guest
@@ -50,12 +61,22 @@ class User(Base):
         :param pwd: user's password
         :return:
         '''
-        if name == None:
+        # verify the name
+        if (name == None or
+            type(name) is not str or
+            len(name) < 5):
             raise Exception("name empty")
-        if pwd == None:
+        
+        # verify the password
+        if (pwd == None or
+            type(pwd) is not str or
+            len(pwd) < 8):
             raise Exception("password empty")
+        
+        # set the name and password
         self.name = name
         self.password = generate_password_hash(pwd)
+
 
     def verify_pwd(self, pwd):
         '''
