@@ -1,6 +1,7 @@
 from time import time
 
 from sqlalchemy import Column, Integer, String
+from math import floor
 
 # TODO save the message
 class Message:
@@ -24,7 +25,7 @@ class Message:
         :param text: text of the message
         '''
         self.id        = msg_id
-        self.chat_id    = chat_id
-        self.sender_id  = sender_id
-        self.text       = text
-        self.timestamp  = time()
+        self.chat_id   = chat_id
+        self.sender_id = sender_id
+        self.text      = text
+        self.timestamp = floor(time())

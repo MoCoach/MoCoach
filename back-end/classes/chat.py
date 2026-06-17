@@ -1,6 +1,7 @@
 from time import time
 
 from sqlalchemy import Column, Integer
+from message import Message
 
 class Chat:
     '''
@@ -26,3 +27,4 @@ class Chat:
         msg = Message(msg_id, self.id, sender, text)
         # TODO verify the write/send is successful before increment
         self.msg_num += 1
+        return msg
