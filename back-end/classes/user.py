@@ -38,14 +38,18 @@ class User(Base):
             return
         
         # verify the name
-        if (type(name) is not str or
-            len(name) < 5):
-            raise Exception("name empty")
-        
+        if not isinstance(name, str):
+            raise TypeError("name must be a string")
+        if len(name) < 5:
+            raise ValueError("name must be at least 5 characters")
+
         # verify the password
-        if (type(pwd) is not str or
-            len(pwd) < 8):
-            raise Exception("no password given")
+        if pwd is None:
+            raise TypeError("password is required")
+        if not isinstance(pwd, str):
+            raise TypeError("password must be a string")
+        if len(pwd) < 8:
+            raise ValueError("password must be at least 8 characters")
         
         # set name, password and status
         self.password = generate_password_hash(pwd)
@@ -62,16 +66,20 @@ class User(Base):
         :return:
         '''
         # verify the name
-        if (name == None or
-            type(name) is not str or
-            len(name) < 5):
-            raise Exception("name empty")
-        
+        if name is None:
+            raise TypeError("name is required")
+        if not isinstance(name, str):
+            raise TypeError("name must be a string")
+        if len(name) < 5:
+            raise ValueError("name must be at least 5 characters")
+
         # verify the password
-        if (pwd == None or
-            type(pwd) is not str or
-            len(pwd) < 8):
-            raise Exception("password empty")
+        if pwd is None:
+            raise TypeError("password is required")
+        if not isinstance(pwd, str):
+            raise TypeError("password must be a string")
+        if len(pwd) < 8:
+            raise ValueError("password must be at least 8 characters")
         
         # set the name and password
         self.name = name
@@ -86,3 +94,16 @@ class User(Base):
         :return: True if the hash of the password is the same as the profile
         '''
         return check_password_hash(self.password, pwd)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "coach": self.coach,
+        }
+
+    def __repr__(self):
+        return f"User(id={self.id!r}, name={self.name!r}, coach={self.coach!r})"
+
+    def __str__(self):
+        return f"User(name={self.name!r}, coach={self.coach!r})"

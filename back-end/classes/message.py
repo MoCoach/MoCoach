@@ -29,3 +29,18 @@ class Message:
         self.sender_id = sender_id
         self.text      = text
         self.timestamp = floor(time())
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "chat_id": self.chat_id,
+            "sender_id": self.sender_id,
+            "text": self.text,
+            "timestamp": self.timestamp,
+        }
+
+    def __repr__(self):
+        return f"Message(id={self.id!r}, chat_id={self.chat_id!r}, sender_id={self.sender_id!r}, text={self.text!r})"
+
+    def __str__(self):
+        return f"[{self.timestamp}] User {self.sender_id}: {self.text}"
