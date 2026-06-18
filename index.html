@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoCoach - Your Whale Fitness Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .hero-bg { background: linear-gradient(180deg, #e0f2fe 0%, #f8fafc 100%); }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <div class="text-blue-600">
+                    <i data-lucide="waves" class="w-8 h-8"></i> <!-- Placeholder for Whale Logo -->
+                </div>
+                <span class="text-2xl font-bold tracking-tight">
+                    <span class="text-blue-600">Mo</span><span class="text-green-500">Coach</span>
+                </span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="hidden md:flex items-center gap-8 text-gray-600 font-medium">
+                <a href="#" class="flex items-center gap-2 text-blue-600 border-b-2 border-blue-600 pb-1">
+                    <i data-lucide="home" class="w-5 h-5"></i> Home
+                </a>
+                <a href="#" class="flex items-center gap-2 hover:text-blue-600 transition">
+                    <i data-lucide="heart" class="w-5 h-5"></i> Favorites
+                </a>
+                <a href="#" class="flex items-center gap-2 hover:text-blue-600 transition">
+                    <i data-lucide="calendar" class="w-5 h-5"></i> My Plan
+                </a>
+            </nav>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-4">
+                <div class="flex bg-gray-100 rounded-full p-1">
+                    <button class="px-4 py-1 rounded-full bg-blue-600 text-white text-sm font-bold">EN</button>
+                    <button class="px-4 py-1 rounded-full text-gray-500 text-sm font-bold">FR</button>
+                </div>
+                <button class="p-2 border rounded-full text-gray-400 hover:bg-gray-50">
+                    <i data-lucide="user" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-bg pt-16 pb-32">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between">
+            <div class="max-w-xl">
+                <h1 class="text-5xl font-extrabold text-gray-900 mb-4">
+                    Hi there! 👋<br>
+                    I'm MoCoach
+                </h1>
+                <p class="text-xl text-gray-600 leading-relaxed">
+                    Your fitness companion.<br>
+                    Find the perfect workout for your goal, your way.
+                </p>
+            </div>
+            <div class="mt-12 md:mt-0">
+                <!-- Placeholder for Whale Illustration -->
+                <div class="relative">
+                    <img src="https://img.icons8.com/color/480/whale.png" alt="MoCoach Whale" class="w-80 h-auto">
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-1 bg-gray-800 rounded-full -z-10"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="max-w-6xl mx-auto px-6 -mt-20">
+        <div class="bg-white rounded-3xl shadow-xl p-8 flex flex-col md:flex-row items-center gap-4 relative">
+            
+            <!-- General Search -->
+            <div class="flex-1 w-full">
+                <label class="flex items-center gap-2 text-gray-800 font-bold mb-3">
+                    <i data-lucide="search" class="w-5 h-5 text-blue-600"></i> Search for a workout
+                </label>
+                <input type="text" placeholder="e.g. strength, yoga, beginner, 20 minutes..." 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <!-- Divider OR -->
+            <div class="hidden md:flex items-center justify-center bg-white border border-gray-100 rounded-full w-10 h-10 font-bold text-xs text-gray-400 shadow-sm z-10">
+                OR
+            </div>
+
+            <!-- Goal Search -->
+            <div class="flex-1 w-full flex gap-2">
+                <div class="flex-1">
+                    <label class="flex items-center gap-2 text-gray-800 font-bold mb-3">
+                        <i data-lucide="target" class="w-5 h-5 text-blue-600"></i> Goal-Based Search
+                    </label>
+                    <input type="text" placeholder="e.g. Build muscle, Lose weight, Improve flexibility..." 
+                        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button class="mt-9 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl transition shadow-lg shadow-blue-200">
+                    <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Browse Categories -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8">Browse by Category</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            
+            <!-- Category Card -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 flex flex-col items-center text-center hover:shadow-md transition cursor-pointer group">
+                <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition">
+                    <i data-lucide="dumbbell"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-1">Strength</h3>
+                <p class="text-xs text-gray-500 leading-tight">Build muscle & get stronger</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 flex flex-col items-center text-center hover:shadow-md transition cursor-pointer group">
+                <div class="w-14 h-14 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-600 group-hover:text-white transition">
+                    <i data-lucide="heart-pulse"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-1">Cardio</h3>
+                <p class="text-xs text-gray-500 leading-tight">Boost endurance & burn calories</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 flex flex-col items-center text-center hover:shadow-md transition cursor-pointer group">
+                <div class="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-600 group-hover:text-white transition">
+                    <i data-lucide="leaf"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-1">Yoga</h3>
+                <p class="text-xs text-gray-500 leading-tight">Improve flexibility & reduce stress</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 flex flex-col items-center text-center hover:shadow-md transition cursor-pointer group">
+                <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition">
+                    <i data-lucide="accessibility"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-1">Stretching</h3>
+                <p class="text-xs text-gray-500 leading-tight">Increase mobility & flexibility</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 flex flex-col items-center text-center hover:shadow-md transition cursor-pointer group">
+                <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-orange-600 group-hover:text-white transition">
+                    <i data-lucide="baby"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-1">Prenatal</h3>
+                <p class="text-xs text-gray-500 leading-tight">Safe workouts for a healthy journey</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 flex flex-col items-center text-center hover:shadow-md transition cursor-pointer group">
+                <div class="w-14 h-14 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-600 group-hover:text-white transition">
+                    <i data-lucide="more-horizontal"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-1">More</h3>
+                <p class="text-xs text-gray-500 leading-tight">Explore other workout types</p>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
