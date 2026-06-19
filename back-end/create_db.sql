@@ -1,3 +1,3 @@
--- Create database hbtn_0e_6_usa
+-- Create database moCoach
 CREATE DATABASE IF NOT EXISTS moCoach;
 USE moCoach;

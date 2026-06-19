@@ -24,7 +24,7 @@ class User(Base):
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
-    def __init__(self, name=None, pwd=None, is_coach=False, description=None):
+    def __init__(self, name=None, pwd=None, is_coach=False, description=None, tags=None):
         '''
         generates a new profile
 
@@ -32,6 +32,7 @@ class User(Base):
         :param pwd: user's password (None for guests)
         :param is_coach: is the user a coach (false for customers and guests)
         :param description: profile description (required for coaches)
+        :param tags: list of Tag objects (0-5, for coaches only)
         '''
 
         # Generate a guest profile
@@ -63,9 +64,12 @@ class User(Base):
         # create a coach profile if needed
         if is_coach:
             self.coach = Coach(description=description)
+            if tags:
+                for tag in tags:
+                    self.coach.add_tag(tag)
 
 
-    def register(self, name, pwd, is_coach=False, description=None):
+    def register(self, name, pwd, is_coach=False, description=None, tags=None):
         '''
         register the profile of a guest
 
@@ -73,6 +77,7 @@ class User(Base):
         :param pwd: user's password
         :param is_coach: is the user a coach
         :param description: profile description (required for coaches)
+        :param tags: list of Tag objects (0-5, for coaches only)
         :return:
         '''
         # verify the name
@@ -99,6 +104,9 @@ class User(Base):
         # create a coach profile if needed
         if is_coach:
             self.coach = Coach(description=description)
+            if tags:
+                for tag in tags:
+                    self.coach.add_tag(tag)
         else:
             self.coach = None
 
@@ -111,6 +119,37 @@ class User(Base):
         :return: True if the hash of the password is the same as the profile
         '''
         return check_password_hash(self.password, pwd)
+
+    def update_profile(self, name=None, pwd=None, description=None, tags=None):
+        '''
+        Update the user profile
+
+        :param name: new name (optional)
+        :param pwd: new password (optional)
+        :param description: new description (coach only, optional)
+        :param tags: new list of Tag objects (coach only, optional, 0-5)
+        '''
+        if name is not None:
+            if not isinstance(name, str):
+                raise TypeError("name must be a string")
+            if len(name) < 5:
+                raise ValueError("name must be at least 5 characters")
+            self.name = name
+
+        if pwd is not None:
+            if not isinstance(pwd, str):
+                raise TypeError("password must be a string")
+            if len(pwd) < 8:
+                raise ValueError("password must be at least 8 characters")
+            self.password = generate_password_hash(pwd)
+
+        if self.is_coach:
+            if description is not None:
+                if not isinstance(description, str):
+                    raise TypeError("description must be a string")
+                self.coach.description = description
+            if tags is not None:
+                self.coach.set_tags(tags)
 
     def to_dict(self):
         d = {

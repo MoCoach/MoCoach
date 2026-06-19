@@ -1,17 +1,25 @@
 from time import time
 
-from sqlalchemy import Column, Integer
-from classes.message import Message
+from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy.orm import relationship
 
-class Chat:
+from . import Base
+from .message import Message
+
+
+class Chat(Base):
     '''
-    Class representing a chat
+    Class representing a chat between a customer and a coach
     '''
     __tablename__ = 'chats'
-    id       = Column(Integer, nullable=False, primary_key=True)
-    id_coach = Column(Integer, nullable=False)
-    id_cust  = Column(Integer, nullable=False)
-    msg_num  = Column(Integer, nullable=False)
+    id       = Column(Integer, primary_key=True)
+    id_coach = Column(Integer, ForeignKey('users.id'), nullable=False)
+    id_cust  = Column(Integer, ForeignKey('users.id'), nullable=False)
+    msg_num  = Column(Integer, nullable=False, default=0)
+
+    messages = relationship("Message", back_populates="chat",
+                            cascade="all, delete-orphan",
+                            order_by="Message.timestamp")
 
     def __init__(self, id_coach, id_cust):
         self.id_coach = id_coach
@@ -21,7 +29,7 @@ class Chat:
     def new_msg(self, sender, text):
         '''
         insert new message
-        :return:
+        :return: the newly created Message
         '''
         if sender is None:
             raise TypeError("sender is required")
@@ -39,20 +47,21 @@ class Chat:
 
         msg_id = f"{self.id}_{self.msg_num}"
         msg = Message(msg_id, self.id, sender, text)
-        # TODO verify the write/send is successful before increment
+        self.messages.append(msg)
         self.msg_num += 1
         return msg
 
     def to_dict(self):
         return {
-            "id": self.__dict__.get("id"),
+            "id": self.id,
             "id_coach": self.id_coach,
             "id_cust": self.id_cust,
             "msg_num": self.msg_num,
+            "messages": [msg.to_dict() for msg in self.messages],
         }
 
     def __repr__(self):
-        return f"Chat(id={self.__dict__.get('id')!r}, id_coach={self.id_coach!r}, id_cust={self.id_cust!r})"
+        return f"Chat(id={self.id!r}, id_coach={self.id_coach!r}, id_cust={self.id_cust!r})"
 
     def __str__(self):
         return f"Chat(coach={self.id_coach}, customer={self.id_cust}, messages={self.msg_num})"

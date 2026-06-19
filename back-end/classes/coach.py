@@ -41,6 +41,19 @@ class Coach(Base):
         if tag in self.tags:
             self.tags.remove(tag)
 
+    def set_tags(self, tags):
+        if tags is None:
+            self.tags = []
+            return
+        if not isinstance(tags, list):
+            raise TypeError("tags must be a list")
+        if len(tags) > 5:
+            raise ValueError("A coach can have at most 5 tags")
+        for tag in tags:
+            if not isinstance(tag, Tag):
+                raise TypeError("each tag must be a Tag instance")
+        self.tags = list(tags)
+
     def to_dict(self):
         return {
             "id": self.id,
