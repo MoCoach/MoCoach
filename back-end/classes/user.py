@@ -5,10 +5,11 @@ Defines the user profile to be stored in the database
 
 
 from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
-Base = declarative_base()
+from . import Base
+from .coach import Coach
 
 
 class User(Base):
@@ -16,11 +17,12 @@ class User(Base):
     Class representing a user of the app
     '''
     __tablename__ = 'users'
-    id          = Column(Integer,     nullable=False, primary_key=True)
-    name        = Column(String(128), nullable=True)
-    password    = Column(String(255), nullable=True)
-    description = Column(String(500), nullable=True)
-    is_coach    = Column(Boolean,     nullable=False)
+    id       = Column(Integer,     nullable=False, primary_key=True)
+    name     = Column(String(128), nullable=True)
+    password = Column(String(255), nullable=True)
+    is_coach = Column(Boolean,     nullable=False)
+
+    coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
     def __init__(self, name=None, pwd=None, is_coach=False, description=None):
         '''
@@ -37,7 +39,6 @@ class User(Base):
             self.name     = None
             self.password = None
             self.is_coach = False
-            self.description = None
             return
 
         # verify the name
@@ -54,19 +55,15 @@ class User(Base):
         if len(pwd) < 8:
             raise ValueError("password must be at least 8 characters")
 
-        # verify the description for coaches
-        if is_coach:
-            if not isinstance(description, str):
-                raise TypeError("description must be a string")
-            self.description = description
-        else:
-            self.description = None
-
         # set name, password and status
         self.password = generate_password_hash(pwd)
         self.name     = name
         self.is_coach = is_coach
-    
+
+        # create a coach profile if needed
+        if is_coach:
+            self.coach = Coach(description=description)
+
 
     def register(self, name, pwd, is_coach=False, description=None):
         '''
@@ -94,18 +91,16 @@ class User(Base):
         if len(pwd) < 8:
             raise ValueError("password must be at least 8 characters")
 
-        # verify the description for coaches
-        if is_coach:
-            if not isinstance(description, str):
-                raise TypeError("description must be a string")
-            self.description = description
-        else:
-            self.description = None
-
         # set the name, password and status
         self.name     = name
         self.password = generate_password_hash(pwd)
         self.is_coach = is_coach
+
+        # create a coach profile if needed
+        if is_coach:
+            self.coach = Coach(description=description)
+        else:
+            self.coach = None
 
 
     def verify_pwd(self, pwd):
@@ -118,11 +113,14 @@ class User(Base):
         return check_password_hash(self.password, pwd)
 
     def to_dict(self):
-        return {
+        d = {
             "id": self.id,
             "name": self.name,
             "is_coach": self.is_coach,
         }
+        if self.coach:
+            d["coach"] = self.coach.to_dict()
+        return d
 
     def __repr__(self):
         return f"User(id={self.id!r}, name={self.name!r}, is_coach={self.is_coach!r})"
