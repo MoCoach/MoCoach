@@ -75,7 +75,7 @@ function switchAuthTab(tab) {
 async function handleLogin(event) {
     event.preventDefault();
     const form = event.target;
-    const name = form.querySelector('[name="login-name"]').value.trim();
+    const email = form.querySelector('[name="login-email"]').value.trim();
     const password = form.querySelector('[name="login-password"]').value;
     const errorEl = form.querySelector(".auth-error");
 
@@ -83,7 +83,7 @@ async function handleLogin(event) {
         const res = await fetch(`${API_BASE}/api/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, password }),
+            body: JSON.stringify({ email, password }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -106,17 +106,22 @@ async function handleLogin(event) {
 async function handleRegister(event) {
     event.preventDefault();
     const form = event.target;
-    const name = form.querySelector('[name="register-name"]').value.trim();
+    const email = form.querySelector('[name="register-email"]').value.trim();
     const password = form.querySelector('[name="register-password"]').value;
     const nickname = form.querySelector('[name="register-nickname"]').value.trim() || null;
-    const email = form.querySelector('[name="register-email"]').value.trim() || null;
     const errorEl = form.querySelector(".auth-error");
+
+    if (!email) {
+        errorEl.textContent = "Email is required";
+        errorEl.classList.remove("hidden");
+        return;
+    }
 
     try {
         const res = await fetch(`${API_BASE}/api/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, password, nickname, email }),
+            body: JSON.stringify({ email, password, nickname }),
         });
         const data = await res.json();
         if (!res.ok) {

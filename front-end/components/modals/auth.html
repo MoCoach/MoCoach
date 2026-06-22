@@ -6,15 +6,12 @@
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
     </div>
-
     <div class="p-6">
       <p class="text-slate-400 text-sm mb-6">Sign up / Sign in to discover our range of local coaches</p>
-
       <div class="flex space-x-1 mb-6 bg-slate-950 rounded-xl p-1">
         <button id="auth-signin-tab" onclick="switchAuthTab('signin')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-blue-600 text-white">Sign In</button>
         <button id="auth-signup-tab" onclick="switchAuthTab('signup')" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-slate-400">Sign Up</button>
       </div>
-
       <div class="space-y-4 mb-6">
         <button class="w-full py-3 px-4 rounded-xl border border-slate-800 bg-slate-950 text-slate-400 text-sm font-bold flex items-center justify-center space-x-3 cursor-not-allowed opacity-60">
           <i data-lucide="smartphone" class="w-5 h-5"></i>
@@ -30,12 +27,11 @@
           <div class="flex-1 h-px bg-slate-800"></div>
         </div>
       </div>
-
       <form id="auth-signin-form" onsubmit="handleLogin(event)">
         <div class="space-y-4">
           <div>
-            <label class="block text-sm text-slate-400 mb-1">Name</label>
-            <input name="login-name" required class="w-full rounded-xl border border-slate-800 bg-slate-950 py-3 px-4 text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="Your username">
+            <label class="block text-sm text-slate-400 mb-1">Email</label>
+            <input name="login-email" type="email" required class="w-full rounded-xl border border-slate-800 bg-slate-950 py-3 px-4 text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="your@email.com">
           </div>
           <div>
             <label class="block text-sm text-slate-400 mb-1">Password</label>
@@ -45,20 +41,15 @@
         <p class="auth-error hidden text-red-400 text-sm mt-3"></p>
         <button type="submit" class="w-full mt-5 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition">Sign In</button>
       </form>
-
       <form id="auth-signup-form" onsubmit="handleRegister(event)" class="hidden">
         <div class="space-y-4">
           <div>
-            <label class="block text-sm text-slate-400 mb-1">Name *</label>
-            <input name="register-name" required class="w-full rounded-xl border border-slate-800 bg-slate-950 py-3 px-4 text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="Min 5 characters">
+            <label class="block text-sm text-slate-400 mb-1">Email *</label>
+            <input name="register-email" type="email" required class="w-full rounded-xl border border-slate-800 bg-slate-950 py-3 px-4 text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="your@email.com">
           </div>
           <div>
             <label class="block text-sm text-slate-400 mb-1">Nickname</label>
             <input name="register-nickname" class="w-full rounded-xl border border-slate-800 bg-slate-950 py-3 px-4 text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="Display name">
-          </div>
-          <div>
-            <label class="block text-sm text-slate-400 mb-1">Email</label>
-            <input name="register-email" type="email" class="w-full rounded-xl border border-slate-800 bg-slate-950 py-3 px-4 text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="your@email.com">
           </div>
           <div>
             <label class="block text-sm text-slate-400 mb-1">Password *</label>
