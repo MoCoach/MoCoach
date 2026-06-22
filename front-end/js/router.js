@@ -79,6 +79,9 @@ function handleRouteChange() {
     if (page === "inbox" && typeof loadInbox === "function") {
         loadInbox();
     }
+    if (page === "apply" && typeof initApplyPage === "function") {
+        initApplyPage();
+    }
 }
 
 function initRouter() {

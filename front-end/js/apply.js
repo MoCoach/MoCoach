@@ -1,8 +1,10 @@
 let uploadedPhotos = [];
 
-document.addEventListener("DOMContentLoaded", () => {
+function initApplyPage() {
     const applyForm = document.getElementById("apply-coach-form");
     if (!applyForm) return;
+
+    uploadedPhotos = [];
 
     fetch("/api/tags")
         .then(r => r.json())
@@ -19,24 +21,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const dropzone = document.getElementById("photo-dropzone");
     const photoInput = document.getElementById("photo-input");
+    const previewContainer = document.getElementById("photo-previews");
 
-    dropzone.addEventListener("click", () => photoInput.click());
+    if (dropzone && photoInput) {
+        dropzone.addEventListener("click", () => photoInput.click());
 
-    dropzone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropzone.classList.add("border-blue-500");
-    });
-    dropzone.addEventListener("dragleave", () => {
-        dropzone.classList.remove("border-blue-500");
-    });
-    dropzone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropzone.classList.remove("border-blue-500");
-        handleFiles(e.dataTransfer.files);
-    });
-    photoInput.addEventListener("change", (e) => {
-        handleFiles(e.target.files);
-    });
+        dropzone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropzone.classList.add("border-blue-500");
+        });
+        dropzone.addEventListener("dragleave", () => {
+            dropzone.classList.remove("border-blue-500");
+        });
+        dropzone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropzone.classList.remove("border-blue-500");
+            handleFiles(e.dataTransfer.files);
+        });
+        photoInput.addEventListener("change", (e) => {
+            handleFiles(e.target.files);
+        });
+    }
 
     function handleFiles(files) {
         const remaining = 10 - uploadedPhotos.length;
@@ -58,8 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderPreviews() {
-        const container = document.getElementById("photo-previews");
-        container.innerHTML = uploadedPhotos.map((p, i) => `
+        if (!previewContainer) return;
+        previewContainer.innerHTML = uploadedPhotos.map((p, i) => `
             <div class="relative group">
                 <img src="${p.preview || ''}" class="w-full h-24 object-cover rounded-xl border ${i === 0 ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-slate-700'}">
                 ${i === 0 ? '<span class="absolute top-1 left-1 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>' : ''}
@@ -67,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `).join("");
 
-        container.querySelectorAll("[data-remove]").forEach(btn => {
+        previewContainer.querySelectorAll("[data-remove]").forEach(btn => {
             btn.addEventListener("click", () => {
                 const idx = parseInt(btn.dataset.remove);
                 uploadedPhotos.splice(idx, 1);
@@ -150,4 +155,4 @@ document.addEventListener("DOMContentLoaded", () => {
             errorEl.classList.remove("hidden");
         }
     });
-});
+}
