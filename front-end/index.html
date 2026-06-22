@@ -9,12 +9,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Lien vers votre fichier CSS externe -->
+  <!-- Lien vers le fichier CSS externe -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
 
-  <!-- Le Header externe sera injecté ici -->
+  <!-- Le Header externe sera injecté ici par JS -->
   <div id="header-placeholder"></div>
 
   <main>
@@ -33,13 +33,13 @@
       <!-- Grille d'arrière-plan -->
       <div class="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none opacity-20 z-20"></div>
 
-      <!-- Halos lumineux bleus (l'écran bleu d'arrière-plan) -->
+      <!-- Halos lumineux -->
       <div class="absolute inset-0 pointer-events-none overflow-hidden z-20">
         <div class="absolute -top-40 right-10 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[140px]"></div>
         <div class="absolute top-40 -left-10 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[140px]"></div>
       </div>
 
-      <!-- Contenu principal du Hero -->
+      <!-- Contenu principal -->
       <div class="max-w-[1600px] mx-auto px-8 relative z-30 w-full flex-1 flex flex-col justify-between">
         
         <div class="text-center max-w-5xl mx-auto my-auto pt-4 pb-8">
@@ -61,7 +61,7 @@
           </div>
         </div>
 
-        <!-- Grille des catégories -->
+        <!-- Catégories -->
         <div class="pt-8 border-t border-slate-900/60 mt-auto">
           <div class="text-center mb-8">
             <span class="text-blue-500 text-xs font-bold uppercase tracking-widest">Tailored Disciplines</span>
@@ -189,7 +189,7 @@
       </div>
     </section>
 
-    <!-- SECTION: EXPLORE (CAROUSEL) -->
+    <!-- SECTION: EXPLORE (CAROUSEL COMPLET - 18 COACHES) -->
     <section id="explore" class="py-20 bg-slate-950 relative border-y border-slate-900">
       <div class="max-w-[1600px] mx-auto px-8">
         
@@ -224,13 +224,12 @@
           </div>
         </div>
 
-        <!-- Carrousel horizontal -->
         <div id="coach-carousel" class="flex overflow-x-auto gap-8 pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
           
-          <!-- Coach 1 -->
+          <!-- 1. Zumba -->
           <div data-name="Priya S." data-discipline="Zumba" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
-              <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80" alt="Zumba Coach Mauritius" class="w-full h-64 object-cover">
+              <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80" alt="Zumba Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
                 <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
               </span>
@@ -240,36 +239,26 @@
                 <div class="flex items-center justify-between mb-2">
                   <div class="flex items-center space-x-2">
                     <h3 class="text-xl font-bold text-white">Priya S.</h3>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
-                      <i data-lucide="shield-check" class="w-3 h-3 mr-0.5"></i>Certified
-                    </span>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
                   <div class="flex items-center space-x-1 text-amber-400">
                     <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
                   </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Zumba</p>
-                <p class="text-sm text-slate-400 leading-relaxed mb-4">High-energy dance fitness sessions filled with rhythmic Latin and global beats. Great for weight management and cardio.</p>
-              </div>
-              <div class="flex flex-wrap gap-1.5 mb-4 mt-auto">
-                <span class="bg-slate-950 text-slate-350 text-[10px] font-semibold px-2.5 py-1 rounded-md">English</span>
-                <span class="bg-slate-950 text-slate-350 text-[10px] font-semibold px-2.5 py-1 rounded-md">French</span>
-                <span class="bg-slate-950 text-slate-350 text-[10px] font-semibold px-2.5 py-1 rounded-md">Kreol</span>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">High-energy dance fitness sessions filled with rhythmic Latin and global beats.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <div>
-                <span class="text-xs text-slate-400 block font-medium mb-0.5">Session from</span>
-                <span class="text-xl sm:text-2xl font-black text-white tracking-tight">Rs 450<span class="text-sm text-slate-400 font-normal">/hr</span></span>
-              </div>
-              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact Coach</a>
+              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
 
-          <!-- Coach 2 -->
+          <!-- 2. Boxing -->
           <div data-name="Cedric L." data-discipline="Boxing" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
-              <img src="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=600&q=80" alt="Boxing Coach Mauritius" class="w-full h-64 object-cover">
+              <img src="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=600&q=80" alt="Boxing Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
                 <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
               </span>
@@ -279,35 +268,26 @@
                 <div class="flex items-center justify-between mb-2">
                   <div class="flex items-center space-x-2">
                     <h3 class="text-xl font-bold text-white">Cedric L.</h3>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
-                      <i data-lucide="shield-check" class="w-3 h-3 mr-0.5"></i>Certified
-                    </span>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
                   <div class="flex items-center space-x-1 text-amber-400">
                     <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">5.0</span>
                   </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Boxing</p>
-                <p class="text-sm text-slate-400 leading-relaxed mb-4">Focused pad work, boxing fundamentals, and intense conditioning drills. Tailored to all fitness levels.</p>
-              </div>
-              <div class="flex flex-wrap gap-1.5 mb-4 mt-auto">
-                <span class="bg-slate-950 text-slate-350 text-[10px] font-semibold px-2.5 py-1 rounded-md">English</span>
-                <span class="bg-slate-950 text-slate-350 text-[10px] font-semibold px-2.5 py-1 rounded-md">French</span>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Focused pad work, boxing fundamentals, and intense conditioning drills.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <div>
-                <span class="text-xs text-slate-400 block font-medium mb-0.5">Session from</span>
-                <span class="text-xl sm:text-2xl font-black text-white tracking-tight">Rs 600<span class="text-sm text-slate-400 font-normal">/hr</span></span>
-              </div>
-              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact Coach</a>
+              <span class="text-xl font-black text-white">Rs 600<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
 
-          <!-- Coach 3 (Yoga) -->
+          <!-- 3. Yoga -->
           <div data-name="Leana Marou" data-discipline="Yoga" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
-              <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80" alt="Yoga Coach Mauritius" class="w-full h-64 object-cover">
+              <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80" alt="Yoga Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
                 <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
               </span>
@@ -317,29 +297,454 @@
                 <div class="flex items-center justify-between mb-2">
                   <div class="flex items-center space-x-2">
                     <h3 class="text-xl font-bold text-white">Leana Marou</h3>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
-                      <i data-lucide="shield-check" class="w-3 h-3 mr-0.5"></i>Certified
-                    </span>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
                   <div class="flex items-center space-x-1 text-amber-400">
                     <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
                   </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Yoga</p>
-                <p class="text-sm text-slate-400 leading-relaxed mb-4">Vinyasa flow, pranayama, and core functional stability sessions. Flexible beachfront classes in Tamarin and Flic-en-Flac.</p>
-              </div>
-              <div class="flex flex-wrap gap-1.5 mb-4 mt-auto">
-                <span class="bg-slate-950 text-slate-350 text-[10px] font-semibold px-2.5 py-1 rounded-md">English</span>
-                <span class="bg-slate-950 text-slate-350 text-[10px] font-semibold px-2.5 py-1 rounded-md">French</span>
-                <span class="bg-slate-950 text-slate-350 text-[10px] font-semibold px-2.5 py-1 rounded-md">Kreol</span>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Vinyasa flow, pranayama, and core functional stability sessions on the beach.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 4. Tennis -->
+          <div data-name="Sarah B." data-discipline="Tennis" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=600&q=80" alt="Tennis Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
               <div>
-                <span class="text-xs text-slate-400 block font-medium mb-0.5">Session from</span>
-                <span class="text-xl sm:text-2xl font-black text-white tracking-tight">Rs 550<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Sarah B.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Tennis</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Individual coaching on serve dynamics, footwork, and tactical court play.</p>
               </div>
-              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact Coach</a>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 750<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 5. Football -->
+          <div data-name="Mathieu R." data-discipline="Football" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1517747614396-d21a78b850e8?auto=format&fit=crop&w=600&q=80" alt="Football Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Mathieu R.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.7</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Football</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Skill development, technical drills, agility, and tactical preparation.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 400<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 6. Gymnastics -->
+          <div data-name="Amisha K." data-discipline="Gymnastics" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&q=80" alt="Gymnastics Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Amisha K.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.8</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Gymnastics</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Core strength, floor routines, and balance for all ages.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 650<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 7. Water Sports -->
+          <div data-name="Jean-Pierre S." data-discipline="Water Sports" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&w=600&q=80" alt="Water Sports Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Jean-Pierre S.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">5.0</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Water Sports</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Open water swimming progression and paddleboarding instruction.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 700<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 8. Jogging/Running -->
+          <div data-name="Chloe A." data-discipline="Jogging/Running" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=600&q=80" alt="Running Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Chloe A.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.8</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Jogging/Running</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Pacing, running mechanics, and base running conditioning.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 350<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 9. Strength Training -->
+          <div data-name="Kavir D." data-discipline="Strength Training" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80" alt="Strength Trainer" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Kavir D.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Strength Training</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Hypertrophy, postural alignment, and progressive overload.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 500<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 10. Hiking -->
+          <div data-name="Arnaud G." data-discipline="Hiking" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" alt="Hiking Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Arnaud G.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">5.0</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Hiking</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Guided mountain navigation and trail routing across the island.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 650<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 11. Combat Sports -->
+          <div data-name="Gael B." data-discipline="Combat Sports" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1517438476312-10d79c01926d?auto=format&fit=crop&w=600&q=80" alt="Combat Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Gael B.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.8</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Combat Sports</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Self-defense, kickboxing coordination, and mental conditioning.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 12. Dance -->
+          <div data-name="Ryan M." data-discipline="Dance" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80" alt="Dance Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Ryan M.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Dance</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Contemporary and hip-hop. Rhythm and physical coordination.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 13. Badminton -->
+          <div data-name="Nicholas W." data-discipline="Badminton" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=600&q=80" alt="Badminton Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Nicholas W.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.7</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Badminton</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Improve racket swing mechanics and court coverage agility.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 480<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 14. Rugby -->
+          <div data-name="Dev M." data-discipline="Rugby" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1533560904424-a0c61dc306fc?auto=format&fit=crop&w=600&q=80" alt="Rugby Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Dev M.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Rugby</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Passing accuracy, tactical sprint work, and defense structures.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 500<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 15. Golf -->
+          <div data-name="Robert T." data-discipline="Golf" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=600&q=80" alt="Golf Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Robert T.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">5.0</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Golf</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Posture control, swing analytics, and short-game precision.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 800<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 16. Basketball -->
+          <div data-name="David L." data-discipline="Basketball" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80" alt="Basketball Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">David L.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Basketball</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Vertical jump programs, shooting dynamics, and handle drills.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 17. Handball -->
+          <div data-name="Melissa P." data-discipline="Handball" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=600&q=80" alt="Handball Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Melissa P.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.8</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Handball</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Passing accuracy, rapid positioning, and defensive tracking.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+            </div>
+          </div>
+
+          <!-- 18. Table Tennis -->
+          <div data-name="Alan Y." data-discipline="Table Tennis" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1534067783941-51c9c23eccfd?auto=format&fit=crop&w=600&q=80" alt="Table Tennis Coach" class="w-full h-64 object-cover">
+              <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
+                <i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span>
+              </span>
+            </div>
+            <div class="p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xl font-bold text-white">Alan Y.</h3>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
+                  </div>
+                  <div class="flex items-center space-x-1 text-amber-400">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
+                  </div>
+                </div>
+                <p class="text-sm text-emerald-400 font-semibold mb-3">Table Tennis</p>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4">Reflex sharpening, spin stroke precision, and placement control.</p>
+              </div>
+            </div>
+            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
+              <span class="text-xl font-black text-white">Rs 400<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <a href="#cta-section" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
 
@@ -347,7 +752,7 @@
       </div>
     </section>
 
-    <!-- SECTION: TRUST & SOCIAL PROOF -->
+    <!-- SECTION: TRUST & SOCIAL PROOF (COMPLET - 3 CADRES) -->
     <section class="py-20 bg-slate-900 border-b border-slate-950">
       <div class="max-w-[1600px] mx-auto px-8">
         <div class="text-center max-w-2xl mx-auto mb-16">
@@ -357,7 +762,8 @@
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Testimonial 1 -->
+          
+          <!-- Testimonial 1 (Sarena Dev) -->
           <div class="bg-slate-950 p-8 rounded-2xl flex flex-col justify-between">
             <div class="space-y-4">
               <div class="flex items-center space-x-1 text-amber-400">
@@ -381,11 +787,62 @@
               </div>
             </div>
           </div>
+
+          <!-- Testimonial 2 (Marcus Hill) -->
+          <div class="bg-slate-950 p-8 rounded-2xl flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center space-x-1 text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              </div>
+              <p class="text-slate-300 text-sm leading-relaxed italic">
+                "As a tourist visiting Mauritius, I wanted to maintain my active training routine on-site. MoCoach matched me with JP, an elite athletic conditioning trainer. We booked beach training directly online. Exceptional experience!"
+              </p>
+            </div>
+            <div class="flex items-center space-x-4 mt-8 pt-4 border-t border-slate-900">
+              <div class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center font-bold text-sm text-emerald-400">
+                MH
+              </div>
+              <div>
+                <p class="text-sm font-bold text-white">Marcus Hill</p>
+                <p class="text-[10px] text-slate-500">Verified Client • Tourist from Germany</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Testimonial 3 (Anusha S.) -->
+          <div class="bg-slate-950 p-8 rounded-2xl flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center space-x-1 text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              </div>
+              <p class="text-slate-300 text-sm leading-relaxed italic">
+                "Moving my client scheduling to MoCoach saved me hours of daily text coordination. My bookings are transparently scheduled, and tourists can easily find and book my slots before arriving in Mauritius."
+              </p>
+            </div>
+            <div class="flex items-center space-x-4 mt-8 pt-4 border-t border-slate-900">
+              <div class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center font-bold text-sm text-amber-400">
+                AM
+              </div>
+              <div>
+                <p class="text-sm font-bold text-white">Anusha S.</p>
+                <p class="text-[10px] text-slate-500">Verified Yoga Instructor • Coach</p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
 
-    <!-- SECTION: FEATURES -->
+    <!-- SECTION: PLATFORM BENEFITS (COMPLET - 4 CADRES) -->
     <section id="features" class="py-24 bg-slate-950">
       <div class="max-w-[1600px] mx-auto px-8">
         <div class="text-center max-w-2xl mx-auto mb-16">
@@ -395,6 +852,8 @@
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          
+          <!-- Card 1 -->
           <div class="bg-slate-900 p-8 rounded-2xl flex flex-col items-start">
             <div class="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center mb-5">
               <i data-lucide="check-square" class="w-6 h-6"></i>
@@ -404,11 +863,45 @@
               Every trainer undergoes ID checks, background verifications, and qualification validation so you can train safely.
             </p>
           </div>
+
+          <!-- Card 2 -->
+          <div class="bg-slate-900 p-8 rounded-2xl flex flex-col items-start">
+            <div class="w-12 h-12 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-5">
+              <i data-lucide="map-pin" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-bold text-white text-base mb-3">Localized Navigation</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Find coaches operating precisely in your district, from Flacq, Grand Baie, Pereybere, down to Flic en Flac and Black River.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="bg-slate-900 p-8 rounded-2xl flex flex-col items-start">
+            <div class="w-12 h-12 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-5">
+              <i data-lucide="calendar" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-bold text-white text-base mb-3">Centralized Logs</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Eliminate disjointed logs across social platforms. Track all your upcoming sessions, schedules, and receipts in one secure system.
+            </p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="bg-slate-900 p-8 rounded-2xl flex flex-col items-start">
+            <div class="w-12 h-12 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mb-5">
+              <i data-lucide="smartphone" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-bold text-white text-base mb-3">Optimized For Mobile</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Designed dynamically to look and operate on high-definition smartphones, allowing swift scheduling on the move.
+            </p>
+          </div>
+
         </div>
       </div>
     </section>
 
-    <!-- SECTION: ABOUT -->
+    <!-- ABOUT SECTION -->
     <section id="about" class="py-24 bg-slate-900 relative">
       <div class="max-w-[1600px] mx-auto px-8">
         <div class="grid lg:grid-cols-2 gap-16 items-center">
@@ -418,32 +911,73 @@
             </div>
             <h2 class="text-3xl font-extrabold text-white mb-6">About MoCoach</h2>
             <p class="text-slate-300 text-base leading-relaxed mb-5">
-              MoCoach represents Mauritius' first dedicated initiative to centralize and secure the sports, health, and wellness ecosystem...
+              MoCoach represents Mauritius' first dedicated initiative to centralize and secure the sports, health, and wellness ecosystem. For years, booking qualified local sports expertise has been fragmented across various social networks, leaving both local residents and visiting tourists struggling with timing sync and verification.
             </p>
+            <p class="text-slate-300 text-base leading-relaxed mb-5">
+              By offering unified profiles, central calendar checks, and client reviews, we help correct transparency imbalances. MoCoach elevates verified professional wellness coaches on the island while protecting clients seeking stable wellness habits.
+            </p>
+            <div class="pt-6 flex items-center space-x-8">
+              <div class="text-left">
+                <span class="block text-3xl font-extrabold text-white">100%</span>
+                <span class="text-xs uppercase text-slate-500 tracking-wider">Vetted Instructors</span>
+              </div>
+              <div class="w-px h-10 bg-slate-800"></div>
+              <div class="text-left">
+                <span class="block text-3xl font-extrabold text-emerald-400">Mauritius</span>
+                <span class="text-xs uppercase text-slate-500 tracking-wider">Broad Local Presence</span>
+              </div>
+            </div>
           </div>
+
           <div class="relative rounded-3xl overflow-hidden group shadow-2xl">
-            <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80" alt="Active community lifestyle" class="w-full h-96 object-cover">
+            <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80" alt="Active community lifestyle in Mauritius" class="w-full h-96 object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+            <div class="absolute bottom-8 left-8 right-8">
+              <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest block mb-1.5">Our Mission</span>
+              <h3 class="text-xl font-bold text-white mb-2">Connecting People Through Active Lifestyles</h3>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                Empowering independent wellness coaches, creating active local job pipelines, and supporting physical fitness initiatives all over Mauritius.
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SECTION: DUAL CTA -->
+    <!-- CTAS FOR USERS & COACHES -->
     <section id="cta-section" class="bg-gradient-to-b from-slate-900 to-slate-950 py-20 px-8">
       <div class="max-w-[1600px] mx-auto grid md:grid-cols-2 gap-8">
         
-        <div class="bg-slate-950/60 p-10 rounded-3xl flex flex-col justify-between shadow-xl relative overflow-hidden group">
-          <h3 class="text-2xl font-bold text-white mb-3">Transform Your Wellness</h3>
+        <div class="bg-slate-950/60 p-10 rounded-3xl flex flex-col justify-between shadow-xl relative overflow-hidden group transition">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl"></div>
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-8">
+              <i data-lucide="user-check" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-3">Transform Your Wellness Routine</h3>
+            <p class="text-base text-slate-300 leading-relaxed mb-8">
+              Find and schedule dedicated personal trainers, stretching specialists, yoga flow guidance, or physical conditioning specialists tailored around your residential or holiday schedule.
+            </p>
+          </div>
           <a href="#explore" class="bg-blue-600 hover:bg-blue-700 text-white text-base font-bold py-4 px-6 rounded-xl transition text-center shadow-md">
             Find Your Coach Now
           </a>
         </div>
 
-        <div id="cta-coach" class="bg-slate-950/60 p-10 rounded-3xl flex flex-col justify-between shadow-xl relative overflow-hidden group">
-          <h3 class="text-2xl font-bold text-white mb-3">Grow Your Coaching Business</h3>
+        <div id="cta-coach" class="bg-slate-950/60 p-10 rounded-3xl flex flex-col justify-between shadow-xl relative overflow-hidden group transition">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl"></div>
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-8">
+              <i data-lucide="award" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-3">Grow Your Coaching Business</h3>
+            <p class="text-base text-slate-350 leading-relaxed mb-8">
+              List your credentials, set your target pricing per hour, choose your operating districts, and capture direct leads from both Mauritius residents and high-spending inbound tourists.
+            </p>
+          </div>
           <div class="space-y-3.5">
-            <input type="email" placeholder="Enter your email" class="w-full bg-slate-900 border border-slate-900 rounded-xl px-4 py-3.5 text-slate-300">
-            <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-base font-extrabold py-4 rounded-xl transition">
+            <input type="email" placeholder="Enter your email address" class="w-full bg-slate-900 border border-slate-900 rounded-xl px-4 py-3.5 text-base text-slate-300 placeholder-slate-500 focus:outline-none transition">
+            <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-base font-extrabold py-4 rounded-xl transition text-center shadow-lg">
               Apply as a Vetted Coach
             </button>
           </div>
@@ -453,10 +987,10 @@
     </section>
   </main>
 
-  <!-- Le Footer externe sera injecté ici -->
+  <!-- Le Footer externe sera injecté ici par JS -->
   <div id="footer-placeholder"></div>
 
-  <!-- Script d'orchestration frontend -->
+  <!-- Script d'orchestration JS principal -->
   <script src="js/app.js"></script>
 </body>
 </html>

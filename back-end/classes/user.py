@@ -18,98 +18,42 @@ class User(Base):
     '''
     __tablename__ = 'users'
     id       = Column(Integer,     nullable=False, primary_key=True)
-    name     = Column(String(128), nullable=True)
-    password = Column(String(255), nullable=True)
+    name     = Column(String(128), nullable=False)
+    password = Column(String(255), nullable=False)
     is_coach = Column(Boolean,     nullable=False)
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
-    def __init__(self, name=None, pwd=None, is_coach=False, description=None, tags=None):
+    def __init__(self, name, pwd, is_coach=False, description=None, tags=None):
         '''
         generates a new profile
-
-        :param name: name of the user (None for guests)
-        :param pwd: user's password (None for guests)
-        :param is_coach: is the user a coach (false for customers and guests)
-        :param description: profile description (required for coaches)
-        :param tags: list of Tag objects (0-5, for coaches only)
-        '''
-
-        # Generate a guest profile
-        if name is None:
-            self.name     = None
-            self.password = None
-            self.is_coach = False
-            return
-
-        # verify the name
-        if not isinstance(name, str):
-            raise TypeError("name must be a string")
-        if len(name) < 5:
-            raise ValueError("name must be at least 5 characters")
-
-        # verify the password
-        if pwd is None:
-            raise TypeError("password is required")
-        if not isinstance(pwd, str):
-            raise TypeError("password must be a string")
-        if len(pwd) < 8:
-            raise ValueError("password must be at least 8 characters")
-
-        # set name, password and status
-        self.password = generate_password_hash(pwd)
-        self.name     = name
-        self.is_coach = is_coach
-
-        # create a coach profile if needed
-        if is_coach:
-            self.coach = Coach(description=description)
-            if tags:
-                for tag in tags:
-                    self.coach.add_tag(tag)
-
-
-    def register(self, name, pwd, is_coach=False, description=None, tags=None):
-        '''
-        register the profile of a guest
 
         :param name: name of the user
         :param pwd: user's password
         :param is_coach: is the user a coach
         :param description: profile description (required for coaches)
         :param tags: list of Tag objects (0-5, for coaches only)
-        :return:
         '''
-        # verify the name
-        if name is None:
-            raise TypeError("name is required")
+
         if not isinstance(name, str):
             raise TypeError("name must be a string")
         if len(name) < 5:
             raise ValueError("name must be at least 5 characters")
 
-        # verify the password
-        if pwd is None:
-            raise TypeError("password is required")
         if not isinstance(pwd, str):
             raise TypeError("password must be a string")
         if len(pwd) < 8:
             raise ValueError("password must be at least 8 characters")
 
-        # set the name, password and status
-        self.name     = name
         self.password = generate_password_hash(pwd)
+        self.name     = name
         self.is_coach = is_coach
 
-        # create a coach profile if needed
         if is_coach:
             self.coach = Coach(description=description)
             if tags:
                 for tag in tags:
                     self.coach.add_tag(tag)
-        else:
-            self.coach = None
-
 
     def verify_pwd(self, pwd):
         '''
