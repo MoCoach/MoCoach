@@ -131,13 +131,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.lucide) lucide.createIcons();
     });
 
-    loadComponent('page-profile-placeholder', 'components/pages/profile.html');
-    loadComponent('page-inbox-placeholder', 'components/pages/inbox.html');
-    loadComponent('page-apply-placeholder', 'components/pages/apply.html');
-    loadComponent('page-coach-view-placeholder', 'components/pages/coach-view.html');
-
-    loadCoachMap();
-    initRouter();
+    Promise.all([
+        loadComponent('page-profile-placeholder', 'components/pages/profile.html'),
+        loadComponent('page-inbox-placeholder', 'components/pages/inbox.html'),
+        loadComponent('page-apply-placeholder', 'components/pages/apply.html'),
+        loadComponent('page-coach-view-placeholder', 'components/pages/coach-view.html'),
+    ]).then(() => {
+        loadCoachMap();
+        initRouter();
+    });
 
     const carousel = document.getElementById('coach-carousel');
     const btnLeft = document.getElementById('slide-left');
