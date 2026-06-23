@@ -9,7 +9,7 @@ async function loadComponent(id, url) {
                 lucide.createIcons();
             }
         } catch (error) {
-            console.error('Erreur de chargement du composant:', error);
+            console.error('Component loading error:', error);
         }
     }
 }
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
 
-    // Carrousel
+    // Carousel
     const carousel = document.getElementById('coach-carousel');
     const btnLeft = document.getElementById('slide-left');
     const btnRight = document.getElementById('slide-right');
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnRight.addEventListener('click', () => carousel.scrollBy({ left: scrollOffset, behavior: 'smooth' }));
     }
 
-    // Recherche
+    // Search
     const searchInput = document.getElementById('search-input');
     const coachCards = document.querySelectorAll('.coach-card');
 

@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 
-app = Flask(__name__)  # Flask utilise automatiquement les dossiers 'templates' et 'static' par défaut
+app = Flask(__name__)  # Flask automatically uses the 'templates' and 'static' folders by default
 
 @app.route('/')
 def home():
