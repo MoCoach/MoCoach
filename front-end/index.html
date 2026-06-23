@@ -9,37 +9,37 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Lien vers le fichier CSS externe -->
+  <!-- External CSS stylesheet link -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
 
-  <!-- Le Header externe sera injecté ici par JS -->
+  <!-- External Header will be injected here by JS -->
   <div id="header-placeholder"></div>
 
   <main>
-    <!-- HERO SECTION (Bordure border-b supprimée pour nettoyer le fond vidéo) -->
+    <!-- HERO SECTION (border-b removed to clean the video background) -->
     <section class="relative bg-slate-950 overflow-hidden min-h-[calc(100vh-121px)] flex flex-col justify-between py-6 lg:py-10">
       
-      <!-- Arrière-plan vidéo -->
+      <!-- Video background -->
       <video autoplay loop muted playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover z-10 opacity-50 pointer-events-none">
         <source src="assets/video/Unlock your full potential MoCoach.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
 
-      <!-- Superposition semi-transparente -->
+      <!-- Semi-transparent overlay -->
       <div class="absolute inset-0 bg-slate-950/60 z-20 pointer-events-none"></div>
 
-      <!-- Grille d'arrière-plan -->
+      <!-- Grid background -->
       <div class="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none opacity-20 z-20"></div>
 
-      <!-- Halos lumineux -->
+      <!-- Glowing light halos -->
       <div class="absolute inset-0 pointer-events-none overflow-hidden z-20">
         <div class="absolute -top-40 right-10 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[140px]"></div>
         <div class="absolute top-40 -left-10 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[140px]"></div>
       </div>
 
-      <!-- Contenu principal -->
+      <!-- Main content -->
       <div class="max-w-[1600px] mx-auto px-8 relative z-30 w-full flex-1 flex flex-col justify-between">
         
         <div class="text-center max-w-5xl mx-auto my-auto pt-4 pb-8">
@@ -61,7 +61,7 @@
           </div>
         </div>
 
-        <!-- Catégories (Bordure border-t également supprimée pour un rendu net) -->
+        <!-- Categories -->
         <div class="pt-8 mt-auto">
           <div class="text-center mb-8">
             <span class="text-blue-500 text-xs font-bold uppercase tracking-widest">Tailored Disciplines</span>
@@ -189,7 +189,7 @@
       </div>
     </section>
 
-    <!-- SECTION: EXPLORE (CAROUSEL COMPLET - 18 COACHES) -->
+    <!-- SECTION: EXPLORE (COMPLETE CAROUSEL - 18 COACHES) -->
     <section id="explore" class="py-20 bg-slate-950 relative border-y border-slate-900">
       <div class="max-w-[1600px] mx-auto px-8">
         
@@ -241,16 +241,13 @@
                     <h3 class="text-xl font-bold text-white">Priya S.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Zumba</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">High-energy dance fitness sessions filled with rhythmic Latin and global beats.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">450 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Zumba%20Coaching%20with%20Priya%2520S." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -270,16 +267,13 @@
                     <h3 class="text-xl font-bold text-white">Cedric L.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">5.0</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Boxing</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Focused pad work, boxing fundamentals, and intense conditioning drills.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 600<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">600 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Boxing%20Coaching%20with%20Cedric%2520L." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -299,16 +293,13 @@
                     <h3 class="text-xl font-bold text-white">Leana Marou</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Yoga</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Vinyasa flow, pranayama, and core functional stability sessions on the beach.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">550 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Yoga%20Coaching%20with%20Leana%2520Marou" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -328,16 +319,13 @@
                     <h3 class="text-xl font-bold text-white">Sarah B.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Tennis</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Individual coaching on serve dynamics, footwork, and tactical court play.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 750<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">750 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Tennis%20Coaching%20with%20Sarah%2520B." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -357,16 +345,13 @@
                     <h3 class="text-xl font-bold text-white">Mathieu R.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.7</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Football</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Skill development, technical drills, agility, and tactical preparation.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 400<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">400 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Football%20Coaching%20with%20Mathieu%2520R." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -386,16 +371,13 @@
                     <h3 class="text-xl font-bold text-white">Amisha K.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.8</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Gymnastics</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Core strength, floor routines, and balance for all ages.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 650<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">650 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Gymnastics%20Coaching%20with%20Amisha%2520K." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -415,16 +397,13 @@
                     <h3 class="text-xl font-bold text-white">Jean-Pierre S.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">5.0</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Water Sports</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Open water swimming progression and paddleboarding instruction.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 700<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">700 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Water%2520Sports%20Coaching%20with%20Jean-Pierre%2520S." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -444,16 +423,13 @@
                     <h3 class="text-xl font-bold text-white">Chloe A.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.8</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Jogging/Running</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Pacing, running mechanics, and base running conditioning.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 350<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">350 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Running%20Coaching%20with%20Chloe%2520A." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -473,16 +449,13 @@
                     <h3 class="text-xl font-bold text-white">Kavir D.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Strength Training</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Hypertrophy, postural alignment, and progressive overload.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 500<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">500 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Strength%20Coaching%20with%20Kavir%2520D." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -502,16 +475,13 @@
                     <h3 class="text-xl font-bold text-white">Arnaud G.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">5.0</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Hiking</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Guided mountain navigation and trail routing across the island.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 650<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">650 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Hiking%20Coaching%20with%20Arnaud%2520G." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -531,16 +501,13 @@
                     <h3 class="text-xl font-bold text-white">Gael B.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.8</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Combat Sports</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Self-defense, kickboxing coordination, and mental conditioning.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">550 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Combat%2520Sports%2520Coaching%20with%20Gael%2520B." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -560,16 +527,13 @@
                     <h3 class="text-xl font-bold text-white">Ryan M.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Dance</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Contemporary and hip-hop. Rhythm and physical coordination.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">450 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Dance%20Coaching%20with%20Ryan%2520M." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -589,16 +553,13 @@
                     <h3 class="text-xl font-bold text-white">Nicholas W.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.7</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Badminton</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Improve racket swing mechanics and court coverage agility.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 480<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">480 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Badminton%20Coaching%20with%20Nicholas%2520W." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -618,16 +579,13 @@
                     <h3 class="text-xl font-bold text-white">Dev M.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Rugby</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Passing accuracy, tactical sprint work, and defense structures.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 500<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">500 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Rugby%20Coaching%20with%20Dev%2520M." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -647,16 +605,13 @@
                     <h3 class="text-xl font-bold text-white">Robert T.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">5.0</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Golf</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Posture control, swing analytics, and short-game precision.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 800<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">800 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Golf%20Coaching%20with%20Robert%2520T." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -676,16 +631,13 @@
                     <h3 class="text-xl font-bold text-white">David L.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Basketball</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Vertical jump programs, shooting dynamics, and handle drills.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">550 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Basketball%20Coaching%20with%20David%2520L." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -705,16 +657,13 @@
                     <h3 class="text-xl font-bold text-white">Melissa P.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.8</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Handball</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Passing accuracy, rapid positioning, and defensive tracking.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">450 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Handball%20Coaching%20with%20Melissa%2520P." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -734,16 +683,13 @@
                     <h3 class="text-xl font-bold text-white">Alan Y.</h3>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span>
                   </div>
-                  <div class="flex items-center space-x-1 text-amber-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i><span class="text-sm font-bold">4.9</span>
-                  </div>
                 </div>
                 <p class="text-sm text-emerald-400 font-semibold mb-3">Table Tennis</p>
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Reflex sharpening, spin stroke precision, and placement control.</p>
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 400<span class="text-sm text-slate-400 font-normal">/hr</span></span>
+              <span class="text-xl font-black text-white">400 Rs<span class="text-sm text-white font-normal">/h</span></span>
               <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Table%2520Tennis%2520Coaching%20with%20Alan%2520Y." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
             </div>
           </div>
@@ -752,7 +698,7 @@
       </div>
     </section>
 
-    <!-- SECTION: TRUST & SOCIAL PROOF (COMPLET - 3 CADRES) -->
+    <!-- SECTION: TRUST & SOCIAL PROOF -->
     <section class="py-20 bg-slate-900 border-b border-slate-950">
       <div class="max-w-[1600px] mx-auto px-8">
         <div class="text-center max-w-2xl mx-auto mb-16">
