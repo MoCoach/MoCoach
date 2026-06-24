@@ -1,8 +1,5 @@
 #!/usr/bin/python3
-"""
-Defines the user profile to be stored in the database
-"""
-
+"""Defines the user profile to be stored in the database."""
 
 import re
 
@@ -19,9 +16,8 @@ _EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
 
 
 class User(Base):
-    '''
-    Class representing a user of the app
-    '''
+    """Represents a user of the app."""
+
     __tablename__ = 'users'
     id       = Column(Integer,     nullable=False, primary_key=True)
     name     = Column(String(128), nullable=False)
@@ -29,12 +25,13 @@ class User(Base):
     password = Column(String(255), nullable=False)
     phone    = Column(String(16),  nullable=True)
     is_coach = Column(Boolean,     nullable=False)
+    is_admin = Column(Boolean,     nullable=False, default=False)
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
-    def __init__(self, name, email, pwd, is_coach=False, description=None, tags=None, phone=None):
-        '''
-        generates a new profile
+    def __init__(self, name, email, pwd, is_coach=False, description=None,
+                 tags=None, phone=None, is_admin=False):
+        """Generates a new user profile.
 
         :param name: name of the user
         :param email: email address
@@ -42,8 +39,8 @@ class User(Base):
         :param is_coach: is the user a coach
         :param description: profile description (required for coaches)
         :param tags: list of Tag objects (0-5, for coaches only)
-        '''
-
+        :param is_admin: whether the user has admin privileges
+        """
         if not isinstance(name, str):
             raise TypeError("name must be a string")
         if len(name) < 5:
@@ -64,6 +61,7 @@ class User(Base):
         self.email    = email
         self.is_coach = is_coach
         self.phone    = phone
+        self.is_admin = is_admin
 
         if is_coach:
             self.coach = Coach(description=description)
@@ -72,24 +70,23 @@ class User(Base):
                     self.coach.add_tag(tag)
 
     def verify_pwd(self, pwd):
-        '''
-        verify the password
+        """Verify the password.
 
         :param pwd: password to be checked
-        :return: True if the hash of the password is the same as the profile
-        '''
+        :return: True if the hash matches the stored password
+        """
         return check_password_hash(self.password, pwd)
 
-    def update_profile(self, name=None, email=_UNSET, pwd=None, description=None, tags=None, phone=_UNSET):
-        '''
-        Update the user profile
+    def update_profile(self, name=None, email=_UNSET, pwd=None,
+                       description=None, tags=None, phone=_UNSET):
+        """Update the user profile fields.
 
         :param name: new name (optional)
         :param email: new email (optional)
         :param pwd: new password (optional)
         :param description: new description (coach only, optional)
-        :param tags: new list of Tag objects (coach only, optional, 0-5)
-        '''
+        :param tags: new list of Tag objects (coach only, 0-5)
+        """
         if name is not None:
             if not isinstance(name, str):
                 raise TypeError("name must be a string")
@@ -125,11 +122,13 @@ class User(Base):
                 self.coach.set_tags(tags)
 
     def to_dict(self):
+        """Serialize user data to a dictionary."""
         d = {
             "id": self.id,
             "name": self.name,
             "email": self.email,
             "is_coach": self.is_coach,
+            "is_admin": self.is_admin,
             "phone": self.phone,
         }
         if self.coach:

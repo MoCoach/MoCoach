@@ -1,3 +1,5 @@
+"""Database management layer providing CRUD operations and business logic."""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -10,12 +12,16 @@ from classes.message import Message
 
 
 class DbError(Exception):
+    """Custom exception carrying a user-facing message and HTTP status code."""
+
     def __init__(self, message, status_code=400):
         self.message = message
         self.status_code = status_code
 
 
 class Db_Management:
+    """Data-access object that wraps all database operations."""
+
     def __init__(self, db_url=None):
         if db_url is None:
             db_url = "mysql+mysqldb://emilien:1234@localhost/moCoach"
@@ -24,18 +30,47 @@ class Db_Management:
         self.Session = sessionmaker(bind=self.engine)
 
     def _session(self):
-        s = self.Session()
-        return s
+        """Open a new database session."""
+        return self.Session()
 
-    # --- register ---
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
 
-    def register_user(self, email, name, password, is_coach, description, tags_data, phone):
+    def _is_admin(self, user_id):
+        """Return True if *user_id* belongs to an admin."""
         session = self._session()
         try:
+            user = session.query(User).filter_by(id=user_id).first()
+            return user is not None and user.is_admin
+        finally:
+            session.close()
+
+    def _is_last_admin(self, user_id):
+        """Return True if *user_id* is the only admin left in the system."""
+        session = self._session()
+        try:
+            admin_count = session.query(User).filter_by(is_admin=True).count()
+            user = session.query(User).filter_by(id=user_id).first()
+            return user is not None and user.is_admin and admin_count <= 1
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Registration / Authentication
+    # ------------------------------------------------------------------
+
+    def register_user(self, email, name, password, is_coach, description,
+                      tags_data, phone, is_admin=False):
+        """Create a new user account.
+
+        :param is_admin: grant admin privileges (default False)
+        """
+        session = self._session()
+        try:
+            # Only email must be unique; names may repeat.
             if session.query(User).filter_by(email=email).first():
                 raise DbError("Email already taken", 409)
-            if session.query(User).filter_by(name=name).first():
-                raise DbError("Name already taken", 409)
 
             tags = []
             if is_coach:
@@ -46,9 +81,10 @@ class Db_Management:
                         session.add(tag)
                     tags.append(tag)
 
-            user = User(name=name, email=email, pwd=password, is_coach=is_coach,
-                        description=description, tags=tags if is_coach else None,
-                        phone=phone)
+            user = User(name=name, email=email, pwd=password,
+                        is_coach=is_coach, description=description,
+                        tags=tags if is_coach else None,
+                        phone=phone, is_admin=is_admin)
             session.add(user)
             session.commit()
             return user.to_dict()
@@ -58,9 +94,8 @@ class Db_Management:
         finally:
             session.close()
 
-    # --- login ---
-
     def authenticate(self, email, password):
+        """Authenticate a user by email/password and return the User object."""
         session = self._session()
         try:
             user = session.query(User).filter_by(email=email).first()
@@ -70,9 +105,13 @@ class Db_Management:
         finally:
             session.close()
 
-    # --- profile update ---
+    # ------------------------------------------------------------------
+    # Profile management
+    # ------------------------------------------------------------------
 
-    def update_profile(self, user_id, name, description, tags_data, email=_UNSET, phone=_UNSET):
+    def update_profile(self, user_id, name, description, tags_data,
+                       email=_UNSET, phone=_UNSET):
+        """Update profile fields for the user identified by *user_id*."""
         session = self._session()
         try:
             user = session.query(User).filter_by(id=user_id).first()
@@ -80,7 +119,9 @@ class Db_Management:
                 raise DbError("User not found", 404)
 
             if email is not _UNSET:
-                existing = session.query(User).filter(User.email == email, User.id != user_id).first()
+                existing = session.query(User).filter(
+                    User.email == email, User.id != user_id
+                ).first()
                 if existing:
                     raise DbError("Email already taken", 409)
 
@@ -108,18 +149,15 @@ class Db_Management:
         finally:
             session.close()
 
-    # --- password change ---
-
     def change_password(self, user_id, old_pwd, new_pwd):
+        """Change the password for *user_id* after verifying the old one."""
         session = self._session()
         try:
             user = session.query(User).filter_by(id=user_id).first()
             if not user:
                 raise DbError("User not found", 404)
-
             if not user.verify_pwd(old_pwd):
                 raise DbError("Old password is incorrect", 401)
-
             user.update_profile(pwd=new_pwd)
             session.commit()
         except (TypeError, ValueError) as e:
@@ -128,9 +166,12 @@ class Db_Management:
         finally:
             session.close()
 
-    # --- coach queries ---
+    # ------------------------------------------------------------------
+    # Coach queries
+    # ------------------------------------------------------------------
 
     def get_coach(self, coach_id):
+        """Return public coach details by coach id."""
         session = self._session()
         try:
             coach = session.query(Coach).filter_by(id=coach_id).first()
@@ -139,50 +180,154 @@ class Db_Management:
             return {
                 "name": coach.user.name,
                 "description": coach.description,
-                "tags": [{"name": t.name, "description": t.description} for t in coach.tags]
+                "tags": [{"name": t.name, "description": t.description}
+                         for t in coach.tags],
             }
         finally:
             session.close()
 
     def list_coaches(self):
+        """Return a list of all coaches."""
         session = self._session()
         try:
             coaches = session.query(Coach).all()
             return [{
                 "name": c.user.name,
                 "description": c.description,
-                "tags": [{"name": t.name, "description": t.description} for t in c.tags]
+                "tags": [{"name": t.name, "description": t.description}
+                         for t in c.tags],
             } for c in coaches]
         finally:
             session.close()
 
     def list_coaches_by_tag(self, tag_name):
+        """Return coaches associated with the given tag name."""
         session = self._session()
         try:
             tag = session.query(Tag).filter_by(name=tag_name).first()
             if not tag:
                 return []
-            coaches = session.query(Coach).filter(Coach.tags.contains(tag)).all()
+            coaches = session.query(Coach).filter(
+                Coach.tags.contains(tag)
+            ).all()
             return [{
                 "name": c.user.name,
                 "description": c.description,
-                "tags": [{"name": t.name, "description": t.description} for t in c.tags]
+                "tags": [{"name": t.name, "description": t.description}
+                         for t in c.tags],
             } for c in coaches]
         finally:
             session.close()
 
-    # --- chat queries ---
+    # ------------------------------------------------------------------
+    # Profile lookup (with visibility rules)
+    # ------------------------------------------------------------------
+
+    def get_user_profile(self, profile_id, current_id):
+        """Return a user's profile enforcing visibility rules.
+
+        Admins are invisible to non-admin users.
+        Admins can see any non-admin profile without restrictions.
+        Non-admin users may only view profiles they have a chat with
+        (coach side) or their own.
+        """
+        session = self._session()
+        try:
+            user = session.query(User).filter_by(id=profile_id).first()
+            if not user:
+                raise DbError("User not found", 404)
+
+            current_user = session.query(User).filter_by(
+                id=current_id
+            ).first()
+            if not current_user:
+                raise DbError("Current user not found", 404)
+
+            # Admin profiles are invisible to non-admins (except self).
+            if user.is_admin and current_id != profile_id:
+                if not current_user.is_admin:
+                    raise DbError("Access denied", 403)
+
+            # Admins can view any non-admin profile.
+            if current_user.is_admin:
+                return user.to_dict()
+
+            # Users can always view their own profile.
+            if current_id == profile_id:
+                return user.to_dict()
+
+            # Otherwise a coach may view a customer they have a chat with.
+            if not current_user.is_coach:
+                raise DbError("Access denied", 403)
+            chat = session.query(Chat).filter(
+                Chat.id_coach == current_id,
+                Chat.id_cust == profile_id,
+            ).first()
+            if not chat:
+                raise DbError("Access denied", 403)
+            return user.to_dict()
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Chat / Messages
+    # ------------------------------------------------------------------
 
     def list_user_chats(self, user_id):
+        """Return chats for a user.
+
+        Users (including admins) only see their own chats.
+        Admins may consult another user's chats via
+        *list_user_chats_as_admin*.
+        """
         session = self._session()
         try:
             chats = session.query(Chat).filter(
                 (Chat.id_coach == user_id) | (Chat.id_cust == user_id)
             ).all()
+
             result = []
             for chat in chats:
-                coach = session.query(User).filter_by(id=chat.id_coach).first()
-                customer = session.query(User).filter_by(id=chat.id_cust).first()
+                coach = session.query(User).filter_by(
+                    id=chat.id_coach
+                ).first()
+                customer = session.query(User).filter_by(
+                    id=chat.id_cust
+                ).first()
+                result.append({
+                    "id": chat.id,
+                    "coach": {"id": coach.id, "name": coach.name},
+                    "customer": {"id": customer.id, "name": customer.name},
+                })
+            return result
+        finally:
+            session.close()
+
+    def list_user_chats_as_admin(self, admin_id, target_user_id):
+        """Return chats belonging to *target_user_id* (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            target = session.query(User).filter_by(id=target_user_id).first()
+            if not target:
+                raise DbError("User not found", 404)
+
+            chats = session.query(Chat).filter(
+                (Chat.id_coach == target_user_id) |
+                (Chat.id_cust == target_user_id)
+            ).all()
+
+            result = []
+            for chat in chats:
+                coach = session.query(User).filter_by(
+                    id=chat.id_coach
+                ).first()
+                customer = session.query(User).filter_by(
+                    id=chat.id_cust
+                ).first()
                 result.append({
                     "id": chat.id,
                     "coach": {"id": coach.id, "name": coach.name},
@@ -193,60 +338,67 @@ class Db_Management:
             session.close()
 
     def get_chat_messages(self, chat_id, user_id):
+        """Return messages for *chat_id* with access control.
+
+        Admins can access any chat and see hidden messages.
+        Non-admin users can only access chats they participate in;
+        hidden messages are excluded from the result.
+        """
         session = self._session()
         try:
+            current_user = session.query(User).filter_by(id=user_id).first()
+            if not current_user:
+                raise DbError("User not found", 404)
+
             chat = session.query(Chat).filter_by(id=chat_id).first()
             if not chat:
                 raise DbError("Chat not found", 404)
 
-            if user_id != chat.id_coach and user_id != chat.id_cust:
-                raise DbError("Access denied", 403)
+            # Only admins or participants may view a chat.
+            if not current_user.is_admin:
+                if (user_id != chat.id_coach and
+                        user_id != chat.id_cust):
+                    raise DbError("Access denied", 403)
 
-            messages = session.query(Message).filter_by(chat_id=chat_id).order_by(Message.timestamp).all()
+            messages = session.query(Message).filter_by(
+                chat_id=chat_id
+            ).order_by(Message.timestamp).all()
+
             result = []
             for msg in messages:
-                sender = session.query(User).filter_by(id=msg.sender_id).first()
-                result.append({
+                # Non-admin users do not see hidden messages.
+                if not current_user.is_admin and msg.hidden:
+                    continue
+
+                sender = session.query(User).filter_by(
+                    id=msg.sender_id
+                ).first()
+                entry = {
                     "sender": {"id": sender.id, "name": sender.name},
                     "timestamp": msg.timestamp,
                     "text": msg.text,
-                })
+                }
+                # Only admins are told whether a message is hidden.
+                if current_user.is_admin:
+                    entry["hidden"] = msg.hidden
+                result.append(entry)
             return result
         finally:
             session.close()
 
-    # --- user profile (with auth check) ---
-
-    def get_user_profile(self, profile_id, current_id):
-        session = self._session()
-        try:
-            user = session.query(User).filter_by(id=profile_id).first()
-            if not user:
-                raise DbError("User not found", 404)
-
-            if current_id != profile_id:
-                current_user = session.query(User).filter_by(id=current_id).first()
-                if not current_user or not current_user.is_coach:
-                    raise DbError("Access denied", 403)
-
-                chat = session.query(Chat).filter(
-                    Chat.id_coach == current_id,
-                    Chat.id_cust == profile_id
-                ).first()
-                if not chat:
-                    raise DbError("Access denied", 403)
-
-            return user.to_dict()
-        finally:
-            session.close()
-
-    # --- send message ---
 
     def send_message(self, sender_id, recipient_id, text):
+        """Send a message from *sender_id* to *recipient_id*.
+
+        Creates a new chat if none exists between the pair.
+        Only a non-coach (customer) can start a new chat.
+        """
         session = self._session()
         try:
             sender = session.query(User).filter_by(id=sender_id).first()
-            recipient = session.query(User).filter_by(id=recipient_id).first()
+            recipient = session.query(User).filter_by(
+                id=recipient_id
+            ).first()
 
             if not sender or not recipient:
                 raise DbError("User not found", 404)
@@ -258,7 +410,9 @@ class Db_Management:
 
             if not chat:
                 if sender.is_coach:
-                    raise DbError("Only customers can start a new chat", 403)
+                    raise DbError(
+                        "Only customers can start a new chat", 403
+                    )
                 chat = Chat(id_coach=recipient_id, id_cust=sender_id)
                 session.add(chat)
                 session.flush()
@@ -275,5 +429,186 @@ class Db_Management:
         except (TypeError, ValueError) as e:
             session.rollback()
             raise DbError(str(e), 400)
+        finally:
+            session.close()
+
+    def hide_message(self, user_id, message_id):
+        """Mark a message as hidden (soft-delete).
+
+        Only the sender may hide their own message, and only if they are
+        not an admin.  Hidden messages are invisible to all non-admin
+        users but remain visible to admins.
+        """
+        session = self._session()
+        try:
+            current_user = session.query(User).filter_by(
+                id=user_id
+            ).first()
+            if not current_user:
+                raise DbError("User not found", 404)
+            if current_user.is_admin:
+                raise DbError(
+                    "Admins cannot hide messages; use DELETE instead", 403
+                )
+
+            msg = session.query(Message).filter_by(id=message_id).first()
+            if not msg:
+                raise DbError("Message not found", 404)
+            if msg.sender_id != user_id:
+                raise DbError(
+                    "You can only hide your own messages", 403
+                )
+            if msg.hidden:
+                raise DbError("Message is already hidden", 400)
+
+            msg.hidden = True
+            session.commit()
+            return {"msg": "Message hidden"}
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Tag management (admin only)
+    # ------------------------------------------------------------------
+
+    def create_tag(self, admin_id, name, description):
+        """Create a new tag (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            tag = Tag(name=name, description=description)
+            session.add(tag)
+            session.commit()
+            return tag.to_dict()
+        except (TypeError, ValueError) as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Admin user listing
+    # ------------------------------------------------------------------
+
+    def list_users(self, admin_id):
+        """Return every non-admin user (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            users = session.query(User).filter_by(is_admin=False).all()
+            return [u.to_dict() for u in users]
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Deletion
+    # ------------------------------------------------------------------
+
+    def delete_user(self, admin_id, user_id):
+        """Delete a non-admin user (admin-only).
+
+        The user's chats and messages are also removed via cascade.
+        """
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            target = session.query(User).filter_by(id=user_id).first()
+            if not target:
+                raise DbError("User not found", 404)
+            if target.is_admin:
+                raise DbError("Cannot delete another admin", 403)
+
+            # Remove all chats the target participates in.
+            chats = session.query(Chat).filter(
+                (Chat.id_coach == user_id) | (Chat.id_cust == user_id)
+            ).all()
+            for chat in chats:
+                session.delete(chat)
+
+            session.delete(target)
+            session.commit()
+            return {"msg": "User deleted"}
+        finally:
+            session.close()
+
+    def delete_own_profile(self, user_id, password):
+        """Delete the current user's own profile.
+
+        The last remaining admin in the system cannot delete their
+        profile.
+        """
+        session = self._session()
+        try:
+            user = session.query(User).filter_by(id=user_id).first()
+            if not user:
+                raise DbError("User not found", 404)
+            if not user.verify_pwd(password):
+                raise DbError("Incorrect password", 401)
+            if self._is_last_admin(user_id):
+                raise DbError(
+                    "Cannot delete the last admin account", 403
+                )
+
+            # Remove all chats the user participates in.
+            chats = session.query(Chat).filter(
+                (Chat.id_coach == user_id) | (Chat.id_cust == user_id)
+            ).all()
+            for chat in chats:
+                session.delete(chat)
+
+            session.delete(user)
+            session.commit()
+            return {"msg": "Profile deleted"}
+        finally:
+            session.close()
+
+    def delete_message(self, admin_id, message_id):
+        """Permanently delete any message (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            msg = session.query(Message).filter_by(id=message_id).first()
+            if not msg:
+                raise DbError("Message not found", 404)
+
+            session.delete(msg)
+            session.commit()
+            return {"msg": "Message deleted"}
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Admin promotion
+    # ------------------------------------------------------------------
+
+    def promote_to_admin(self, admin_id, target_user_id):
+        """Promote a user to admin (admin-only, irreversible)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            target = session.query(User).filter_by(id=target_user_id).first()
+            if not target:
+                raise DbError("User not found", 404)
+            if target.is_admin:
+                raise DbError("User is already an admin", 400)
+
+            target.is_admin = True
+            session.commit()
+            return target.to_dict()
         finally:
             session.close()
