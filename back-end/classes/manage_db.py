@@ -1,10 +1,12 @@
 """Database management layer providing CRUD operations and business logic."""
 
+import re
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from classes import Base
-from classes.user import User, _UNSET
+from classes.user import User, _UNSET, _FORBIDDEN_USERNAMES
 from classes.coach import Coach
 from classes.tag import Tag
 from classes.chat import Chat
@@ -57,18 +59,47 @@ class Db_Management:
             session.close()
 
     # ------------------------------------------------------------------
+    # Availability checks
+    # ------------------------------------------------------------------
+
+    def check_username_available(self, username):
+        """Return True if *username* is not taken and respects format rules."""
+        session = self._session()
+        try:
+            if not isinstance(username, str) or not username.strip():
+                return False
+            if not re.match(r'^[a-zA-Z0-9_]+$', username):
+                return False
+            if username.lower() in _FORBIDDEN_USERNAMES:
+                return False
+            return session.query(User).filter_by(username=username).first() is None
+        finally:
+            session.close()
+
+    def check_email_available(self, email):
+        """Return True if *email* is not already registered."""
+        session = self._session()
+        try:
+            return session.query(User).filter_by(email=email).first() is None
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
     # Registration / Authentication
     # ------------------------------------------------------------------
 
-    def register_user(self, email, name, password, is_coach, description,
-                      tags_data, phone, is_admin=False):
+    def register_user(self, username, email, password, is_coach, description,
+                      tags_data, phone, is_admin=False, name=None):
         """Create a new user account.
 
+        :param username: unique login identifier (required)
+        :param name: display name (required for coaches, optional otherwise)
         :param is_admin: grant admin privileges (default False)
         """
         session = self._session()
         try:
-            # Only email must be unique; names may repeat.
+            if session.query(User).filter_by(username=username).first():
+                raise DbError("Username already taken", 409)
             if session.query(User).filter_by(email=email).first():
                 raise DbError("Email already taken", 409)
 
@@ -81,10 +112,10 @@ class Db_Management:
                         session.add(tag)
                     tags.append(tag)
 
-            user = User(name=name, email=email, pwd=password,
+            user = User(username=username, email=email, pwd=password,
                         is_coach=is_coach, description=description,
                         tags=tags if is_coach else None,
-                        phone=phone, is_admin=is_admin)
+                        phone=phone, is_admin=is_admin, name=name)
             session.add(user)
             session.commit()
             return user.to_dict()
@@ -94,11 +125,13 @@ class Db_Management:
         finally:
             session.close()
 
-    def authenticate(self, email, password):
-        """Authenticate a user by email/password and return the User object."""
+    def authenticate(self, login, password):
+        """Authenticate a user by email or username and return the User object."""
         session = self._session()
         try:
-            user = session.query(User).filter_by(email=email).first()
+            user = session.query(User).filter_by(email=login).first()
+            if not user:
+                user = session.query(User).filter_by(username=login).first()
             if not user or not user.verify_pwd(password):
                 raise DbError("Bad credentials", 401)
             return user
@@ -109,8 +142,9 @@ class Db_Management:
     # Profile management
     # ------------------------------------------------------------------
 
-    def update_profile(self, user_id, name, description, tags_data,
-                       email=_UNSET, phone=_UNSET):
+    def update_profile(self, user_id, name=_UNSET, description=None,
+                       tags_data=None, email=_UNSET, phone=_UNSET,
+                       username=_UNSET):
         """Update profile fields for the user identified by *user_id*."""
         session = self._session()
         try:
@@ -125,6 +159,13 @@ class Db_Management:
                 if existing:
                     raise DbError("Email already taken", 409)
 
+            if username is not _UNSET:
+                existing = session.query(User).filter(
+                    User.username == username, User.id != user_id
+                ).first()
+                if existing:
+                    raise DbError("Username already taken", 409)
+
             tags = None
             if tags_data is not None and user.is_coach:
                 tags = []
@@ -135,11 +176,15 @@ class Db_Management:
                         session.add(tag)
                     tags.append(tag)
 
-            kwargs = dict(name=name, description=description, tags=tags)
+            kwargs = dict(description=description, tags=tags)
+            if name is not _UNSET:
+                kwargs["name"] = name
             if email is not _UNSET:
                 kwargs["email"] = email
             if phone is not _UNSET:
                 kwargs["phone"] = phone
+            if username is not _UNSET:
+                kwargs["username"] = username
             user.update_profile(**kwargs)
             session.commit()
             return user.to_dict()
@@ -360,6 +405,15 @@ class Db_Management:
                         user_id != chat.id_cust):
                     raise DbError("Access denied", 403)
 
+            # Only two possible senders in any chat: the coach and the
+            # customer.  Pre-fetch both to avoid N+1 queries.
+            coach = session.query(User).filter_by(id=chat.id_coach).first()
+            customer = session.query(User).filter_by(id=chat.id_cust).first()
+            senders = {
+                coach.id: coach.name,
+                customer.id: customer.name,
+            }
+
             messages = session.query(Message).filter_by(
                 chat_id=chat_id
             ).order_by(Message.timestamp).all()
@@ -370,11 +424,11 @@ class Db_Management:
                 if not current_user.is_admin and msg.hidden:
                     continue
 
-                sender = session.query(User).filter_by(
-                    id=msg.sender_id
-                ).first()
                 entry = {
-                    "sender": {"id": sender.id, "name": sender.name},
+                    "sender": {
+                        "id": msg.sender_id,
+                        "name": senders.get(msg.sender_id, "Unknown"),
+                    },
                     "timestamp": msg.timestamp,
                     "text": msg.text,
                 }

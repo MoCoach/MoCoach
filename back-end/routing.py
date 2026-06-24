@@ -17,6 +17,22 @@ db = Db_Management()
 
 
 # ------------------------------------------------------------------
+# Availability checks
+# ------------------------------------------------------------------
+
+@app.route("/check-username/<username>", methods=["GET"])
+def check_username(username):
+    """Return whether a username is available."""
+    return jsonify({"available": db.check_username_available(username)}), 200
+
+
+@app.route("/check-email/<email>", methods=["GET"])
+def check_email(email):
+    """Return whether an email is available."""
+    return jsonify({"available": db.check_email_available(email)}), 200
+
+
+# ------------------------------------------------------------------
 # Authentication
 # ------------------------------------------------------------------
 
@@ -27,17 +43,20 @@ def register():
     if not data:
         return jsonify({"msg": "Missing JSON body"}), 400
 
+    username = data.get("username")
     email = data.get("email")
-    name = data.get("name")
     password = data.get("password")
-    if not email or not name or not password:
-        return jsonify({"msg": "Email, name and password are required"}), 400
+    if not username or not email or not password:
+        return jsonify({
+            "msg": "Username, email and password are required"
+        }), 400
 
     try:
         result = db.register_user(
+            username    = username,
             email       = email,
-            name        = name,
             password    = password,
+            name        = data.get("name"),
             is_coach    = data.get("is_coach", False),
             description = data.get("description"),
             tags_data   = data.get("tags", []),
@@ -51,18 +70,18 @@ def register():
 
 @app.route("/login", methods=["POST"])
 def login():
-    """Authenticate and return a JWT access token."""
+    """Authenticate via email or username and return a JWT access token."""
     data = request.get_json()
     if not data:
         return jsonify({"msg": "Missing JSON body"}), 400
 
-    email = data.get("email")
+    login = data.get("login")
     password = data.get("password")
-    if not email or not password:
-        return jsonify({"msg": "Email and password are required"}), 400
+    if not login or not password:
+        return jsonify({"msg": "Login and password are required"}), 400
 
     try:
-        user = db.authenticate(email, password)
+        user = db.authenticate(login, password)
         token = create_access_token(identity=user.id)
         return jsonify(access_token=token), 200
     except DbError as e:
@@ -84,14 +103,17 @@ def edit_profile():
     try:
         kwargs = dict(
             user_id     = get_jwt_identity(),
-            name        = data.get("name"),
             description = data.get("description"),
             tags_data   = data.get("tags"),
         )
+        if "name" in data:
+            kwargs["name"] = data["name"]
         if "email" in data:
             kwargs["email"] = data["email"]
         if "phone" in data:
             kwargs["phone"] = data["phone"]
+        if "username" in data:
+            kwargs["username"] = data["username"]
         result = db.update_profile(**kwargs)
         return jsonify(result), 200
     except DbError as e:

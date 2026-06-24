@@ -13,6 +13,10 @@ from .coach import Coach
 
 _UNSET = object()
 _EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+_USERNAME_RE = re.compile(r'^[a-zA-Z0-9_]+$')
+_FORBIDDEN_USERNAMES = frozenset({
+    "admin", "administrator", "root", "postmaster", "abuse",
+})
 
 
 class User(Base):
@@ -20,7 +24,8 @@ class User(Base):
 
     __tablename__ = 'users'
     id       = Column(Integer,     nullable=False, primary_key=True)
-    name     = Column(String(128), nullable=False)
+    username = Column(String(128), nullable=False, unique=True)
+    name     = Column(String(128), nullable=True)
     email    = Column(String(128), nullable=False, unique=True)
     password = Column(String(255), nullable=False)
     phone    = Column(String(16),  nullable=True)
@@ -29,22 +34,27 @@ class User(Base):
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
-    def __init__(self, name, email, pwd, is_coach=False, description=None,
-                 tags=None, phone=None, is_admin=False):
+    def __init__(self, username, email, pwd, is_coach=False, description=None,
+                 tags=None, phone=None, is_admin=False, name=None):
         """Generates a new user profile.
 
-        :param name: name of the user
+        :param username: unique login identifier
         :param email: email address
         :param pwd: user's password
         :param is_coach: is the user a coach
         :param description: profile description (required for coaches)
         :param tags: list of Tag objects (0-5, for coaches only)
         :param is_admin: whether the user has admin privileges
+        :param name: display name (required for coaches, optional otherwise)
         """
-        if not isinstance(name, str):
-            raise TypeError("name must be a string")
-        if len(name) < 5:
-            raise ValueError("name must be at least 5 characters")
+        if not isinstance(username, str) or not username.strip():
+            raise ValueError("username must be a non-empty string")
+        if not _USERNAME_RE.match(username):
+            raise ValueError(
+                "username must only contain letters, digits or underscores (\"_\")"
+            )
+        if username.lower() in _FORBIDDEN_USERNAMES:
+            raise ValueError(f"username '{username}' is not allowed")
 
         if not isinstance(email, str):
             raise TypeError("email must be a string")
@@ -56,7 +66,16 @@ class User(Base):
         if len(pwd) < 8:
             raise ValueError("password must be at least 8 characters")
 
+        elif is_coach or name is not None:
+            if is_coach and name is None:
+                raise ValueError("name is mandatory for coaches")
+            if not isinstance(name, str):
+                raise TypeError("name must be a string")
+            if len(name) < 3:
+                raise ValueError("name must be at least 3 characters")
+
         self.password = generate_password_hash(pwd)
+        self.username = username
         self.name     = name
         self.email    = email
         self.is_coach = is_coach
@@ -77,21 +96,37 @@ class User(Base):
         """
         return check_password_hash(self.password, pwd)
 
-    def update_profile(self, name=None, email=_UNSET, pwd=None,
-                       description=None, tags=None, phone=_UNSET):
+    def update_profile(self, name=_UNSET, email=_UNSET, pwd=None,
+                       description=None, tags=None, phone=_UNSET,
+                       username=_UNSET):
         """Update the user profile fields.
 
-        :param name: new name (optional)
+        :param name: new display name (_UNSET = no change, None = clear)
         :param email: new email (optional)
         :param pwd: new password (optional)
         :param description: new description (coach only, optional)
         :param tags: new list of Tag objects (coach only, 0-5)
+        :param username: new unique username (optional)
         """
-        if name is not None:
-            if not isinstance(name, str):
-                raise TypeError("name must be a string")
-            if len(name) < 5:
-                raise ValueError("name must be at least 5 characters")
+        if username is not _UNSET:
+            if not isinstance(username, str) or not username.strip():
+                raise ValueError("username must be a non-empty string")
+            if not _USERNAME_RE.match(username):
+                raise ValueError(
+                    "username must only contain letters, digits or underscores (\"_\")"
+                )
+            if username.lower() in _FORBIDDEN_USERNAMES:
+                raise ValueError(f"username '{username}' is not allowed")
+            self.username = username
+
+        if name is not _UNSET:
+            if name is not None:
+                if not isinstance(name, str):
+                    raise TypeError("name must be a string")
+                if len(name) < 3:
+                    raise ValueError("name must be at least 3 characters")
+            elif self.is_coach:
+                raise ValueError("name is required for coaches")
             self.name = name
 
         if email is not _UNSET:
@@ -125,6 +160,7 @@ class User(Base):
         """Serialize user data to a dictionary."""
         d = {
             "id": self.id,
+            "username": self.username,
             "name": self.name,
             "email": self.email,
             "is_coach": self.is_coach,
