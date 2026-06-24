@@ -20,13 +20,13 @@ db = Db_Management()
 # Availability checks
 # ------------------------------------------------------------------
 
-@app.route("/check-username/<username>", methods=["GET"])
+@app.get("/check-username/<username>")
 def check_username(username):
     """Return whether a username is available."""
     return jsonify({"available": db.check_username_available(username)}), 200
 
 
-@app.route("/check-email/<email>", methods=["GET"])
+@app.get("/check-email/<email>")
 def check_email(email):
     """Return whether an email is available."""
     return jsonify({"available": db.check_email_available(email)}), 200
@@ -36,7 +36,7 @@ def check_email(email):
 # Authentication
 # ------------------------------------------------------------------
 
-@app.route("/register", methods=["POST"])
+@app.post("/register")
 def register():
     """Register a new user account."""
     data = request.get_json()
@@ -68,7 +68,7 @@ def register():
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/login", methods=["POST"])
+@app.post("/login")
 def login():
     """Authenticate via email or username and return a JWT access token."""
     data = request.get_json()
@@ -92,7 +92,7 @@ def login():
 # Profile
 # ------------------------------------------------------------------
 
-@app.route("/profile", methods=["PUT"])
+@app.put("/profile")
 @jwt_required()
 def edit_profile():
     """Update the authenticated user's profile."""
@@ -120,7 +120,7 @@ def edit_profile():
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/password", methods=["PUT"])
+@app.put("/password")
 @jwt_required()
 def edit_password():
     """Change the authenticated user's password."""
@@ -140,7 +140,7 @@ def edit_password():
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/profile/<int:profile_id>", methods=["GET"])
+@app.get("/profile/<int:profile_id>")
 @jwt_required()
 def get_profile(profile_id):
     """View a user's profile (visibility rules enforced)."""
@@ -150,7 +150,7 @@ def get_profile(profile_id):
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/profile", methods=["DELETE"])
+@app.delete("/profile")
 @jwt_required()
 def delete_own_profile():
     """Delete the authenticated user's own account.
@@ -173,7 +173,7 @@ def delete_own_profile():
 # Coach queries (public)
 # ------------------------------------------------------------------
 
-@app.route("/coach/<int:coach_id>", methods=["GET"])
+@app.get("/coach/<int:coach_id>")
 def get_coach(coach_id):
     """Return public details for a specific coach."""
     try:
@@ -182,13 +182,13 @@ def get_coach(coach_id):
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/coaches", methods=["GET"])
+@app.get("/coach")
 def list_coaches():
     """Return all coaches."""
     return jsonify(db.list_coaches()), 200
 
 
-@app.route("/coaches/tag/<tag_name>", methods=["GET"])
+@app.get("/coach/tag/<tag_name>")
 def list_coaches_by_tag(tag_name):
     """Return coaches filtered by tag name."""
     return jsonify(db.list_coaches_by_tag(tag_name)), 200
@@ -198,7 +198,7 @@ def list_coaches_by_tag(tag_name):
 # Chat / Messages
 # ------------------------------------------------------------------
 
-@app.route("/chats", methods=["GET"])
+@app.get("/chat")
 @jwt_required()
 def list_chats():
     """Return chats for the authenticated user.
@@ -209,7 +209,7 @@ def list_chats():
     return jsonify(db.list_user_chats(get_jwt_identity())), 200
 
 
-@app.route("/chat/<int:chat_id>", methods=["GET"])
+@app.get("/chat/<int:chat_id>")
 @jwt_required()
 def get_chat_messages(chat_id):
     """Return messages for a given chat.
@@ -223,7 +223,7 @@ def get_chat_messages(chat_id):
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/message", methods=["POST"])
+@app.post("/message")
 @jwt_required()
 def send_message():
     """Send a message to another user."""
@@ -243,7 +243,7 @@ def send_message():
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/message/<message_id>/hide", methods=["PUT"])
+@app.put("/message/<message_id>/hide")
 @jwt_required()
 def hide_message(message_id):
     """Hide (soft-delete) one of your own messages.
@@ -258,7 +258,7 @@ def hide_message(message_id):
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/message/<message_id>", methods=["DELETE"])
+@app.delete("/message/<message_id>")
 @jwt_required()
 def delete_message(message_id):
     """Permanently delete any message (admin-only)."""
@@ -273,7 +273,13 @@ def delete_message(message_id):
 # Tag management
 # ------------------------------------------------------------------
 
-@app.route("/tag", methods=["POST"])
+@app.get("/tag")
+def list_tags():
+    """Return all tags (public)."""
+    return jsonify(db.list_tags()), 200
+
+
+@app.post("/tag")
 @jwt_required()
 def create_tag():
     """Create a new tag (admin-only)."""
@@ -297,7 +303,7 @@ def create_tag():
 # Admin user management
 # ------------------------------------------------------------------
 
-@app.route("/users", methods=["GET"])
+@app.get("/users")
 @jwt_required()
 def list_users():
     """List all non-admin users (admin-only)."""
@@ -308,7 +314,7 @@ def list_users():
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/user/<int:user_id>", methods=["DELETE"])
+@app.delete("/user/<int:user_id>")
 @jwt_required()
 def delete_user(user_id):
     """Delete a non-admin user (admin-only)."""
@@ -319,7 +325,7 @@ def delete_user(user_id):
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/user/<int:user_id>/promote", methods=["PUT"])
+@app.put("/user/<int:user_id>/promote")
 @jwt_required()
 def promote_user(user_id):
     """Promote a user to admin (admin-only, irreversible)."""
@@ -330,7 +336,7 @@ def promote_user(user_id):
         return jsonify({"msg": e.message}), e.status_code
 
 
-@app.route("/user/<int:user_id>/chats", methods=["GET"])
+@app.get("/user/<int:user_id>/chats")
 @jwt_required()
 def get_user_chats(user_id):
     """Return a specific user's chats (admin-only consultation)."""

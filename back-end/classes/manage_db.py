@@ -543,6 +543,15 @@ class Db_Management:
         finally:
             session.close()
 
+    def list_tags(self):
+        """Return all tags."""
+        session = self._session()
+        try:
+            tags = session.query(Tag).all()
+            return [t.to_dict() for t in tags]
+        finally:
+            session.close()
+
     # ------------------------------------------------------------------
     # Admin user listing
     # ------------------------------------------------------------------
