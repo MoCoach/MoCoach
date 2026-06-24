@@ -50,13 +50,14 @@
           </h1>
           
           <div class="animate-fade-delayed-1 flex flex-col sm:flex-row items-center justify-center gap-5">
-            <a href="#explore" class="w-full sm:w-auto bg-[#2f55f6] hover:bg-[#1e44e2] text-white px-10 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(47,85,246,0.35)] hover:scale-[1.02] flex items-center justify-center space-x-3 text-base border border-blue-400/20">
+            <a href="#explore" class="w-full sm:w-auto bg-[#2f55f6] hover:bg-[#1e44e2] text-white px-10 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(47,85,246,0.35)] hover:scale-[1.02] flex items-center justify-center space-x-3 text-base border border-blue-400/20 whitespace-nowrap">
               <i data-lucide="search" class="w-5.5 h-5.5 text-white"></i>
               <span>Find a Coach Now</span>
             </a>
-            <a href="mailto:info@mocoach.mu?subject=Become%20a%20Coach%20on%20MoCoach" class="w-full sm:w-auto bg-[#030712]/50 hover:bg-[#030712]/95 backdrop-blur-md text-slate-100 px-10 py-4 rounded-full font-bold transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:scale-[1.02] flex items-center justify-center space-x-3 text-base shadow-sm">
+            <!-- Corrected "Register as a Coach" button linked with trigger id and whitespace-nowrap class -->
+            <a href="#" id="become-coach-btn" class="w-full sm:w-auto bg-[#030712]/50 hover:bg-[#030712]/95 backdrop-blur-md text-slate-100 px-10 py-4 rounded-full font-bold transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:scale-[1.02] flex items-center justify-center space-x-3 text-base shadow-sm whitespace-nowrap">
               <i data-lucide="award" class="w-5.5 h-5.5 text-emerald-400"></i>
-              <span>Become a Coach</span>
+              <span>Register as a Coach</span>
             </a>
           </div>
         </div>
@@ -64,7 +65,7 @@
         <!-- Categories -->
         <div class="pt-8 mt-auto">
           <div class="text-center mb-8">
-            <span class="text-blue-500 text-xs font-bold uppercase tracking-widest">Tailored Disciplines</span>
+            <span class="text-blue-500 text-xs font-bold uppercase tracking-widest">Explore Coaches</span>
             <h2 class="text-2xl font-extrabold text-white mt-1">Explore Specialized Categories</h2>
           </div>
 
@@ -769,7 +770,7 @@
                 <i data-lucide="star" class="w-4 h-4 fill-current"></i>
                 <i data-lucide="star" class="w-4 h-4 fill-current"></i>
               </div>
-              <p class="text-slate-300 text-sm leading-relaxed italic">
+              <p class="text-slate-300 text-sm text-left leading-relaxed italic">
                 "Moving my client scheduling to MoCoach saved me hours of daily text coordination. My bookings are transparently scheduled, and tourists can easily find and book my slots before arriving in Mauritius."
               </p>
             </div>
@@ -894,7 +895,184 @@
   <!-- The external Footer will be injected here by JS -->
   <div id="footer-placeholder"></div>
 
-  <!-- Main JS orchestration script -->
+  <!-- MODAL "APPLY AS A COACH" (Pop-up registration form) -->
+  <div id="coach-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl p-8 relative my-auto shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
+      
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Apply as a Coach</h2>
+        <button id="close-modal-btn" class="text-slate-400 hover:text-white transition focus:outline-none">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- Registration Form -->
+      <form class="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
+        
+        <!-- First Name -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name *</label>
+          <input type="text" placeholder="e.g. Arveen" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <!-- Last Name -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name *</label>
+          <input type="text" placeholder="e.g. Lall" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <!-- Email Address -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Email Address *</label>
+          <input type="email" placeholder="e.g. arveentest@gmail.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <!-- Zip Code -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Zip Code *</label>
+          <input type="text" placeholder="e.g. 72134" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
+          <input type="password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <!-- Confirm Password -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Confirm Password *</label>
+          <input type="password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <!-- Bio (Optional) -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Bio <span class="text-slate-500 font-normal">(optional)</span></label>
+          <textarea rows="3" placeholder="Describe your coaching background..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+        </div>
+
+        <!-- Photo Upload (Visual mock-up matching screenshots) -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Photos <span class="text-slate-500 font-normal">(up to 10, first = profile picture)</span></label>
+          
+          <!-- Hidden file input linked to browser explorer -->
+          <input type="file" id="modal-file-input" accept="image/*" class="hidden" multiple>
+          
+          <div id="upload-zone" class="border-2 border-dashed border-slate-800 hover:border-blue-500/50 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer transition duration-300 bg-slate-950/40">
+            <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-500 mb-2"></i>
+            <p class="text-sm text-slate-400 font-medium">Drag & drop photos here or click to browse</p>
+          </div>
+
+          <!-- File Previews (thumbnails container) -->
+          <div id="modal-previews-container" class="flex gap-4 mt-4">
+            <div class="relative w-20 h-24 rounded-xl overflow-hidden border border-blue-500 shadow-lg">
+              <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=150&q=80" class="w-full h-full object-cover">
+              <span class="absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>
+            </div>
+            <div class="w-20 h-24 rounded-xl overflow-hidden border border-slate-800">
+              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=150&q=80" class="w-full h-full object-cover">
+            </div>
+          </div>
+        </div>
+
+        <!-- Qualifications Message (Alert box) -->
+        <div class="md:col-span-2 bg-blue-950/40 border border-blue-900/30 text-blue-400 p-4 rounded-xl text-center text-sm font-medium">
+          To become a vetted coach, send your proof of qualifications and ID to <a href="mailto:kyc@mocoach.mu" class="underline hover:text-blue-300">kyc@mocoach.mu</a>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="md:col-span-2 mt-2">
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg">
+            Submit Application
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Internal script guaranteeing modal runs directly with no cache/path limits -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const becomeCoachBtn = document.getElementById('become-coach-btn');
+      const coachModal = document.getElementById('coach-modal');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+      const uploadZone = document.getElementById('upload-zone');
+      const fileInput = document.getElementById('modal-file-input');
+      const previewsContainer = document.getElementById('modal-previews-container');
+
+      // 1. OPEN MODAL
+      if (becomeCoachBtn && coachModal) {
+        becomeCoachBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          coachModal.classList.remove('hidden');
+          document.body.classList.add('overflow-hidden'); // Lock background scroll
+        });
+      }
+
+      // 2. CLOSE MODAL (X BUTTON)
+      if (closeModalBtn && coachModal) {
+        closeModalBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          coachModal.classList.add('hidden');
+          document.body.classList.remove('overflow-hidden'); // Restore scroll
+        });
+      }
+
+      // 3. CLOSE MODAL (CLICKING OUTSIDE CARD)
+      if (coachModal) {
+        coachModal.addEventListener('click', (e) => {
+          if (e.target === coachModal) {
+            coachModal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+          }
+        });
+      }
+
+      // 4. TRIGGER NATIVE FILE EXPLORER DIALOG ON CLICK
+      if (uploadZone && fileInput) {
+        uploadZone.addEventListener('click', () => {
+          fileInput.click();
+        });
+      }
+
+      // 5. RENDER DYNAMIC IMAGE THUMBNAILS ONCE SELECTED FROM FILES/GALLERY
+      if (fileInput && previewsContainer) {
+        fileInput.addEventListener('change', (e) => {
+          previewsContainer.innerHTML = ''; // Clear default mocks
+          const files = e.target.files;
+          
+          for (let i = 0; i < Math.min(files.length, 10); i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            
+            reader.onload = (event) => {
+              const div = document.createElement('div');
+              div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border ' + 
+                            (i === 0 ? 'border-blue-500 shadow-lg' : 'border-slate-800');
+              
+              let badge = '';
+              if (i === 0) {
+                badge = `<span class="absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>`;
+              }
+
+              div.innerHTML = `
+                <img src="${event.target.result}" class="w-full h-full object-cover">
+                ${badge}
+              `;
+              previewsContainer.appendChild(div);
+            };
+            
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    });
+  </script>
+
+  <!-- External JS orchestration fallback script -->
   <script src="js/app.js"></script>
 </body>
 </html>
