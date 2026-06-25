@@ -14,6 +14,30 @@ async function loadComponent(id, url) {
     }
 }
 
+let currentView = 'home';
+
+function showMainView() {
+    currentView = 'home';
+    const main = document.querySelector('main');
+    const profile = document.getElementById('profile-view');
+    if (main) main.classList.remove('hidden');
+    if (profile) profile.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showProfileView() {
+    currentView = 'profile';
+    const main = document.querySelector('main');
+    const profile = document.getElementById('profile-view');
+    if (main) main.classList.add('hidden');
+    if (profile) profile.classList.remove('hidden');
+    window.scrollTo({ top: 0 });
+}
+
+window.showMainView = showMainView;
+window.showProfileView = showProfileView;
+
 document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) {
         lucide.createIcons();
@@ -23,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
+    loadComponent('profile-placeholder', 'components/profile.html');
 
     // Gestion dynamique de la transparence du header au défilement
     window.addEventListener('scroll', () => {
@@ -69,4 +94,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    // Profile button (delegated because header loads async)
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('#profile-btn');
+        if (btn) {
+            e.preventDefault();
+            showProfileView();
+        }
+    });
+
+    // Home nav link (delegated)
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('nav a[href="#"]');
+        if (link && currentView === 'profile') {
+            e.preventDefault();
+            showMainView();
+        }
+    });
 });
