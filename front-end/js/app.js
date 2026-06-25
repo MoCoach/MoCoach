@@ -19,9 +19,26 @@ document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
 
+    // Chargement des composants asynchrones
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
+
+    // Gestion dynamique de la transparence du header au défilement
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        if (header) {
+            if (window.scrollY > 20) {
+                // Effet lors du défilement (Glassmorphism : fond bleu/slate transparent avec flou)
+                header.classList.remove('bg-slate-950', 'border-slate-900/20');
+                header.classList.add('bg-slate-950/70', 'backdrop-blur-md', 'border-slate-900/40', 'shadow-lg');
+            } else {
+                // État initial tout en haut de la page (Opaque et solide)
+                header.classList.remove('bg-slate-950/70', 'backdrop-blur-md', 'border-slate-900/40', 'shadow-lg');
+                header.classList.add('bg-slate-950', 'border-slate-900/20');
+            }
+        }
+    });
 
     // Carousel
     const carousel = document.getElementById('coach-carousel');

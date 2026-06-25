@@ -14,8 +14,8 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
 
-  <!-- External Header will be injected here by JS -->
-  <div id="header-placeholder"></div>
+  <!-- External Header will be injected here by JS (Made sticky so the bar stays visible) -->
+  <div id="header-placeholder" class="sticky top-0 z-50"></div>
 
   <main>
     <!-- HERO SECTION (border-b removed to clean the video background) -->
@@ -967,20 +967,12 @@
             <p class="text-sm text-slate-400 font-medium">Drag & drop photos here or click to browse</p>
           </div>
 
-          <!-- File Previews (thumbnails container) -->
-          <div id="modal-previews-container" class="flex gap-4 mt-4">
-            <div class="relative w-20 h-24 rounded-xl overflow-hidden border border-blue-500 shadow-lg">
-              <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=150&q=80" class="w-full h-full object-cover">
-              <span class="absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>
-            </div>
-            <div class="w-20 h-24 rounded-xl overflow-hidden border border-slate-800">
-              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=150&q=80" class="w-full h-full object-cover">
-            </div>
-          </div>
+          <!-- File Previews (thumbnails container empty by default) -->
+          <div id="modal-previews-container" class="flex gap-4 mt-4"></div>
         </div>
 
-        <!-- Qualifications Message (Alert box) -->
-        <div class="md:col-span-2 bg-blue-950/40 border border-blue-900/30 text-blue-400 p-4 rounded-xl text-center text-sm font-medium">
+        <!-- Qualifications Message (Alert box with margin top to prevent tight overlap) -->
+        <div class="md:col-span-2 mt-4 bg-blue-950/40 border border-blue-900/30 text-blue-400 p-4 rounded-xl text-center text-sm font-medium">
           To become a vetted coach, send your proof of qualifications and ID to <a href="mailto:kyc@mocoach.mu" class="underline hover:text-blue-300">kyc@mocoach.mu</a>
         </div>
 
@@ -1041,10 +1033,38 @@
         });
       }
 
-      // 5. RENDER DYNAMIC IMAGE THUMBNAILS ONCE SELECTED FROM FILES/GALLERY
+      // 5. DRAG & DROP FUNCTIONALITY ON UPLOAD ZONE
+      if (uploadZone && fileInput) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+          uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadZone.classList.add('border-blue-500', 'bg-blue-950/20');
+          }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadZone.classList.remove('border-blue-500', 'bg-blue-950/20');
+          }, false);
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+          const dt = e.dataTransfer;
+          const files = dt.files;
+          if (files && files.length > 0) {
+            fileInput.files = files; // Pass files to the input
+            fileInput.dispatchEvent(new Event('change')); // Trigger rendering
+          }
+        }, false);
+      }
+
+      // 6. RENDER DYNAMIC IMAGE THUMBNAILS ONCE SELECTED WITH CLICK-TO-SWITCH PROFILE PIC
       if (fileInput && previewsContainer) {
         fileInput.addEventListener('change', (e) => {
-          previewsContainer.innerHTML = ''; // Clear default mocks
+          previewsContainer.innerHTML = ''; // Clear previews container
           const files = e.target.files;
           
           for (let i = 0; i < Math.min(files.length, 10); i++) {
@@ -1053,18 +1073,42 @@
             
             reader.onload = (event) => {
               const div = document.createElement('div');
-              div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border ' + 
-                            (i === 0 ? 'border-blue-500 shadow-lg' : 'border-slate-800');
+              div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border cursor-pointer transition duration-300 ' + 
+                            (i === 0 ? 'border-blue-500 shadow-lg profile-selected' : 'border-slate-800');
               
               let badge = '';
               if (i === 0) {
-                badge = `<span class="absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>`;
+                badge = `<span class="profile-badge absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>`;
               }
 
               div.innerHTML = `
                 <img src="${event.target.result}" class="w-full h-full object-cover">
                 ${badge}
               `;
+
+              // CLICK EVENT TO SWITCH WHICH PHOTO IS THE PROFILE PICTURE
+              div.addEventListener('click', () => {
+                // Reset all sibling previews to default border and remove badge
+                const siblings = previewsContainer.children;
+                for (let sibling of siblings) {
+                  sibling.classList.remove('border-blue-500', 'shadow-lg', 'profile-selected');
+                  sibling.classList.add('border-slate-800');
+                  const badgeSpan = sibling.querySelector('.profile-badge');
+                  if (badgeSpan) {
+                    badgeSpan.remove();
+                  }
+                }
+
+                // Set current preview as active profile picture
+                div.classList.remove('border-slate-800');
+                div.classList.add('border-blue-500', 'shadow-lg', 'profile-selected');
+                
+                const span = document.createElement('span');
+                span.className = 'profile-badge absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded';
+                span.innerText = 'PROFILE';
+                div.appendChild(span);
+              });
+
               previewsContainer.appendChild(div);
             };
             
