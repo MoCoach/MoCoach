@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
+    loadComponent('messaging-placeholder', 'components/messaging.html');
 
     // Carousel
     const carousel = document.getElementById('coach-carousel');

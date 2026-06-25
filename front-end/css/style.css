@@ -43,3 +43,60 @@ body {
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.messaging-overlay {
+  visibility: hidden;
+  transition: visibility 0.3s ease;
+}
+
+.messaging-overlay.open {
+  visibility: visible;
+}
+
+.messaging-backdrop {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.messaging-overlay.open .messaging-backdrop {
+  opacity: 1;
+}
+
+.messaging-panel {
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.messaging-overlay.open .messaging-panel {
+  transform: translateX(0);
+}
+
+#msg-messages::-webkit-scrollbar {
+  width: 4px;
+}
+
+#msg-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#msg-messages::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+#msg-messages::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+#msg-input {
+  resize: none;
+}
+
+@keyframes msgPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.msg-unread-pulse {
+  animation: msgPulse 2s ease-in-out infinite;
+}

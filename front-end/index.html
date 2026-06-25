@@ -228,7 +228,7 @@
         <div id="coach-carousel" class="flex overflow-x-auto gap-8 pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
           
           <!-- 1. Zumba -->
-          <div data-name="Priya S." data-discipline="Zumba" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-1" data-name="Priya S." data-discipline="Zumba" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="assets/img/Certified_coaches/zumba.jpg" alt="Zumba Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -249,12 +249,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">450 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Zumba%20Coaching%20with%20Priya%2520S." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-1')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 2. Boxing -->
-          <div data-name="Cedric L." data-discipline="Boxing" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-2" data-name="Cedric L." data-discipline="Boxing" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=600&q=80" alt="Boxing Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -275,12 +275,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">600 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Boxing%20Coaching%20with%20Cedric%2520L." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-2')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 3. Yoga -->
-          <div data-name="Leana Marou" data-discipline="Yoga" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-3" data-name="Leana Marou" data-discipline="Yoga" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80" alt="Yoga Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -301,12 +301,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">550 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Yoga%20Coaching%20with%20Leana%2520Marou" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-3')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 4. Tennis -->
-          <div data-name="Sarah B." data-discipline="Tennis" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-4" data-name="Sarah B." data-discipline="Tennis" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=600&q=80" alt="Tennis Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -327,12 +327,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">750 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Tennis%20Coaching%20with%20Sarah%2520B." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-4')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 5. Football -->
-          <div data-name="Mathieu R." data-discipline="Football" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-5" data-name="Mathieu R." data-discipline="Football" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1517747614396-d21a78b850e8?auto=format&fit=crop&w=600&q=80" alt="Football Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -353,12 +353,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">400 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Football%20Coaching%20with%20Mathieu%2520R." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-5')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 6. Gymnastics -->
-          <div data-name="Amisha K." data-discipline="Gymnastics" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-6" data-name="Amisha K." data-discipline="Gymnastics" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&q=80" alt="Gymnastics Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -379,12 +379,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">650 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Gymnastics%20Coaching%20with%20Amisha%2520K." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-6')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 7. Water Sports -->
-          <div data-name="Jean-Pierre S." data-discipline="Water Sports" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-7" data-name="Jean-Pierre S." data-discipline="Water Sports" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&w=600&q=80" alt="Water Sports Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -405,12 +405,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">700 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Water%2520Sports%20Coaching%20with%20Jean-Pierre%2520S." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-7')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 8. Jogging/Running -->
-          <div data-name="Chloe A." data-discipline="Jogging/Running" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-8" data-name="Chloe A." data-discipline="Jogging/Running" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=600&q=80" alt="Running Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -431,12 +431,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">350 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Running%20Coaching%20with%20Chloe%2520A." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-8')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 9. Strength Training -->
-          <div data-name="Kavir D." data-discipline="Strength Training" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-9" data-name="Kavir D." data-discipline="Strength Training" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80" alt="Strength Trainer" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -457,12 +457,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">500 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Strength%20Coaching%20with%20Kavir%2520D." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-9')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 10. Hiking -->
-          <div data-name="Arnaud G." data-discipline="Hiking" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-10" data-name="Arnaud G." data-discipline="Hiking" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" alt="Hiking Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -483,12 +483,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">650 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Hiking%20Coaching%20with%20Arnaud%2520G." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-10')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 11. Combat Sports -->
-          <div data-name="Gael B." data-discipline="Combat Sports" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-11" data-name="Gael B." data-discipline="Combat Sports" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1517438476312-10d79c01926d?auto=format&fit=crop&w=600&q=80" alt="Combat Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -509,12 +509,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">550 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Combat%2520Sports%2520Coaching%20with%20Gael%2520B." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-11')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 12. Dance -->
-          <div data-name="Ryan M." data-discipline="Dance" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-12" data-name="Ryan M." data-discipline="Dance" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80" alt="Dance Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -535,12 +535,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">450 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Dance%20Coaching%20with%20Ryan%2520M." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-12')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 13. Badminton -->
-          <div data-name="Nicholas W." data-discipline="Badminton" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-13" data-name="Nicholas W." data-discipline="Badminton" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=600&q=80" alt="Badminton Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -561,12 +561,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">480 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Badminton%20Coaching%20with%20Nicholas%2520W." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-13')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 14. Rugby -->
-          <div data-name="Dev M." data-discipline="Rugby" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-14" data-name="Dev M." data-discipline="Rugby" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1533560904424-a0c61dc306fc?auto=format&fit=crop&w=600&q=80" alt="Rugby Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -587,12 +587,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">500 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Rugby%20Coaching%20with%20Dev%2520M." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-14')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 15. Golf -->
-          <div data-name="Robert T." data-discipline="Golf" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-15" data-name="Robert T." data-discipline="Golf" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=600&q=80" alt="Golf Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -613,12 +613,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">800 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Golf%20Coaching%20with%20Robert%2520T." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-15')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 16. Basketball -->
-          <div data-name="David L." data-discipline="Basketball" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-16" data-name="David L." data-discipline="Basketball" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80" alt="Basketball Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -639,12 +639,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">550 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Basketball%20Coaching%20with%20David%2520L." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-16')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 17. Handball -->
-          <div data-name="Melissa P." data-discipline="Handball" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-17" data-name="Melissa P." data-discipline="Handball" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=600&q=80" alt="Handball Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -665,12 +665,12 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">450 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Handball%20Coaching%20with%20Melissa%2520P." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-17')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
           <!-- 18. Table Tennis -->
-          <div data-name="Alan Y." data-discipline="Table Tennis" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
+          <div data-coach-id="coach-18" data-name="Alan Y." data-discipline="Table Tennis" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition snap-start min-w-[320px] sm:min-w-[360px] max-w-[360px]">
             <div class="relative">
               <img src="https://images.unsplash.com/photo-1534067783941-51c9c23eccfd?auto=format&fit=crop&w=600&q=80" alt="Table Tennis Coach" class="w-full h-64 object-cover">
               <span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow">
@@ -691,7 +691,7 @@
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
               <span class="text-xl font-black text-white">400 Rs<span class="text-sm text-white font-normal">/h</span></span>
-              <a href="mailto:info@mocoach.mu?subject=Inquiry%20about%20Table%2520Tennis%2520Coaching%20with%20Alan%2520Y." class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</a>
+              <button onclick="ChatApp.open('coach-18')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
 
@@ -895,6 +895,9 @@
   <!-- The external Footer will be injected here by JS -->
   <div id="footer-placeholder"></div>
 
+  <!-- Messaging interface will be injected here by JS -->
+  <div id="messaging-placeholder"></div>
+
   <!-- MODAL "APPLY AS A COACH" (Pop-up registration form) -->
   <div id="coach-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl p-8 relative my-auto shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
@@ -1074,5 +1077,6 @@
 
   <!-- External JS orchestration fallback script -->
   <script src="js/app.js"></script>
+  <script src="js/messaging.js"></script>
 </body>
 </html>
