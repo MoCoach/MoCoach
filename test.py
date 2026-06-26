@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, text
 BASE = "http://localhost:5678"
 DB_URL = "mysql+mysqldb://emilien:1234@localhost/moCoach"
 
-TABLES = ["users", "coaches", "tags", "coach_tags", "chats", "messages"]
+TABLES = ["users", "coaches", "tags", "coach_tags", "chats", "messages", "badges", "user_badges"]
 
 ADMIN_USERNAME = "__admin__"
 ADMIN_EMAIL = "__admin__@mo coach.local"
@@ -280,12 +280,12 @@ def test_badges():
     h_bob = {"Authorization": f"Bearer {TOKENS['bob']}"}
 
     # Admin creates badges
-    r = requests.post(f"{BASE}/badge", json={"name": "top coach", "for_coach": True}, headers=h_admin)
+    r = requests.post(f"{BASE}/badge", json={"name": "top coach", "description": "Awarded to top coaches", "for_coach": True}, headers=h_admin)
     print(r.json())
     report("POST /badge (create coach badge)", r.status_code == 201 and r.json().get("name") == "top coach")
     DATA["coach_badge_id"] = r.json()["id"]
 
-    r = requests.post(f"{BASE}/badge", json={"name": "star client", "for_coach": False}, headers=h_admin)
+    r = requests.post(f"{BASE}/badge", json={"name": "star client", "description": "Awarded to star clients", "for_coach": False}, headers=h_admin)
     print(r.json())
     report("POST /badge (create customer badge)", r.status_code == 201 and r.json().get("name") == "star client")
     DATA["cust_badge_id"] = r.json()["id"]
@@ -296,7 +296,7 @@ def test_badges():
     report("GET /badge/all (lists badges)", r.status_code == 200 and len(r.json()) == 2)
 
     # Non-admin cannot create
-    r = requests.post(f"{BASE}/badge", json={"name": "x", "for_coach": True}, headers=h_alice)
+    r = requests.post(f"{BASE}/badge", json={"name": "x", "description": "test", "for_coach": True}, headers=h_alice)
     print(r.json())
     report("POST /badge (non-admin)", r.status_code == 403)
 
@@ -314,15 +314,16 @@ def test_badges():
     print(r.json())
     report("POST /badge/give (coach→customer)", r.status_code == 201)
 
-    # Customer → Customer (same role → should fail)
-    r = requests.put(f"{BASE}/profile", json={},
+    # Customer → Admin (admins cannot receive badges)
+    r = requests.get(f"{BASE}/profile/1",
         headers={"Authorization": f"Bearer {TOKENS['admin']}"})
+    print(r.json())
     admin_user_id = r.json()["id"]
     r = requests.post(f"{BASE}/badge/give", json={
         "user_id": admin_user_id, "badge_id": DATA["coach_badge_id"],
     }, headers=h_alice)
     print(r.json())
-    report("POST /badge/give (customer→customer, same role)", r.status_code == 400)
+    report("POST /badge/give (customer→admin)", r.status_code == 400 and "Admins cannot give or receive badges" in r.json().get("msg", ""))
 
     # Same badge again (duplicate triplet → should fail)
     r = requests.post(f"{BASE}/badge/give", json={
@@ -376,13 +377,13 @@ def test_badges():
     report("PUT /badge/<id> (edit name)", r.status_code == 200 and r.json().get("name") == "top coach updated")
 
     r = requests.put(f"{BASE}/badge/{DATA['coach_badge_id']}",
-        json={"for_coach": False}, headers=h_admin)
+        json={"description": "Updated description"}, headers=h_admin)
     print(r.json())
-    report("PUT /badge/<id> (edit for_coach)", r.status_code == 200 and r.json().get("for_coach") is False)
+    report("PUT /badge/<id> (edit description)", r.status_code == 200 and r.json().get("description") == "Updated description")
 
-    # Reset for_coach back
+    # Reset description back
     requests.put(f"{BASE}/badge/{DATA['coach_badge_id']}",
-        json={"for_coach": True}, headers=h_admin)
+        json={"description": "Awarded to top coaches"}, headers=h_admin)
 
     # Rename badge to existing name (should fail)
     r = requests.put(f"{BASE}/badge/{DATA['coach_badge_id']}",
@@ -529,12 +530,8 @@ def test_messages():
     h_alice = {"Authorization": f"Bearer {alice}"}
     h_bob = {"Authorization": f"Bearer {bob}"}
 
-    r = requests.put(f"{BASE}/profile", json={}, headers=h_alice)
-    print(r.json())
-    alice_id = r.json()["id"]
-    r = requests.put(f"{BASE}/profile", json={}, headers=h_bob)
-    print(r.json())
-    bob_id = r.json()["id"]
+    alice_id = DATA["alice_id"]
+    bob_id = DATA["bob_id"]
 
     r = requests.post(f"{BASE}/message", json={"recipient_id": alice_id, "text": "hi"}, headers=h_bob)
     print(r.json())
@@ -566,11 +563,11 @@ def test_messages():
     print(r.json())
     report("POST /message (coach replies)", r.status_code == 201)
 
-    r = requests.put(f"{BASE}/message/{msg1['timestamp']}/hide", headers=h_alice)
+    r = requests.put(f"{BASE}/message/{msg1['id']}/hide", headers=h_alice)
     print(r.json())
     report("PUT /message/<id>/hide", r.status_code == 200)
 
-    r = requests.put(f"{BASE}/message/{msg1['timestamp']}/hide", headers=h_alice)
+    r = requests.put(f"{BASE}/message/{msg1['id']}/hide", headers=h_alice)
     print(r.json())
     report("PUT /message/<id>/hide (again)", r.status_code == 400)
 
@@ -649,12 +646,12 @@ def test_validation():
 
     for path, method in [("/register", "POST"), ("/login", "POST")]:
         fn = getattr(requests, method.lower())
-        r = fn(f"{BASE}{path}", json=None)
-        print(r.json())
+        r = fn(f"{BASE}{path}", data='', headers={"Content-Type": "application/json"})
+        print(f"------------------------------------------------------------------\n{r.text}\n------------------------------------------------------------------")
         report(f"{method} {path} (no body)", r.status_code == 400)
 
     r = requests.get(f"{BASE}/nonexistent")
-    print(r.json())
+    print(f"------------------------------------------------------------------\n{r.text}\n------------------------------------------------------------------")
     report("GET /nonexistent", r.status_code == 404)
 
 
