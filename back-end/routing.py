@@ -299,6 +299,142 @@ def create_tag():
         return jsonify({"msg": e.message}), e.status_code
 
 
+@app.put("/tag/<int:tag_id>")
+@jwt_required()
+def edit_tag(tag_id):
+    """Update a tag (admin-only)."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"msg": "Missing JSON body"}), 400
+
+    try:
+        result = db.edit_tag(
+            get_jwt_identity(), tag_id,
+            name=data.get("name"), description=data.get("description"),
+        )
+        return jsonify(result), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+@app.delete("/tag/<int:tag_id>")
+@jwt_required()
+def delete_tag(tag_id):
+    """Delete a tag (admin-only)."""
+    try:
+        result = db.delete_tag(get_jwt_identity(), tag_id)
+        return jsonify(result), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+# ------------------------------------------------------------------
+# Badge management
+# ------------------------------------------------------------------
+
+@app.get("/badge")
+@jwt_required()
+def list_badges():
+    """Return the authenticated user's received badges, grouped by badge."""
+    try:
+        result = db.get_user_badges(get_jwt_identity())
+        return jsonify(result), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+@app.post("/badge/give")
+@jwt_required()
+def give_badge():
+    """Give a badge to another user."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"msg": "Missing JSON body"}), 400
+
+    user_id = data.get("user_id")
+    badge_id = data.get("badge_id")
+    if not user_id or not badge_id:
+        return jsonify({"msg": "user_id and badge_id are required"}), 400
+
+    try:
+        result = db.give_badge(get_jwt_identity(), user_id, badge_id)
+        return jsonify(result), 201
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+@app.get("/badge/all")
+def list_all_badges():
+    """Return all available badges (public)."""
+    return jsonify(db.list_all_badges()), 200
+
+
+@app.get("/badge/for/<string:role>")
+def list_badges_by_role(role):
+    """Return badges for a specific role (public).
+
+    Role must be 'coach' or 'customer'.
+    """
+    if role == "coach":
+        for_coach = True
+    elif role == "customer":
+        for_coach = False
+    else:
+        return jsonify({"msg": "Role must be 'coach' or 'customer'"}), 400
+    return jsonify(db.list_badges_by_role(for_coach)), 200
+
+
+@app.post("/badge")
+@jwt_required()
+def create_badge():
+    """Create a new badge (admin-only)."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"msg": "Missing JSON body"}), 400
+
+    name = data.get("name")
+    description = data.get("description")
+    for_coach = data.get("for_coach")
+    if not name or not description or for_coach is None:
+        return jsonify({"msg": "name, description and for_coach are required"}), 400
+
+    try:
+        result = db.create_badge(get_jwt_identity(), name, description, for_coach)
+        return jsonify(result), 201
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+@app.put("/badge/<int:badge_id>")
+@jwt_required()
+def edit_badge(badge_id):
+    """Update a badge (admin-only)."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"msg": "Missing JSON body"}), 400
+
+    try:
+        result = db.edit_badge(
+            get_jwt_identity(), badge_id,
+            name=data.get("name"),
+            description=data.get("description"),
+        )
+        return jsonify(result), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+@app.delete("/badge/<int:badge_id>")
+@jwt_required()
+def delete_badge(badge_id):
+    """Delete a badge (admin-only)."""
+    try:
+        result = db.delete_badge(get_jwt_identity(), badge_id)
+        return jsonify(result), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
 # ------------------------------------------------------------------
 # Admin user management
 # ------------------------------------------------------------------

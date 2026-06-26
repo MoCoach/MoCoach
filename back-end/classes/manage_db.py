@@ -11,6 +11,8 @@ from classes.coach import Coach
 from classes.tag import Tag
 from classes.chat import Chat
 from classes.message import Message
+from classes.badge import Badge
+from classes.user_badge import UserBadge
 
 
 class DbError(Exception):
@@ -55,6 +57,17 @@ class Db_Management:
             admin_count = session.query(User).filter_by(is_admin=True).count()
             user = session.query(User).filter_by(id=user_id).first()
             return user is not None and user.is_admin and admin_count <= 1
+        finally:
+            session.close()
+
+    def get_user_by_id(self, user_id):
+        """Return a user dict with is_admin and is_coach, or None."""
+        session = self._session()
+        try:
+            user = session.query(User).filter_by(id=user_id).first()
+            if not user:
+                return None
+            return {"is_admin": user.is_admin, "is_coach": user.is_coach}
         finally:
             session.close()
 
@@ -549,6 +562,228 @@ class Db_Management:
         try:
             tags = session.query(Tag).all()
             return [t.to_dict() for t in tags]
+        finally:
+            session.close()
+
+    def edit_tag(self, admin_id, tag_id, name=None, description=None):
+        """Update a tag's name and/or description (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            tag = session.query(Tag).filter_by(id=tag_id).first()
+            if not tag:
+                raise DbError("Tag not found", 404)
+
+            if name is not None:
+                if not isinstance(name, str) or not name.strip():
+                    raise DbError("name must be a non-empty string", 400)
+                if len(name) > 25:
+                    raise DbError("name must be at most 25 characters", 400)
+                existing = session.query(Tag).filter_by(name=name).first()
+                if existing and existing.id != tag_id:
+                    raise DbError("A tag with this name already exists", 409)
+                tag.name = name
+            if description is not None:
+                if not isinstance(description, str):
+                    raise DbError("description must be a string", 400)
+                if len(description) > 100:
+                    raise DbError("description must be at most 100 characters", 400)
+                tag.description = description
+
+            session.commit()
+            return tag.to_dict()
+        finally:
+            session.close()
+
+    def delete_tag(self, admin_id, tag_id):
+        """Delete a tag (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            tag = session.query(Tag).filter_by(id=tag_id).first()
+            if not tag:
+                raise DbError("Tag not found", 404)
+
+            session.delete(tag)
+            session.commit()
+            return {"msg": "Tag deleted"}
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Badge management
+    # ------------------------------------------------------------------
+
+    def create_badge(self, admin_id, name, description, for_coach):
+        """Create a new badge (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            badge = Badge(name=name, description=description, for_coach=for_coach)
+            session.add(badge)
+            session.commit()
+            return badge.to_dict()
+        except (TypeError, ValueError) as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
+    def list_all_badges(self):
+        """Return all badges (public)."""
+        session = self._session()
+        try:
+            badges = session.query(Badge).all()
+            return [b.to_dict() for b in badges]
+        finally:
+            session.close()
+
+    def list_badges_by_role(self, for_coach):
+        """Return badges filtered by role (public).
+
+        Args:
+            for_coach: True to return coach badges, False for customer badges.
+        """
+        session = self._session()
+        try:
+            badges = session.query(Badge).filter_by(for_coach=for_coach).all()
+            return [b.to_dict() for b in badges]
+        finally:
+            session.close()
+
+    def edit_badge(self, admin_id, badge_id, name=None, description=None):
+        """Update a badge's name and/or description (admin-only). for_coach is immutable after creation."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            badge = session.query(Badge).filter_by(id=badge_id).first()
+            if not badge:
+                raise DbError("Badge not found", 404)
+
+            if name is not None:
+                if not isinstance(name, str) or not name.strip():
+                    raise DbError("name must be a non-empty string", 400)
+                if len(name) > 25:
+                    raise DbError("name must be at most 25 characters", 400)
+                existing = session.query(Badge).filter_by(name=name).first()
+                if existing and existing.id != badge_id:
+                    raise DbError("A badge with this name already exists", 409)
+                badge.name = name
+            if description is not None:
+                if not isinstance(description, str) or not description.strip():
+                    raise DbError("description must be a non-empty string", 400)
+                if len(description) > 100:
+                    raise DbError("description must be at most 100 characters", 400)
+                badge.description = description
+
+            session.commit()
+            return badge.to_dict()
+        finally:
+            session.close()
+
+    def delete_badge(self, admin_id, badge_id):
+        """Delete a badge (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            badge = session.query(Badge).filter_by(id=badge_id).first()
+            if not badge:
+                raise DbError("Badge not found", 404)
+
+            session.delete(badge)
+            session.commit()
+            return {"msg": "Badge deleted"}
+        finally:
+            session.close()
+
+    def give_badge(self, giver_id, user_id, badge_id):
+        """Give a badge from *giver* to *user*.
+
+        Validates that:
+        - Both users exist.
+        - Giver is not the recipient.
+        - Giver and recipient have different roles (coach ↔ customer).
+        - This specific triplet (user, giver, badge) has not been used before.
+        """
+        session = self._session()
+        try:
+            giver = session.query(User).filter_by(id=giver_id).first()
+            if not giver:
+                raise DbError("Giver not found", 404)
+
+            user = session.query(User).filter_by(id=user_id).first()
+            if not user:
+                raise DbError("User not found", 404)
+
+            if giver_id == user_id:
+                raise DbError("Cannot give badge to yourself", 400)
+
+            if user.is_coach == giver.is_coach:
+                raise DbError("Cannot give badge to someone with the same role", 400)
+
+            badge = session.query(Badge).filter_by(id=badge_id).first()
+            if not badge:
+                raise DbError("Badge not found", 404)
+
+            existing = session.query(UserBadge).filter_by(
+                user_id=user_id, giver_id=giver_id, badge_id=badge_id,
+            ).first()
+            if existing:
+                raise DbError("You already gave this badge to this user", 409)
+
+            ub = UserBadge(user_id=user_id, giver_id=giver_id, badge_id=badge_id)
+            session.add(ub)
+            session.commit()
+            return {"msg": "Badge given"}
+        except DbError:
+            session.rollback()
+            raise
+        except Exception as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
+    def get_user_badges(self, user_id):
+        """Return badges received by *user*, grouped by badge id.
+
+        Returns:
+            {badge_id: [{"giver_id": int, "name": str}, ...], ...}
+        """
+        session = self._session()
+        try:
+            user = session.query(User).filter_by(id=user_id).first()
+            if not user:
+                raise DbError("User not found", 404)
+
+            rows = session.query(UserBadge).filter_by(user_id=user_id).all()
+            result = {}
+            for ub in rows:
+                badge = session.query(Badge).filter_by(id=ub.badge_id).first()
+                badge_name = badge.name if badge else "Unknown"
+                bid = ub.badge_id
+                if bid not in result:
+                    result[bid] = []
+                result[bid].append({
+                    "giver_id": ub.giver_id,
+                    "name": badge_name,
+                })
+            return result
         finally:
             session.close()
 

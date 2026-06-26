@@ -8,8 +8,8 @@ from .tag import Tag
 coach_tags = Table(
     'coach_tags',
     Base.metadata,
-    Column('coach_id', Integer, ForeignKey('coaches.id'), primary_key=True),
-    Column('tag_id',   Integer, ForeignKey('tags.id'),    primary_key=True),
+    Column('coach_id', Integer, ForeignKey('coaches.id', ondelete="CASCADE"), primary_key=True),
+    Column('tag_id',   Integer, ForeignKey('tags.id', ondelete="CASCADE"),    primary_key=True),
 )
 
 
@@ -18,7 +18,7 @@ class Coach(Base):
     Class representing coach-specific data
     '''
     __tablename__ = 'coaches'
-    id          = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    id          = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
     description = Column(String(500), nullable=False)
 
     user = relationship("User", back_populates="coach")
