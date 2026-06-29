@@ -43,22 +43,22 @@ document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
 
-    // Chargement des composants asynchrones
+    // Loading asynchronous components
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
     loadComponent('profile-placeholder', 'components/profile.html');
 
-    // Gestion dynamique de la transparence du header au défilement
+    // Dynamic header transparency management on scroll
     window.addEventListener('scroll', () => {
         const header = document.querySelector('header');
         if (header) {
             if (window.scrollY > 20) {
-                // Effet lors du défilement (Glassmorphism : fond bleu/slate transparent avec flou)
+                // Scroll effect (Glassmorphism: transparent blue/slate background with blur)
                 header.classList.remove('bg-slate-950', 'border-slate-900/20');
                 header.classList.add('bg-slate-950/70', 'backdrop-blur-md', 'border-slate-900/40', 'shadow-lg');
             } else {
-                // État initial tout en haut de la page (Opaque et solide)
+                // Initial state at the very top of the page (Opaque and solid)
                 header.classList.remove('bg-slate-950/70', 'backdrop-blur-md', 'border-slate-900/40', 'shadow-lg');
                 header.classList.add('bg-slate-950', 'border-slate-900/20');
             }
