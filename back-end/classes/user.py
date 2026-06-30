@@ -35,7 +35,8 @@ class User(Base):
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
     def __init__(self, username, email, pwd, is_coach=False, description=None,
-                 tags=None, phone=None, is_admin=False, name=None, city_id=None):
+                 tags=None, phone=None, is_admin=False, name=None, city_id=None,
+                 price=None, photo_url=None):
         """Generates a new user profile.
 
         :param username: unique login identifier
@@ -47,6 +48,8 @@ class User(Base):
         :param is_admin: whether the user has admin privileges
         :param name: display name (required for coaches, optional otherwise)
         :param city_id: id of the city (required for coaches)
+        :param price: coaching price per hour (coaches only, optional)
+        :param photo_url: URL to coach photo (coaches only, optional)
         """
         if not isinstance(username, str) or not username.strip():
             raise ValueError("username must be a non-empty string")
@@ -86,7 +89,8 @@ class User(Base):
         if is_coach:
             if city_id is None:
                 raise ValueError("city_id is mandatory for coaches")
-            self.coach = Coach(description=description, city_id=city_id)
+            self.coach = Coach(description=description, city_id=city_id,
+                               price=price, photo_url=photo_url)
             if tags:
                 for tag in tags:
                     self.coach.add_tag(tag)
@@ -100,8 +104,9 @@ class User(Base):
         return check_password_hash(self.password, pwd)
 
     def update_profile(self, name=_UNSET, email=_UNSET, pwd=None,
-                        description=None, tags=None, phone=_UNSET,
-                        username=_UNSET, city_id=None):
+                       description=None, tags=None, phone=_UNSET,
+                       username=_UNSET, city_id=None, price=None,
+                       photo_url=None):
         """Update the user profile fields.
 
         :param name: new display name (_UNSET = no change, None = clear)
@@ -110,6 +115,8 @@ class User(Base):
         :param description: new description (coach only, optional)
         :param tags: new list of Tag objects (coach only, 0-5)
         :param username: new unique username (optional)
+        :param price: new coaching price (coach only, optional)
+        :param photo_url: new photo URL (coach only, optional)
         """
         if username is not _UNSET:
             if not isinstance(username, str) or not username.strip():
@@ -162,6 +169,14 @@ class User(Base):
                 if not isinstance(city_id, int):
                     raise TypeError("city_id must be an int")
                 self.coach.city_id = city_id
+            if price is not None:
+                if not isinstance(price, int):
+                    raise TypeError("price must be an integer")
+                self.coach.price = price
+            if photo_url is not None:
+                if not isinstance(photo_url, str):
+                    raise TypeError("photo_url must be a string")
+                self.coach.photo_url = photo_url
 
     def to_dict(self):
         """Serialize user data to a dictionary."""
