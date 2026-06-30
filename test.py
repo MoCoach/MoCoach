@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, text
 BASE = "http://localhost:5678"
 DB_URL = "mysql+mysqldb://emilien:1234@localhost/moCoach"
 
-TABLES = ["users", "coaches", "tags", "coach_tags", "chats", "messages", "badges", "user_badges"]
+TABLES = ["users", "coaches", "tags", "coach_tags", "chats", "messages", "badges", "user_badges", "cities"]
 
 ADMIN_USERNAME = "__admin__"
 ADMIN_EMAIL = "__admin__@mo coach.local"
@@ -111,6 +111,104 @@ def test_availability():
 
 
 # ===================================================================
+# Cities (admin create/edit, public read)
+# ===================================================================
+def test_cities():
+    print("\n=== Cities ===")
+
+    # Log in as admin (seeded by seed_admin_user)
+    r = requests.post(f"{BASE}/login", json={"login": ADMIN_USERNAME, "password": ADMIN_PASSWORD})
+    if r.status_code != 200:
+        print("  [FAIL] Cannot log in as admin for city setup")
+        return
+    h_admin = {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+    # Create a default city needed for coach registration
+    r = requests.post(f"{BASE}/city", json={"name": "Paris"}, headers=h_admin)
+    print(r.json())
+    report("POST /city (create Paris)", r.status_code == 201 and r.json().get("name") == "Paris")
+    DATA["city_id"] = r.json()["id"]
+    paris_id = DATA["city_id"]
+
+    # Get city by id
+    r = requests.get(f"{BASE}/city/{paris_id}")
+    print(r.json())
+    report("GET /city/<id> (Paris)", r.status_code == 200 and r.json().get("name") == "Paris")
+
+    # City not found
+    r = requests.get(f"{BASE}/city/9999")
+    print(r.json())
+    report("GET /city/9999 (not found)", r.status_code == 404)
+
+    # List cities
+    r = requests.get(f"{BASE}/city")
+    print(r.json())
+    report("GET /city (lists Paris)", r.status_code == 200 and any(c["name"] == "Paris" for c in r.json()))
+
+    # Admin creates additional cities for CRUD testing
+    r = requests.post(f"{BASE}/city", json={"name": "Lyon"}, headers=h_admin)
+    print(r.json())
+    report("POST /city (admin creates Lyon)", r.status_code == 201 and r.json().get("name") == "Lyon")
+    lyon_id = r.json()["id"]
+
+    r = requests.post(f"{BASE}/city", json={"name": "Toulouse"}, headers=h_admin)
+    print(r.json())
+    report("POST /city (admin creates Toulouse)", r.status_code == 201 and r.json().get("name") == "Toulouse")
+    toulouse_id = r.json()["id"]
+
+    # Duplicate name
+    r = requests.post(f"{BASE}/city", json={"name": "Lyon"}, headers=h_admin)
+    print(r.text)
+    report("POST /city (duplicate name)", r.status_code == 409)
+
+    # Missing fields
+    r = requests.post(f"{BASE}/city", json={}, headers=h_admin)
+    print(r.json())
+    report("POST /city (missing fields)", r.status_code == 400)
+
+    # Create a temp non-admin user for permission tests
+    r = requests.post(f"{BASE}/register", json={
+        "username": "city_tester", "email": "city_tester@x.com", "password": "testpass8",
+    })
+    if r.status_code != 201:
+        print("  [FAIL] Cannot create temp user for permission tests")
+        return
+    r = requests.post(f"{BASE}/login", json={"login": "city_tester", "password": "testpass8"})
+    h_nonadmin = {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+    # Non-admin cannot create
+    r = requests.post(f"{BASE}/city", json={"name": "Marseille"}, headers=h_nonadmin)
+    print(r.json())
+    report("POST /city (non-admin)", r.status_code == 403)
+
+    # Edit Toulouse name
+    r = requests.put(f"{BASE}/city/{toulouse_id}", json={"name": "Toulouse Updated"}, headers=h_admin)
+    print(r.json())
+    report("PUT /city/<id> (edit name)", r.status_code == 200 and r.json().get("name") == "Toulouse Updated")
+
+    # Rename to existing name (should fail)
+    r = requests.put(f"{BASE}/city/{toulouse_id}", json={"name": "Lyon"}, headers=h_admin)
+    print(r.json())
+    report("PUT /city/<id> (rename to existing name)", r.status_code == 409)
+
+    # Non-admin cannot edit
+    r = requests.put(f"{BASE}/city/{paris_id}", json={"name": "x"}, headers=h_nonadmin)
+    print(r.json())
+    report("PUT /city/<id> (non-admin)", r.status_code == 403)
+
+    # City not found
+    r = requests.put(f"{BASE}/city/9999", json={"name": "x"}, headers=h_admin)
+    print(r.json())
+    report("PUT /city/9999 (not found)", r.status_code == 404)
+
+    # Verify list includes all cities
+    r = requests.get(f"{BASE}/city")
+    print(r.json())
+    names = {c["name"] for c in r.json()}
+    report("GET /city (lists all cities)", r.status_code == 200 and "Paris" in names and "Lyon" in names and "Toulouse Updated" in names)
+
+
+# ===================================================================
 # Registration
 # ===================================================================
 def test_register():
@@ -152,11 +250,13 @@ def test_register():
         "username": "bob", "email": "bob@x.com", "password": "bobpass8",
         "name": "Bob", "is_coach": True, "description": "I am Bob",
         "tags": [{"name": "fitness", "description": "Fitness coaching"}],
+        "city_id": DATA["city_id"],
     })
     print(r.json())
     report("POST /register (coach)", r.status_code == 201 and r.json().get("is_coach") is True)
     DATA["bob_id"] = r.json()["id"]
     DATA["bob_coach_id"] = r.json()["coach"]["id"]
+    DATA["bob_city"] = r.json()["coach"]["city"]
 
     r = requests.post(f"{BASE}/register", json={
         "username": "bob2", "email": "bob2@x.com", "password": "bobpass8",
@@ -164,6 +264,14 @@ def test_register():
     })
     print(r.json())
     report("POST /register (coach missing description)", r.status_code == 400)
+
+    r = requests.post(f"{BASE}/register", json={
+        "username": "bob3", "email": "bob3@x.com", "password": "bobpass8",
+        "name": "Bob3", "is_coach": True, "description": "I am Bob3",
+        "tags": [{"name": "fitness", "description": "Fitness coaching"}],
+    })
+    print(r.json())
+    report("POST /register (coach missing city_id)", r.status_code == 400)
 
 
 # ===================================================================
@@ -247,11 +355,13 @@ def test_coaches():
     bob_coach = next(c for c in coaches if c["name"] == "Bob")
     tag_names = {t["name"] for t in bob_coach["tags"]}
     report("GET /coach (bob has fitness tag)", r.status_code == 200 and "fitness" in tag_names)
+    report("GET /coach (bob has city)", r.status_code == 200 and bob_coach.get("city") == "Paris")
 
     # Get bob by ID (coach id = user id in this schema)
     r = requests.get(f"{BASE}/coach/{DATA['bob_coach_id']}")
     print(r.json())
     report("GET /coach/<id> (bob by id)", r.status_code == 200 and r.json().get("name") == "Bob")
+    report("GET /coach/<id> (bob city)", r.status_code == 200 and r.json().get("city") == "Paris")
 
     # Not found
     r = requests.get(f"{BASE}/coach/9999")
@@ -664,6 +774,7 @@ if __name__ == "__main__":
     check_db_state()
 
     test_availability()
+    test_cities()
     test_register()
     test_login()
     test_tags()

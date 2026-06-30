@@ -10,6 +10,7 @@ from classes import Base
 from classes.user import User, _UNSET, _FORBIDDEN_USERNAMES
 from classes.coach import Coach
 from classes.tag import Tag
+from classes.city import City
 from classes.chat import Chat
 from classes.message import Message
 from classes.badge import Badge
@@ -103,12 +104,16 @@ class Db_Management:
     # ------------------------------------------------------------------
 
     def register_user(self, username, email, password, is_coach, description,
-                      tags_data, phone, is_admin=False, name=None):
+                      tags_data, phone, is_admin=False, name=None, city_id=None,
+                      price=None, photo_url=None):
         """Create a new user account.
 
         :param username: unique login identifier (required)
         :param name: display name (required for coaches, optional otherwise)
         :param is_admin: grant admin privileges (default False)
+        :param city_id: city id (required for coaches)
+        :param price: coaching price per hour (coaches only, optional)
+        :param photo_url: URL to coach photo (coaches only, optional)
         """
         session = self._session()
         try:
@@ -129,7 +134,8 @@ class Db_Management:
             user = User(username=username, email=email, pwd=password,
                         is_coach=is_coach, description=description,
                         tags=tags if is_coach else None,
-                        phone=phone, is_admin=is_admin, name=name)
+                        phone=phone, is_admin=is_admin, name=name,
+                        city_id=city_id, price=price, photo_url=photo_url)
             session.add(user)
             session.commit()
             return user.to_dict()
@@ -158,7 +164,8 @@ class Db_Management:
 
     def update_profile(self, user_id, name=_UNSET, description=None,
                        tags_data=None, email=_UNSET, phone=_UNSET,
-                       username=_UNSET):
+                       username=_UNSET, city_id=None, price=None,
+                       photo_url=None):
         """Update profile fields for the user identified by *user_id*."""
         session = self._session()
         try:
@@ -199,6 +206,12 @@ class Db_Management:
                 kwargs["phone"] = phone
             if username is not _UNSET:
                 kwargs["username"] = username
+            if city_id is not None:
+                kwargs["city_id"] = city_id
+            if price is not None:
+                kwargs["price"] = price
+            if photo_url is not None:
+                kwargs["photo_url"] = photo_url
             user.update_profile(**kwargs)
             session.commit()
             return user.to_dict()
@@ -229,6 +242,20 @@ class Db_Management:
     # Coach queries
     # ------------------------------------------------------------------
 
+    def _coach_to_dict(self, coach):
+        """Serialize a coach record to a public-facing dictionary."""
+        return {
+            "id": coach.id,
+            "name": coach.user.name,
+            "description": coach.description,
+            "price": coach.price,
+            "city": coach.city.name if coach.city else None,
+            "photo_url": coach.photo_url,
+            "phone": coach.user.phone,
+            "tags": [{"name": t.name, "description": t.description}
+                     for t in coach.tags],
+        }
+
     def get_coach(self, coach_id):
         """Return public coach details by coach id."""
         session = self._session()
@@ -236,12 +263,7 @@ class Db_Management:
             coach = session.query(Coach).filter_by(id=coach_id).first()
             if not coach:
                 raise DbError("Coach not found", 404)
-            return {
-                "name": coach.user.name,
-                "description": coach.description,
-                "tags": [{"name": t.name, "description": t.description}
-                         for t in coach.tags],
-            }
+            return self._coach_to_dict(coach)
         finally:
             session.close()
 
@@ -250,12 +272,7 @@ class Db_Management:
         session = self._session()
         try:
             coaches = session.query(Coach).all()
-            return [{
-                "name": c.user.name,
-                "description": c.description,
-                "tags": [{"name": t.name, "description": t.description}
-                         for t in c.tags],
-            } for c in coaches]
+            return [self._coach_to_dict(c) for c in coaches]
         finally:
             session.close()
 
@@ -269,12 +286,7 @@ class Db_Management:
             coaches = session.query(Coach).filter(
                 Coach.tags.contains(tag)
             ).all()
-            return [{
-                "name": c.user.name,
-                "description": c.description,
-                "tags": [{"name": t.name, "description": t.description}
-                         for t in c.tags],
-            } for c in coaches]
+            return [self._coach_to_dict(c) for c in coaches]
         finally:
             session.close()
 
@@ -618,6 +630,79 @@ class Db_Management:
             session.delete(tag)
             session.commit()
             return {"msg": "Tag deleted"}
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # City management (admin only)
+    # ------------------------------------------------------------------
+
+    def add_city(self, admin_id, name):
+        """Create a new city (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            existing = session.query(City).filter_by(name=name).first()
+            if existing:
+                raise DbError("A city with this name already exists", 409)
+
+            city = City(name=name)
+            session.add(city)
+            session.commit()
+            return city.to_dict()
+        except (TypeError, ValueError) as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
+    def edit_city(self, admin_id, city_id, name):
+        """Update a city's name (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+
+            city = session.query(City).filter_by(id=city_id).first()
+            if not city:
+                raise DbError("City not found", 404)
+
+            if not isinstance(name, str) or not name.strip():
+                raise DbError("name must be a non-empty string", 400)
+            if len(name) > 25:
+                raise DbError("name must be at most 25 characters", 400)
+
+            existing = session.query(City).filter_by(name=name).first()
+            if existing and existing.id != city_id:
+                raise DbError("A city with this name already exists", 409)
+
+            city.name = name
+            session.commit()
+            return city.to_dict()
+        finally:
+            session.close()
+
+    def list_cities(self):
+        """Return all cities (public)."""
+        session = self._session()
+        try:
+            cities = session.query(City).all()
+            return [c.to_dict() for c in cities]
+        finally:
+            session.close()
+
+    def get_city(self, city_id):
+        """Return a city by id (public)."""
+        session = self._session()
+        try:
+            city = session.query(City).filter_by(id=city_id).first()
+            if not city:
+                raise DbError("City not found", 404)
+            return city.to_dict()
         finally:
             session.close()
 

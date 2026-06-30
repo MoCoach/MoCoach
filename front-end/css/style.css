@@ -170,24 +170,3 @@ body {
   height: 8px;
   background: #1e293b;
 }
-
-/* Animation de scintillement des étoiles régulières */
-@keyframes twinkle {
-  0%, 100% {
-    opacity: 0.15;
-    transform: scale(0.8);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
-  }
-}
-
-/* Style de base des étoiles */
-.star {
-  position: absolute;
-  background-color: #ffffff;
-  border-radius: 50%;
-  pointer-events: none;
-}

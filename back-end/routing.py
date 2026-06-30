@@ -62,6 +62,9 @@ def register():
             tags_data   = data.get("tags", []),
             phone       = data.get("phone"),
             is_admin    = False,
+            city_id     = data.get("city_id"),
+            price       = data.get("price"),
+            photo_url   = data.get("photo_url"),
         )
         return jsonify(result), 201
     except DbError as e:
@@ -114,6 +117,12 @@ def edit_profile():
             kwargs["phone"] = data["phone"]
         if "username" in data:
             kwargs["username"] = data["username"]
+        if "city_id" in data:
+            kwargs["city_id"] = data["city_id"]
+        if "price" in data:
+            kwargs["price"] = data["price"]
+        if "photo_url" in data:
+            kwargs["photo_url"] = data["photo_url"]
         result = db.update_profile(**kwargs)
         return jsonify(result), 200
     except DbError as e:
@@ -324,6 +333,63 @@ def delete_tag(tag_id):
     try:
         result = db.delete_tag(get_jwt_identity(), tag_id)
         return jsonify(result), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+# ------------------------------------------------------------------
+# City management (admin only)
+# ------------------------------------------------------------------
+
+@app.post("/city")
+@jwt_required()
+def create_city():
+    """Create a new city (admin-only)."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"msg": "Missing JSON body"}), 400
+
+    name = data.get("name")
+    if not name:
+        return jsonify({"msg": "name is required"}), 400
+
+    try:
+        result = db.add_city(get_jwt_identity(), name)
+        return jsonify(result), 201
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+@app.put("/city/<int:city_id>")
+@jwt_required()
+def edit_city(city_id):
+    """Update a city's name (admin-only)."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"msg": "Missing JSON body"}), 400
+
+    name = data.get("name")
+    if not name:
+        return jsonify({"msg": "name is required"}), 400
+
+    try:
+        result = db.edit_city(get_jwt_identity(), city_id, name)
+        return jsonify(result), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+@app.get("/city")
+def list_cities():
+    """Return all cities (public)."""
+    return jsonify(db.list_cities()), 200
+
+
+@app.get("/city/<int:city_id>")
+def get_city(city_id):
+    """Return a city by id (public)."""
+    try:
+        return jsonify(db.get_city(city_id)), 200
     except DbError as e:
         return jsonify({"msg": e.message}), e.status_code
 

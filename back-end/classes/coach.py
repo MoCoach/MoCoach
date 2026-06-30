@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from . import Base
 from .tag import Tag
+from .city import City
 
 
 coach_tags = Table(
@@ -20,14 +21,23 @@ class Coach(Base):
     __tablename__ = 'coaches'
     id          = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
     description = Column(String(500), nullable=False)
+    city_id     = Column(Integer, ForeignKey('cities.id'), nullable=False)
+    price       = Column(Integer, nullable=True)
+    photo_url   = Column(String(500), nullable=True)
 
     user = relationship("User", back_populates="coach")
     tags = relationship("Tag", secondary=coach_tags)
+    city = relationship("City")
 
-    def __init__(self, description):
+    def __init__(self, description, city_id, price=None, photo_url=None):
         if not isinstance(description, str):
             raise TypeError("description must be a string")
+        if not isinstance(city_id, int):
+            raise TypeError("city_id must be an int")
         self.description = description
+        self.city_id = city_id
+        self.price = price
+        self.photo_url = photo_url
 
     def add_tag(self, tag):
         if not isinstance(tag, Tag):
@@ -58,6 +68,9 @@ class Coach(Base):
         return {
             "id": self.id,
             "description": self.description,
+            "city": self.city.name if self.city else None,
+            "price": self.price,
+            "photo_url": self.photo_url,
             "tags": [tag.to_dict() for tag in self.tags],
         }
 
