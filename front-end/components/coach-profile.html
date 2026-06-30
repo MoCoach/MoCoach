@@ -1,0 +1,65 @@
+<div id="coach-profile-view" class="hidden">
+  <div class="min-h-screen bg-slate-950">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <button id="coach-profile-back-btn" class="text-slate-400 hover:text-white transition flex items-center space-x-1.5 text-sm mb-6">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span>Back to Coaches</span>
+      </button>
+
+      <div class="bg-slate-900/60 rounded-3xl overflow-hidden border border-slate-800 shadow-xl">
+        <div id="coach-profile-hero" class="relative h-64 sm:h-80 bg-slate-800">
+          <div id="coach-profile-hero-img" class="absolute inset-0 bg-cover bg-center"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+        </div>
+
+        <div class="px-6 sm:px-8 -mt-16 relative z-10">
+          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div class="flex items-end space-x-5">
+              <div id="coach-profile-avatar" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-slate-900 bg-slate-800 bg-cover bg-center shadow-xl flex-shrink-0"></div>
+              <div class="pb-1">
+                <div class="flex items-center space-x-3">
+                  <h1 id="coach-profile-name" class="text-2xl sm:text-3xl font-extrabold text-white"></h1>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 text-[10px] font-bold">VERIFIED</span>
+                </div>
+                <p id="coach-profile-discipline" class="text-emerald-400 font-semibold text-sm mt-0.5"></p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-3 pb-1">
+              <span id="coach-profile-price" class="text-2xl font-black text-white"></span>
+              <button id="coach-profile-contact-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2 text-sm">
+                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                <span>Contact Coach</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 sm:px-8 pt-8 pb-8 space-y-8">
+          <div>
+            <h2 class="text-lg font-bold text-white mb-3 flex items-center space-x-2">
+              <i data-lucide="info" class="w-4 h-4 text-blue-400"></i>
+              <span>About</span>
+            </h2>
+            <p id="coach-profile-description" class="text-slate-300 text-base leading-relaxed"></p>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-bold text-white mb-3 flex items-center space-x-2">
+              <i data-lucide="tags" class="w-4 h-4 text-blue-400"></i>
+              <span>Specialties</span>
+            </h2>
+            <div id="coach-profile-tags" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <div id="coach-profile-badges-section">
+            <h2 class="text-lg font-bold text-white mb-3 flex items-center space-x-2">
+              <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
+              <span>Badges & Achievements</span>
+            </h2>
+            <div id="coach-profile-badges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

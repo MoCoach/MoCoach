@@ -103,12 +103,15 @@ class Db_Management:
     # ------------------------------------------------------------------
 
     def register_user(self, username, email, password, is_coach, description,
-                      tags_data, phone, is_admin=False, name=None):
+                      tags_data, phone, is_admin=False, name=None,
+                      price=None, photo_url=None):
         """Create a new user account.
 
         :param username: unique login identifier (required)
         :param name: display name (required for coaches, optional otherwise)
         :param is_admin: grant admin privileges (default False)
+        :param price: coaching price per hour (coaches only, optional)
+        :param photo_url: URL to coach photo (coaches only, optional)
         """
         session = self._session()
         try:
@@ -129,7 +132,8 @@ class Db_Management:
             user = User(username=username, email=email, pwd=password,
                         is_coach=is_coach, description=description,
                         tags=tags if is_coach else None,
-                        phone=phone, is_admin=is_admin, name=name)
+                        phone=phone, is_admin=is_admin, name=name,
+                        price=price, photo_url=photo_url)
             session.add(user)
             session.commit()
             return user.to_dict()
@@ -158,7 +162,7 @@ class Db_Management:
 
     def update_profile(self, user_id, name=_UNSET, description=None,
                        tags_data=None, email=_UNSET, phone=_UNSET,
-                       username=_UNSET):
+                       username=_UNSET, price=None, photo_url=None):
         """Update profile fields for the user identified by *user_id*."""
         session = self._session()
         try:
@@ -199,6 +203,10 @@ class Db_Management:
                 kwargs["phone"] = phone
             if username is not _UNSET:
                 kwargs["username"] = username
+            if price is not None:
+                kwargs["price"] = price
+            if photo_url is not None:
+                kwargs["photo_url"] = photo_url
             user.update_profile(**kwargs)
             session.commit()
             return user.to_dict()
@@ -229,6 +237,19 @@ class Db_Management:
     # Coach queries
     # ------------------------------------------------------------------
 
+    def _coach_to_dict(self, coach):
+        """Serialize a coach record to a public-facing dictionary."""
+        return {
+            "id": coach.id,
+            "name": coach.user.name,
+            "description": coach.description,
+            "price": coach.price,
+            "photo_url": coach.photo_url,
+            "phone": coach.user.phone,
+            "tags": [{"name": t.name, "description": t.description}
+                     for t in coach.tags],
+        }
+
     def get_coach(self, coach_id):
         """Return public coach details by coach id."""
         session = self._session()
@@ -236,12 +257,7 @@ class Db_Management:
             coach = session.query(Coach).filter_by(id=coach_id).first()
             if not coach:
                 raise DbError("Coach not found", 404)
-            return {
-                "name": coach.user.name,
-                "description": coach.description,
-                "tags": [{"name": t.name, "description": t.description}
-                         for t in coach.tags],
-            }
+            return self._coach_to_dict(coach)
         finally:
             session.close()
 
@@ -250,12 +266,7 @@ class Db_Management:
         session = self._session()
         try:
             coaches = session.query(Coach).all()
-            return [{
-                "name": c.user.name,
-                "description": c.description,
-                "tags": [{"name": t.name, "description": t.description}
-                         for t in c.tags],
-            } for c in coaches]
+            return [self._coach_to_dict(c) for c in coaches]
         finally:
             session.close()
 
@@ -269,12 +280,7 @@ class Db_Management:
             coaches = session.query(Coach).filter(
                 Coach.tags.contains(tag)
             ).all()
-            return [{
-                "name": c.user.name,
-                "description": c.description,
-                "tags": [{"name": t.name, "description": t.description}
-                         for t in c.tags],
-            } for c in coaches]
+            return [self._coach_to_dict(c) for c in coaches]
         finally:
             session.close()
 

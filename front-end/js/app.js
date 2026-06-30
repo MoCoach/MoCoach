@@ -20,8 +20,10 @@ function showMainView() {
     currentView = 'home';
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
+    const coachProfile = document.getElementById('coach-profile-view');
     if (main) main.classList.remove('hidden');
     if (profile) profile.classList.add('hidden');
+    if (coachProfile) coachProfile.classList.add('hidden');
     document.body.classList.remove('overflow-hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -30,24 +32,36 @@ function showProfileView() {
     currentView = 'profile';
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
+    const coachProfile = document.getElementById('coach-profile-view');
     if (main) main.classList.add('hidden');
     if (profile) profile.classList.remove('hidden');
+    if (coachProfile) coachProfile.classList.add('hidden');
     window.scrollTo({ top: 0 });
 }
 
 window.showMainView = showMainView;
 window.showProfileView = showProfileView;
 
+function showCoachProfileView(coachId) {
+    currentView = 'coach-profile';
+    if (window.CoachProfileApp) {
+        CoachProfileApp.open(coachId);
+    }
+}
+
+window.showCoachProfileView = showCoachProfileView;
+
 document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) {
         lucide.createIcons();
     }
 
-    // Loading asynchronous components
+    // Chargement des composants asynchrones
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
     loadComponent('profile-placeholder', 'components/profile.html');
+    loadComponent('coach-profile-placeholder', 'components/coach-profile.html');
 
     // Dynamic header transparency management on scroll
     window.addEventListener('scroll', () => {
@@ -108,6 +122,28 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (e) => {
         const link = e.target.closest('nav a[href="#"]');
         if (link && currentView === 'profile') {
+            e.preventDefault();
+            showMainView();
+        }
+    });
+
+    // Coach card click (delegated) - open coach profile unless Contact button was clicked
+    document.addEventListener('click', (e) => {
+        const card = e.target.closest('.coach-card');
+        const contactBtn = e.target.closest('button[onclick*="ChatApp.open"]');
+        if (card && !contactBtn) {
+            const coachId = card.getAttribute('data-coach-id');
+            if (coachId) {
+                e.preventDefault();
+                showCoachProfileView(coachId);
+            }
+        }
+    });
+
+    // Re-delegate home link for coach-profile view
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('nav a[href="#"]');
+        if (link && currentView === 'coach-profile') {
             e.preventDefault();
             showMainView();
         }

@@ -20,14 +20,18 @@ class Coach(Base):
     __tablename__ = 'coaches'
     id          = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
     description = Column(String(500), nullable=False)
+    price       = Column(Integer, nullable=True)
+    photo_url   = Column(String(500), nullable=True)
 
     user = relationship("User", back_populates="coach")
     tags = relationship("Tag", secondary=coach_tags)
 
-    def __init__(self, description):
+    def __init__(self, description, price=None, photo_url=None):
         if not isinstance(description, str):
             raise TypeError("description must be a string")
         self.description = description
+        self.price = price
+        self.photo_url = photo_url
 
     def add_tag(self, tag):
         if not isinstance(tag, Tag):
@@ -58,6 +62,8 @@ class Coach(Base):
         return {
             "id": self.id,
             "description": self.description,
+            "price": self.price,
+            "photo_url": self.photo_url,
             "tags": [tag.to_dict() for tag in self.tags],
         }
 
