@@ -19,10 +19,18 @@
         <a href="#about" class="text-slate-300 hover:text-white transition">About Us</a>
       </nav>
     </div>
-    <div class="flex items-center">
-      <button id="profile-btn" aria-label="User Profile" class="w-12 h-12 rounded-full bg-slate-900 hover:bg-slate-850 border border-slate-800 flex items-center justify-center text-slate-300 transition shadow-md">
+    
+    <!-- Bouton Profil avec Conteneur de Positionnement pour le menu au Clic -->
+    <div class="flex items-center relative">
+      <button id="profile-btn" aria-label="User Profile" class="w-12 h-12 rounded-full bg-slate-900 hover:bg-slate-850 border border-slate-800 flex items-center justify-center text-slate-300 transition shadow-md focus:outline-none">
         <i data-lucide="user" class="w-6 h-6"></i>
       </button>
+      
+      <!-- Menu déroulant d'en-tête (Dropdown) - Masqué par défaut (hidden) et contrôlé uniquement au clic par app.js -->
+      <div id="profile-dropdown" class="absolute right-0 top-full mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-2 hidden z-50">
+        <!-- Rempli dynamiquement par app.js -->
+      </div>
     </div>
+
   </div>
 </header>

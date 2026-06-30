@@ -1,10 +1,10 @@
 const PROFILE_DATA = {
-  nickname: 'pseudo', // Remplacé "Arveen_Fitness" par "pseudo"
-  firstName: '',      // Vide pour laisser s'afficher le placeholder d'exemple
-  lastName: '',       // Vide pour laisser s'afficher le placeholder d'exemple
-  email: '',          // Vide pour laisser s'afficher le placeholder d'exemple
-  phone: '',          // Vide pour laisser s'afficher le placeholder d'exemple
-  city: '',           // Vide pour laisser s'afficher le placeholder d'exemple
+  nickname: 'pseudo',
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  city: '',
   avatar: 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   badges: [
     {
@@ -67,7 +67,24 @@ const ProfileApp = {
       setTimeout(() => this.init(), 50);
       return;
     }
-    this.data = JSON.parse(JSON.stringify(PROFILE_DATA));
+
+    // Récupération dynamique sécurisée des données de session
+    try {
+      const savedUser = localStorage.getItem('mocoach_user');
+      if (savedUser) {
+          this.data = JSON.parse(savedUser);
+      } else {
+          this.data = JSON.parse(JSON.stringify(PROFILE_DATA));
+      }
+    } catch (err) {
+      console.error("Session parse error, resetting data.", err);
+      this.data = JSON.parse(JSON.stringify(PROFILE_DATA));
+    }
+
+    if (!this.data || typeof this.data !== 'object') {
+      this.data = JSON.parse(JSON.stringify(PROFILE_DATA));
+    }
+
     this.render();
     this.bindEvents();
     this.generateTwinklingStars(); // Génère les 220 étoiles scintillantes
@@ -108,6 +125,12 @@ const ProfileApp = {
     }
   },
 
+  logout() {
+    // Suppression de la session locale et rechargement de l'application
+    localStorage.removeItem('mocoach_user');
+    window.location.reload();
+  },
+
   renderHeader() {
     const el = document.getElementById('profile-header-card');
     if (!el) return;
@@ -117,19 +140,23 @@ const ProfileApp = {
       <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
         <div class="relative flex-shrink-0">
           <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-blue-500/30 shadow-xl">
-            <img src="${this._esc(d.avatar)}" alt="User avatar" class="w-full h-full object-cover" loading="lazy">
+            <img src="${this._esc(d.avatar || PROFILE_DATA.avatar)}" alt="User avatar" class="w-full h-full object-cover" loading="lazy">
           </div>
           <div class="absolute -bottom-1 -right-1 bg-emerald-500 w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center">
             <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
           </div>
         </div>
         <div class="text-center md:text-left flex-1 min-w-0 flex flex-col justify-center">
-          <p class="text-blue-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${this._esc(d.nickname)}</p>
+          <p class="text-blue-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${this._esc(d.nickname || 'pseudo')}</p>
         </div>
-        <div class="flex-shrink-0 mt-4 md:mt-0">
+        <div class="flex-shrink-0 mt-4 md:mt-0 flex items-center space-x-3">
           <button onclick="ProfileApp.scrollToPersonal()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
             <span>Edit Profile</span>
+          </button>
+          <button onclick="ProfileApp.logout()" class="bg-red-950/40 border border-red-900/50 hover:bg-red-900/40 text-red-400 text-sm font-bold px-4 py-2.5 rounded-xl transition flex items-center space-x-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            <span>Logout</span>
           </button>
         </div>
       </div>
@@ -141,15 +168,14 @@ const ProfileApp = {
     if (!el) return;
     const d = this.data;
     const fields = [
-      { id: 'pf-nickname', label: 'Pseudo', value: d.nickname, placeholder: 'ex: pseudo', type: 'text', required: true, colSpan: false },
-      { id: 'pf-firstName', label: 'First Name', value: d.firstName, placeholder: 'ex: yourname', type: 'text', required: true, colSpan: false },
-      { id: 'pf-lastName', label: 'Last Name', value: d.lastName, placeholder: 'ex: yourlastname', type: 'text', required: true, colSpan: false },
-      { id: 'pf-email', label: 'Email', value: d.email, placeholder: 'ex: @example.com', type: 'email', required: true, colSpan: false },
-      { id: 'pf-phone', label: 'Phone Number', value: d.phone, placeholder: 'ex: +230 5000 0000', type: 'tel', required: false, colSpan: false },
-      { id: 'pf-city', label: 'City', value: d.city, placeholder: 'ex: Grand Baie', type: 'text', required: true, colSpan: false },
+      { id: 'pf-nickname', label: 'Pseudo', value: d.nickname || '', placeholder: 'ex: pseudo', type: 'text', required: true, colSpan: false },
+      { id: 'pf-firstName', label: 'First Name', value: d.firstName || '', placeholder: 'ex: yourname', type: 'text', required: true, colSpan: false },
+      { id: 'pf-lastName', label: 'Last Name', value: d.lastName || '', placeholder: 'ex: yourlastname', type: 'text', required: true, colSpan: false },
+      { id: 'pf-email', label: 'Email', value: d.email || '', placeholder: 'ex: @example.com', type: 'email', required: true, colSpan: false },
+      { id: 'pf-phone', label: 'Phone Number', value: d.phone || '', placeholder: 'ex: +230 5000 0000', type: 'tel', required: false, colSpan: false },
+      { id: 'pf-city', label: 'City', value: d.city || '', placeholder: 'ex: Grand Baie', type: 'text', required: true, colSpan: false },
     ];
 
-    // Correction importante : Rendu de placeholder="..." distinct de la value="..." et texte écrit en blanc (text-white) hautement lisible dans l'input sombre
     el.innerHTML = `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         ${fields.map(f => `
@@ -160,7 +186,7 @@ const ProfileApp = {
             <input id="${f.id}" type="${f.type}" value="${this._esc(f.value)}"
               placeholder="${this._esc(f.placeholder)}"
               ${f.required ? 'required' : ''}
-              class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
+              class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
             <p id="${f.id}-error" class="text-red-500 text-xs mt-1 hidden"></p>
           </div>
         `).join('')}
@@ -243,6 +269,13 @@ const ProfileApp = {
     }
 
     Object.assign(this.data, values);
+    localStorage.setItem('mocoach_user', JSON.stringify(this.data)); // Enregistre les changements
+    
+    // Met à jour dynamiquement la photo de profil du Header d'accueil après modification
+    if (window.updateHeaderProfilePic) {
+        window.updateHeaderProfilePic();
+    }
+    
     this.showToast('Profile updated successfully!', 'success');
     this.renderHeader();
   },
@@ -254,19 +287,19 @@ const ProfileApp = {
     el.innerHTML = `
       <div class="space-y-5">
         <div>
-          <label for="pf-currentPw" class="block text-base font-semibold text-slate-200 mb-2">Current Password</label>
+          <label for="pf-currentPw" class="block text-base font-semibold text-slate-700 mb-2">Current Password</label>
           <div class="relative">
-            <input id="pf-currentPw" type="password" placeholder="Enter current password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
-            <button onclick="ProfileApp.togglePassword('pf-currentPw', 'pw-toggle-current')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200" tabindex="-1">
+            <input id="pf-currentPw" type="password" placeholder="Enter current password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
+            <button onclick="ProfileApp.togglePassword('pf-currentPw', 'pw-toggle-current')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-current" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
         <div>
-          <label for="pf-newPw" class="block text-base font-semibold text-slate-200 mb-2">New Password</label>
+          <label for="pf-newPw" class="block text-base font-semibold text-slate-700 mb-2">New Password</label>
           <div class="relative">
-            <input id="pf-newPw" type="password" placeholder="Enter new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
-            <button onclick="ProfileApp.togglePassword('pf-newPw', 'pw-toggle-new')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200" tabindex="-1">
+            <input id="pf-newPw" type="password" placeholder="Enter new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
+            <button onclick="ProfileApp.togglePassword('pf-newPw', 'pw-toggle-new')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-new" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
           </div>
@@ -282,10 +315,10 @@ const ProfileApp = {
           </ul>
         </div>
         <div>
-          <label for="pf-confirmPw" class="block text-base font-semibold text-slate-200 mb-2">Confirm New Password</label>
+          <label for="pf-confirmPw" class="block text-base font-semibold text-slate-700 mb-2">Confirm New Password</label>
           <div class="relative">
-            <input id="pf-confirmPw" type="password" placeholder="Confirm new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
-            <button onclick="ProfileApp.togglePassword('pf-confirmPw', 'pw-toggle-confirm')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200" tabindex="-1">
+            <input id="pf-confirmPw" type="password" placeholder="Confirm new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
+            <button onclick="ProfileApp.togglePassword('pf-confirmPw', 'pw-toggle-confirm')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-confirm" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
           </div>
@@ -418,7 +451,7 @@ const ProfileApp = {
 
     const errEl = document.getElementById('pf-confirmPw-error');
     if (errEl) errEl.classList.add('hidden');
-    confirm.className = confirm.className.replace('border-red-400', 'border-slate-800');
+    confirm.className = confirm.className.replace('border-red-400', 'border-slate-300');
 
     current.value = '';
     newPw.value = '';
@@ -426,6 +459,9 @@ const ProfileApp = {
     this.checkPasswordStrength('');
     if (status) status.textContent = '';
 
+    // Enregistrement du nouveau mot de passe dans le localStorage pour la persistance
+    this.data.password = newVal;
+    localStorage.setItem('mocoach_user', JSON.stringify(this.data));
     this.showToast('Password changed successfully!', 'success');
   },
 
@@ -492,7 +528,7 @@ const ProfileApp = {
       html += `
         <div class="relative z-10">
           <div class="flex items-center space-x-2 mb-4">
-            <i data-lucide="upload" class="w-4 h-4 text-blue-400"></i>
+            <i data-lucide="upload" class="w-4 h-4 text-blue-600"></i>
             <h3 class="text-base font-bold text-slate-300">Badges You've Given</h3>
             <span class="text-[10px] text-slate-400 font-bold bg-slate-800 px-2 py-0.5 rounded-full">${given.length}</span>
           </div>
@@ -548,7 +584,8 @@ const ProfileApp = {
   },
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+// BUG FIX : Système de démarrage robuste pour éviter tout conflit asynchrone avec DOMContentLoaded
+const runProfileInit = () => {
   const tryInit = () => {
     if (document.getElementById('profile-header-card')) {
       ProfileApp.init();
@@ -556,7 +593,13 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(tryInit, 50);
     }
   };
-  setTimeout(tryInit, 300);
-});
+  setTimeout(tryInit, 100);
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runProfileInit);
+} else {
+    runProfileInit();
+}
 
 window.ProfileApp = ProfileApp;
