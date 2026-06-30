@@ -21,9 +21,11 @@ function showMainView() {
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
     const coachProfile = document.getElementById('coach-profile-view');
+    const footer = document.getElementById('footer-placeholder');
     if (main) main.classList.remove('hidden');
     if (profile) profile.classList.add('hidden');
     if (coachProfile) coachProfile.classList.add('hidden');
+    if (footer) footer.classList.remove('hidden');
     document.body.classList.remove('overflow-hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -33,9 +35,11 @@ function showProfileView() {
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
     const coachProfile = document.getElementById('coach-profile-view');
+    const footer = document.getElementById('footer-placeholder');
     if (main) main.classList.add('hidden');
     if (profile) profile.classList.remove('hidden');
     if (coachProfile) coachProfile.classList.add('hidden');
+    if (footer) footer.classList.add('hidden');
     window.scrollTo({ top: 0 });
 }
 
@@ -56,30 +60,28 @@ document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
 
-    // Chargement des composants asynchrones
+    // Chargement dynamique des composants asynchrones
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
     loadComponent('profile-placeholder', 'components/profile.html');
     loadComponent('coach-profile-placeholder', 'components/coach-profile.html');
 
-    // Dynamic header transparency management on scroll
+    // Gestion de l'opacité et de l'effet flou du Header au défilement (Glassmorphism)
     window.addEventListener('scroll', () => {
         const header = document.querySelector('header');
         if (header) {
             if (window.scrollY > 20) {
-                // Scroll effect (Glassmorphism: transparent blue/slate background with blur)
                 header.classList.remove('bg-slate-950', 'border-slate-900/20');
                 header.classList.add('bg-slate-950/70', 'backdrop-blur-md', 'border-slate-900/40', 'shadow-lg');
             } else {
-                // Initial state at the very top of the page (Opaque and solid)
                 header.classList.remove('bg-slate-950/70', 'backdrop-blur-md', 'border-slate-900/40', 'shadow-lg');
                 header.classList.add('bg-slate-950', 'border-slate-900/20');
             }
         }
     });
 
-    // Carousel
+    // Configuration et défilement du carrousel de cartes de coachs
     const carousel = document.getElementById('coach-carousel');
     const btnLeft = document.getElementById('slide-left');
     const btnRight = document.getElementById('slide-right');
@@ -90,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnRight.addEventListener('click', () => carousel.scrollBy({ left: scrollOffset, behavior: 'smooth' }));
     }
 
-    // Search
+    // Filtrage et recherche de coach par nom ou par discipline
     const searchInput = document.getElementById('search-input');
     const coachCards = document.querySelectorAll('.coach-card');
 
@@ -109,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Profile button (delegated because header loads async)
+    // Gestion déléguée du clic sur le bouton profil
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('#profile-btn');
         if (btn) {
@@ -118,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Home nav link (delegated)
+    // Gestion déléguée du lien d'accueil de la navigation
     document.addEventListener('click', (e) => {
         const link = e.target.closest('nav a[href="#"]');
         if (link && currentView === 'profile') {
