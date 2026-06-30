@@ -3,6 +3,7 @@
 import re
 
 from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from classes import Base
@@ -489,6 +490,7 @@ class Db_Management:
             session.commit()
 
             return {
+                "id": msg.id,
                 "sender": {"id": sender.id, "name": sender.name},
                 "timestamp": msg.timestamp,
                 "text": msg.text,
@@ -553,6 +555,9 @@ class Db_Management:
         except (TypeError, ValueError) as e:
             session.rollback()
             raise DbError(str(e), 400)
+        except IntegrityError as e:
+            session.rollback()
+            raise DbError("A tag with this name already exists", 409)
         finally:
             session.close()
 
@@ -635,6 +640,9 @@ class Db_Management:
         except (TypeError, ValueError) as e:
             session.rollback()
             raise DbError(str(e), 400)
+        except IntegrityError as e:
+            session.rollback()
+            raise DbError("A badge with this name already exists", 409)
         finally:
             session.close()
 
@@ -732,6 +740,9 @@ class Db_Management:
 
             if giver_id == user_id:
                 raise DbError("Cannot give badge to yourself", 400)
+
+            if giver.is_admin or user.is_admin:
+                raise DbError("Admins cannot give or receive badges", 400)
 
             if user.is_coach == giver.is_coach:
                 raise DbError("Cannot give badge to someone with the same role", 400)

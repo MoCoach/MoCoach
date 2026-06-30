@@ -1,11 +1,11 @@
 const PROFILE_DATA = {
-  nickname: 'arveen_fit',
-  firstName: 'Arveen',
-  lastName: 'Loopeshmogun',
-  email: 'arveen@mocoach.mu',
-  phone: '+230 5712 3456',
+  nickname: 'Arveen_Fitness',
+  firstName: 'ex: yourname',
+  lastName: 'ex: yourlastname',
+  email: 'ex: @example.com',
+  phone: '+230 0000 0000',
   zipCode: '72134',
-  avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=300&q=80',
+  avatar: 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   badges: [
     {
       id: 'b1', icon: 'flame', title: 'Unparalleled Force',
