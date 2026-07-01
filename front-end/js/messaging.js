@@ -119,14 +119,7 @@ const ChatApp = {
               discipline: card.getAttribute('data-discipline'),
               avatar: img ? img.src : '',
             },
-            messages: [
-              {
-                id: this._id(),
-                senderId: coachId,
-                text: `Hi! I'm ${card.getAttribute('data-name')}, your ${card.getAttribute('data-discipline')} coach. How can I help you today?`,
-                timestamp: new Date().toISOString(),
-              },
-            ],
+            messages: [],
             unread: 0,
             lastActivity: new Date().toISOString(),
           };
@@ -185,25 +178,6 @@ const ChatApp = {
     this.renderConversations();
     this.scrollToBottom();
 
-    clearTimeout(this._replyTimer);
-    const delay = 800 + Math.random() * 1500;
-    this._replyTimer = setTimeout(() => {
-      const reply = {
-        id: this._id(),
-        senderId: conv.coach.id,
-        text: this._autoReply(),
-        timestamp: new Date().toISOString(),
-      };
-      conv.messages.push(reply);
-      conv.lastActivity = reply.timestamp;
-      this.renderChat(conv);
-      this.renderConversations();
-      this.scrollToBottom();
-      if (this.activeId !== conv.id) {
-        conv.unread = (conv.unread || 0) + 1;
-        this.renderConversations();
-      }
-    }, delay);
   },
 
   renderConversations() {
