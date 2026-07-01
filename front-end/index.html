@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoCoach - Centralized Sports & Wellness Marketplace in Mauritius</title>
 
-  <link class="rounded-full" rel="icon" type="image/png" href="assets/img/favicon_MoCoach_3.png">
+  <link class="rounded-full" rel="icon" type="image/png" href="assets/img/favicon_MoCoach.png">
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -747,16 +747,16 @@
                 <i data-lucide="star" class="w-4 h-4 fill-current"></i>
               </div>
               <p class="text-slate-300 text-sm leading-relaxed italic">
-                "As a tourist visiting Mauritius, I wanted to maintain my active training routine on-site. MoCoach matched me with JP, an elite athletic conditioning trainer. We booked beach training directly online. Exceptional experience!"
+                "Focused pad work, boxing fundamentals, and intense conditioning drills."
               </p>
             </div>
             <div class="flex items-center space-x-4 mt-8 pt-4 border-t border-slate-900">
-              <div class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center font-bold text-sm text-emerald-400">
-                MH
+              <div class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center font-bold text-sm text-blue-400">
+                CL
               </div>
               <div>
-                <p class="text-sm font-bold text-white">Marcus Hill</p>
-                <p class="text-[10px] text-slate-500">Verified Client • Tourist from Germany</p>
+                <p class="text-sm font-bold text-white">Cedric L.</p>
+                <p class="text-[10px] text-slate-500">Verified Client • Mauritius Resident</p>
               </div>
             </div>
           </div>
@@ -902,13 +902,13 @@
   <!-- Profile page will be injected here by JS -->
   <div id="profile-placeholder"></div>
 
-  <!-- MODAL "APPLY AS A COACH" (Double-onglet : Inscription / Connexion avec Placeholders natifs) -->
+  <!-- MODAL "APPLY AS A COACH" (Dual Register & Login Tabs) -->
   <div id="coach-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl p-8 relative my-auto shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
       
       <!-- Modal Header -->
       <div class="flex justify-between items-center mb-6">
-        <h2 id="modal-title" class="text-2xl font-bold text-white">S'inscrire</h2>
+        <h2 id="modal-title" class="text-2xl font-bold text-white">Register</h2>
         <button id="close-modal-btn" class="text-slate-400 hover:text-white transition focus:outline-none">
           <i data-lucide="x" class="w-6 h-6"></i>
         </button>
@@ -916,16 +916,16 @@
 
       <!-- Navigation Tabs -->
       <div class="flex border-b border-slate-800 mb-6">
-        <button id="tab-register-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-blue-500 text-white transition focus:outline-none">S'inscrire</button>
-        <button id="tab-login-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-transparent text-slate-400 hover:text-white transition focus:outline-none">Se connecter</button>
+        <button id="tab-register-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-blue-500 text-white transition focus:outline-none">Register</button>
+        <button id="tab-login-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-transparent text-slate-400 hover:text-white transition focus:outline-none">Login</button>
       </div>
 
-      <!-- Formulaire d'Inscription -->
+      <!-- Inscription / Registration Form (Fully translated into English with Placeholders) -->
       <form id="register-form" class="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
         
         <!-- Pseudo / Nickname -->
         <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Pseudo (Nickname) *</label>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username (Pseudo) *</label>
           <input type="text" id="reg-nickname" placeholder="ex: pseudo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-650 focus:outline-none focus:border-blue-500 transition">
         </div>
 
@@ -947,7 +947,7 @@
           <input type="email" id="reg-email" placeholder="ex: @example.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
-        <!-- City (qui remplace Zip Code) -->
+        <!-- City (Replaces Zip Code) -->
         <div class="md:col-span-2">
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">City *</label>
           <input type="text" id="reg-city" placeholder="ex: Grand Baie" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
@@ -995,20 +995,20 @@
         <!-- Submit Button -->
         <div class="md:col-span-2 mt-2">
           <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg">
-            S'inscrire (S'enregistrer)
+            Register
           </button>
         </div>
       </form>
 
-      <!-- Formulaire de Connexion -->
+      <!-- Connexion / Login Form (Fully translated into English with Placeholders) -->
       <form id="login-form" class="hidden flex flex-col gap-5 text-left">
         <div>
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Pseudo ou Email *</label>
-          <input type="text" id="login-identity" placeholder="ex: pseudo ou arveentest@gmail.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username or Email *</label>
+          <input type="text" id="login-identity" placeholder="ex: pseudo or arveentest@gmail.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Mot de Passe *</label>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
           <input type="password" id="login-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
@@ -1017,7 +1017,7 @@
 
         <div class="mt-2">
           <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg">
-            Se connecter
+            Login
           </button>
         </div>
       </form>
@@ -1124,7 +1124,7 @@
                 ${badge}
               `;
 
-              // CLICK EVENT TO SWITCH WHICH PHOTO IS THE PROFILE PICTURE
+              // CLICK EVENT TO SWITCH WHICH PHOTO IS THE PROFILE PIC
               div.addEventListener('click', () => {
                 // Reset all sibling previews to default border and remove badge
                 const siblings = previewsContainer.children;

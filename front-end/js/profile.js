@@ -5,6 +5,7 @@ const PROFILE_DATA = {
   email: '',
   phone: '',
   city: '',
+  bio: '', // Ajout de la propriété bio par défaut
   avatar: 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   badges: [
     {
@@ -136,6 +137,7 @@ const ProfileApp = {
     if (!el) return;
     const d = this.data;
 
+    // Modification pour intégrer la Bio sous le nom de compte
     el.innerHTML = `
       <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
         <div class="relative flex-shrink-0">
@@ -148,6 +150,7 @@ const ProfileApp = {
         </div>
         <div class="text-center md:text-left flex-1 min-w-0 flex flex-col justify-center">
           <p class="text-blue-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${this._esc(d.nickname || 'pseudo')}</p>
+          <p class="text-slate-300 text-sm mt-2.5 leading-relaxed italic max-w-xl break-words">${this._esc(d.bio || 'No bio written yet.')}</p>
         </div>
         <div class="flex-shrink-0 mt-4 md:mt-0 flex items-center space-x-3">
           <button onclick="ProfileApp.scrollToPersonal()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
@@ -167,6 +170,8 @@ const ProfileApp = {
     const el = document.getElementById('profile-personal-form');
     if (!el) return;
     const d = this.data;
+    
+    // Ajout du champ "Bio" à la liste des champs éditables
     const fields = [
       { id: 'pf-nickname', label: 'Pseudo', value: d.nickname || '', placeholder: 'ex: pseudo', type: 'text', required: true, colSpan: false },
       { id: 'pf-firstName', label: 'First Name', value: d.firstName || '', placeholder: 'ex: yourname', type: 'text', required: true, colSpan: false },
@@ -174,22 +179,31 @@ const ProfileApp = {
       { id: 'pf-email', label: 'Email', value: d.email || '', placeholder: 'ex: @example.com', type: 'email', required: true, colSpan: false },
       { id: 'pf-phone', label: 'Phone Number', value: d.phone || '', placeholder: 'ex: +230 5000 0000', type: 'tel', required: false, colSpan: false },
       { id: 'pf-city', label: 'City', value: d.city || '', placeholder: 'ex: Grand Baie', type: 'text', required: true, colSpan: false },
+      { id: 'pf-bio', label: 'Bio', value: d.bio || '', placeholder: 'Describe your coaching background...', type: 'textarea', required: false, colSpan: true },
     ];
 
     el.innerHTML = `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        ${fields.map(f => `
-          <div class="${f.colSpan ? 'md:col-span-2' : ''}">
-            <label for="${f.id}" class="block text-base font-semibold text-slate-200 mb-2">
-              ${this._esc(f.label)} ${f.required ? '<span class="text-red-500">*</span>' : ''}
-            </label>
-            <input id="${f.id}" type="${f.type}" value="${this._esc(f.value)}"
-              placeholder="${this._esc(f.placeholder)}"
-              ${f.required ? 'required' : ''}
-              class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
-            <p id="${f.id}-error" class="text-red-500 text-xs mt-1 hidden"></p>
-          </div>
-        `).join('')}
+        ${fields.map(f => {
+          // Gestion des champs d'entrée simples et de la zone de texte multi-ligne pour la bio
+          const inputHtml = f.type === 'textarea'
+            ? `<textarea id="${f.id}" rows="3" placeholder="${this._esc(f.placeholder)}"
+                 class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base resize-none">${this._esc(f.value)}</textarea>`
+            : `<input id="${f.id}" type="${f.type}" value="${this._esc(f.value)}"
+                 placeholder="${this._esc(f.placeholder)}"
+                 ${f.required ? 'required' : ''}
+                 class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">`;
+
+          return `
+            <div class="${f.colSpan ? 'md:col-span-2' : ''}">
+              <label for="${f.id}" class="block text-base font-semibold text-slate-200 mb-2">
+                ${this._esc(f.label)} ${f.required ? '<span class="text-red-500">*</span>' : ''}
+              </label>
+              ${inputHtml}
+              <p id="${f.id}-error" class="text-red-500 text-xs mt-1 hidden"></p>
+            </div>
+          `;
+        }).join('')}
       </div>
       <div class="mt-6 flex items-center justify-between">
         <p id="pf-status" class="text-sm text-slate-500"></p>
@@ -202,10 +216,10 @@ const ProfileApp = {
   },
 
   savePersonalInfo() {
-    const fields = ['nickname', 'firstName', 'lastName', 'email', 'phone', 'city'];
+    const fields = ['nickname', 'firstName', 'lastName', 'email', 'phone', 'city', 'bio'];
     const fieldIds = {
       nickname: 'pf-nickname', firstName: 'pf-firstName', lastName: 'pf-lastName',
-      email: 'pf-email', phone: 'pf-phone', city: 'pf-city',
+      email: 'pf-email', phone: 'pf-phone', city: 'pf-city', bio: 'pf-bio',
     };
     const validators = {
       nickname: (v) => {
@@ -242,6 +256,10 @@ const ProfileApp = {
         if (!/^[a-zA-Z\s'-,]+$/.test(v)) return 'Letters, spaces, and commas only';
         return '';
       },
+      bio: (v) => {
+        if (v.length > 500) return 'Bio must be under 500 characters';
+        return '';
+      }
     };
 
     let hasError = false;
@@ -470,7 +488,7 @@ const ProfileApp = {
       html += `
         <div class="relative z-10">
           <div class="flex items-center space-x-2 mb-4">
-            <i data-lucide="upload" class="w-4 h-4 text-blue-400"></i>
+            <i data-lucide="upload" class="w-4 h-4 text-blue-600"></i>
             <h3 class="text-base font-bold text-slate-300">Badges You've Given</h3>
             <span class="text-[10px] text-slate-400 font-bold bg-slate-800 px-2 py-0.5 rounded-full">${given.length}</span>
           </div>

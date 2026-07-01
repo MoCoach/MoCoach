@@ -74,7 +74,7 @@ function updateHeaderProfilePic() {
         if (window.lucide) lucide.createIcons();
         if (dropdown) {
             dropdown.innerHTML = `
-                <a href="#" id="dropdown-login-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition font-semibold">Se connecter / S'inscrire</a>
+                <a href="#" id="dropdown-login-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-850 hover:text-white transition font-semibold">Login / Register</a>
             `;
         }
     }
@@ -98,7 +98,7 @@ function switchModalTab(tab) {
         regTabBtn.classList.remove('border-transparent', 'text-slate-400');
         loginTabBtn.classList.remove('border-blue-500', 'text-white');
         loginTabBtn.classList.add('border-transparent', 'text-slate-400');
-        if (modalTitle) modalTitle.textContent = "S'inscrire";
+        if (modalTitle) modalTitle.textContent = "Register";
     } else {
         loginForm.classList.remove('hidden');
         registerForm.classList.add('hidden');
@@ -106,7 +106,7 @@ function switchModalTab(tab) {
         loginTabBtn.classList.remove('border-transparent', 'text-slate-400');
         regTabBtn.classList.remove('border-blue-500', 'text-white');
         regTabBtn.classList.add('border-transparent', 'text-slate-400');
-        if (modalTitle) modalTitle.textContent = "Se connecter";
+        if (modalTitle) modalTitle.textContent = "Login";
     }
 }
 
@@ -170,7 +170,7 @@ const runAppInit = () => {
             const confirmPass = document.getElementById('reg-confirm-password').value;
 
             if (pass !== confirmPass) {
-                alert("Erreur : Les mots de passe ne correspondent pas ! Veuillez réessayer.");
+                alert("Error: Passwords do not match! Please try again.");
                 return;
             }
 
@@ -188,6 +188,7 @@ const runAppInit = () => {
                 phone: '', // Initialement vide pour être édité sur le profil
                 password: pass,
                 avatar: avatarSrc,
+                bio: document.getElementById('reg-bio').value.trim(), // Sauvegarde bien la bio à l'inscription
                 badges: [
                     {
                         id: 'b1', icon: 'flame', title: 'Unparalleled Force',
@@ -248,7 +249,7 @@ const runAppInit = () => {
             } else {
                 // Erreur de connexion
                 if (errorDiv) {
-                    errorDiv.textContent = "Pseudo/Email ou Mot de passe incorrect.";
+                    errorDiv.textContent = "Incorrect Username/Email or Password.";
                     errorDiv.classList.remove('hidden');
                 }
             }
