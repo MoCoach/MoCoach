@@ -1,19 +1,10 @@
 const PROFILE_DATA = {
-<<<<<<< HEAD
   nickname: 'pseudo',
   firstName: '',
   lastName: '',
   email: '',
   phone: '',
   city: '',
-=======
-  nickname: 'Arveen_Fitness',
-  firstName: 'ex: yourname',
-  lastName: 'ex: yourlastname',
-  email: 'ex: @example.com',
-  phone: '+230 0000 0000',
-  zipCode: '72134',
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
   avatar: 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   badges: [
     {
@@ -96,6 +87,7 @@ const ProfileApp = {
 
     this.render();
     this.bindEvents();
+    this.generateTwinklingStars(); // Génère les 220 étoiles scintillantes
   },
 
   render() {
@@ -106,7 +98,6 @@ const ProfileApp = {
     if (window.lucide) lucide.createIcons();
   },
 
-<<<<<<< HEAD
   generateTwinklingStars() {
     const container = document.getElementById('stars-container');
     if (!container) return;
@@ -140,39 +131,25 @@ const ProfileApp = {
     window.location.reload();
   },
 
-=======
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
   renderHeader() {
     const el = document.getElementById('profile-header-card');
     if (!el) return;
     const d = this.data;
 
     el.innerHTML = `
-      <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+      <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
         <div class="relative flex-shrink-0">
           <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-blue-500/30 shadow-xl">
-<<<<<<< HEAD
             <img src="${this._esc(d.avatar || PROFILE_DATA.avatar)}" alt="User avatar" class="w-full h-full object-cover" loading="lazy">
-=======
-            <img src="${this._esc(d.avatar)}" alt="${this._esc(d.firstName)}" class="w-full h-full object-cover" loading="lazy">
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
           </div>
-          <div class="absolute -bottom-1 -right-1 bg-emerald-500 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
+          <div class="absolute -bottom-1 -right-1 bg-emerald-500 w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center">
             <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
           </div>
         </div>
-<<<<<<< HEAD
         <div class="text-center md:text-left flex-1 min-w-0 flex flex-col justify-center">
           <p class="text-blue-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${this._esc(d.nickname || 'pseudo')}</p>
         </div>
         <div class="flex-shrink-0 mt-4 md:mt-0 flex items-center space-x-3">
-=======
-        <div class="text-center md:text-left flex-1 min-w-0">
-          <p class="text-blue-400 text-sm font-mono">@${this._esc(d.nickname)}</p>
-          <h1 class="text-2xl md:text-3xl font-extrabold text-white mt-0.5">${this._esc(d.firstName)} ${this._esc(d.lastName)}</h1>
-        </div>
-        <div class="flex-shrink-0">
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
           <button onclick="ProfileApp.scrollToPersonal()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
             <span>Edit Profile</span>
@@ -191,37 +168,25 @@ const ProfileApp = {
     if (!el) return;
     const d = this.data;
     const fields = [
-<<<<<<< HEAD
       { id: 'pf-nickname', label: 'Pseudo', value: d.nickname || '', placeholder: 'ex: pseudo', type: 'text', required: true, colSpan: false },
       { id: 'pf-firstName', label: 'First Name', value: d.firstName || '', placeholder: 'ex: yourname', type: 'text', required: true, colSpan: false },
       { id: 'pf-lastName', label: 'Last Name', value: d.lastName || '', placeholder: 'ex: yourlastname', type: 'text', required: true, colSpan: false },
       { id: 'pf-email', label: 'Email', value: d.email || '', placeholder: 'ex: @example.com', type: 'email', required: true, colSpan: false },
       { id: 'pf-phone', label: 'Phone Number', value: d.phone || '', placeholder: 'ex: +230 5000 0000', type: 'tel', required: false, colSpan: false },
       { id: 'pf-city', label: 'City', value: d.city || '', placeholder: 'ex: Grand Baie', type: 'text', required: true, colSpan: false },
-=======
-      { id: 'pf-nickname', label: 'Nickname', value: d.nickname, type: 'text', required: true, colSpan: false },
-      { id: 'pf-firstName', label: 'First Name', value: d.firstName, type: 'text', required: true, colSpan: false },
-      { id: 'pf-lastName', label: 'Last Name', value: d.lastName, type: 'text', required: true, colSpan: false },
-      { id: 'pf-email', label: 'Email', value: d.email, type: 'email', required: true, colSpan: false },
-      { id: 'pf-phone', label: 'Phone Number', value: d.phone, type: 'tel', required: false, colSpan: false },
-      { id: 'pf-zipCode', label: 'Zip Code', value: d.zipCode, type: 'text', required: true, colSpan: false },
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
     ];
 
     el.innerHTML = `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         ${fields.map(f => `
           <div class="${f.colSpan ? 'md:col-span-2' : ''}">
-            <label for="${f.id}" class="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label for="${f.id}" class="block text-base font-semibold text-slate-200 mb-2">
               ${this._esc(f.label)} ${f.required ? '<span class="text-red-500">*</span>' : ''}
             </label>
             <input id="${f.id}" type="${f.type}" value="${this._esc(f.value)}"
+              placeholder="${this._esc(f.placeholder)}"
               ${f.required ? 'required' : ''}
-<<<<<<< HEAD
               class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
-=======
-              class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-sm">
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
             <p id="${f.id}-error" class="text-red-500 text-xs mt-1 hidden"></p>
           </div>
         `).join('')}
@@ -237,14 +202,14 @@ const ProfileApp = {
   },
 
   savePersonalInfo() {
-    const fields = ['nickname', 'firstName', 'lastName', 'email', 'phone', 'zipCode'];
+    const fields = ['nickname', 'firstName', 'lastName', 'email', 'phone', 'city'];
     const fieldIds = {
       nickname: 'pf-nickname', firstName: 'pf-firstName', lastName: 'pf-lastName',
-      email: 'pf-email', phone: 'pf-phone', zipCode: 'pf-zipCode',
+      email: 'pf-email', phone: 'pf-phone', city: 'pf-city',
     };
     const validators = {
       nickname: (v) => {
-        if (!v) return 'Nickname is required';
+        if (!v) return 'Pseudo is required';
         if (v.length < 3 || v.length > 20) return 'Must be 3–20 characters';
         if (!/^[a-zA-Z0-9_]+$/.test(v)) return 'Letters, numbers, and underscores only';
         return '';
@@ -271,9 +236,10 @@ const ProfileApp = {
         if (!/^\+?[\d\s-]{7,15}$/.test(v)) return 'Invalid phone number';
         return '';
       },
-      zipCode: (v) => {
-        if (!v) return 'Zip code is required';
-        if (!/^\d{5}$/.test(v)) return 'Must be 5 digits';
+      city: (v) => {
+        if (!v) return 'City is required';
+        if (v.length < 2 || v.length > 50) return 'Must be 2–50 characters';
+        if (!/^[a-zA-Z\s'-,]+$/.test(v)) return 'Letters, spaces, and commas only';
         return '';
       },
     };
@@ -289,10 +255,10 @@ const ProfileApp = {
       const err = validators[f](val);
       if (err) {
         hasError = true;
-        input.className = input.className.replace('border-slate-300', 'border-red-400') + ' border-red-400';
+        input.className = input.className.replace('border-slate-800', 'border-red-400') + ' border-red-400';
         if (errorEl) { errorEl.textContent = err; errorEl.classList.remove('hidden'); }
       } else {
-        input.className = input.className.replace('border-red-400', 'border-slate-300');
+        input.className = input.className.replace('border-red-400', 'border-slate-800');
         if (errorEl) { errorEl.textContent = ''; errorEl.classList.add('hidden'); }
       }
     });
@@ -303,7 +269,7 @@ const ProfileApp = {
     }
 
     Object.assign(this.data, values);
-    localStorage.setItem('mocoach_user', JSON.stringify(this.data)); // Enregistre les changements
+    localStorage.setItem('mocoach_user', JSON.stringify(this.data)); // Enregistre les changements dans la session locale
     
     // Met à jour dynamiquement la photo de profil du Header d'accueil après modification
     if (window.updateHeaderProfilePic) {
@@ -321,55 +287,37 @@ const ProfileApp = {
     el.innerHTML = `
       <div class="space-y-5">
         <div>
-<<<<<<< HEAD
           <label for="pf-currentPw" class="block text-base font-semibold text-slate-700 mb-2">Current Password</label>
           <div class="relative">
             <input id="pf-currentPw" type="password" placeholder="Enter current password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
-=======
-          <label for="pf-currentPw" class="block text-sm font-semibold text-slate-700 mb-1.5">Current Password</label>
-          <div class="relative">
-            <input id="pf-currentPw" type="password" placeholder="Enter current password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 pr-11 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-sm">
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
             <button onclick="ProfileApp.togglePassword('pf-currentPw', 'pw-toggle-current')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-current" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
         <div>
-<<<<<<< HEAD
           <label for="pf-newPw" class="block text-base font-semibold text-slate-700 mb-2">New Password</label>
           <div class="relative">
             <input id="pf-newPw" type="password" placeholder="Enter new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
-=======
-          <label for="pf-newPw" class="block text-sm font-semibold text-slate-700 mb-1.5">New Password</label>
-          <div class="relative">
-            <input id="pf-newPw" type="password" placeholder="Enter new password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 pr-11 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-sm">
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
             <button onclick="ProfileApp.togglePassword('pf-newPw', 'pw-toggle-new')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-new" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
           </div>
-          <div id="pw-strength-bar" class="mt-2 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+          <div id="pw-strength-bar" class="mt-2 h-1.5 rounded-full bg-slate-850 overflow-hidden">
             <div id="pw-strength-fill" class="h-full rounded-full transition-all duration-300" style="width:0%"></div>
           </div>
-          <div id="pw-strength-label" class="text-xs text-slate-400 mt-1"></div>
+          <div id="pw-strength-label" class="text-sm text-slate-300 font-semibold mt-1"></div>
           <ul id="pw-criteria" class="mt-2 space-y-1">
-            <li id="pw-criteria-length" class="text-xs text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>At least 8 characters</span></li>
-            <li id="pw-criteria-upper" class="text-xs text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>One uppercase letter</span></li>
-            <li id="pw-criteria-number" class="text-xs text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>One number</span></li>
-            <li id="pw-criteria-special" class="text-xs text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>One special character</span></li>
+            <li id="pw-criteria-length" class="text-sm text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>At least 8 characters</span></li>
+            <li id="pw-criteria-upper" class="text-sm text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>One uppercase letter</span></li>
+            <li id="pw-criteria-number" class="text-sm text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>One number</span></li>
+            <li id="pw-criteria-special" class="text-sm text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>One special character</span></li>
           </ul>
         </div>
         <div>
-<<<<<<< HEAD
           <label for="pf-confirmPw" class="block text-base font-semibold text-slate-700 mb-2">Confirm New Password</label>
           <div class="relative">
             <input id="pf-confirmPw" type="password" placeholder="Confirm new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
-=======
-          <label for="pf-confirmPw" class="block text-sm font-semibold text-slate-700 mb-1.5">Confirm New Password</label>
-          <div class="relative">
-            <input id="pf-confirmPw" type="password" placeholder="Confirm new password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 pr-11 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-sm">
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
             <button onclick="ProfileApp.togglePassword('pf-confirmPw', 'pw-toggle-confirm')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-confirm" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
@@ -415,11 +363,11 @@ const ProfileApp = {
     criteria.forEach(({ id, pass }) => {
       const el = document.getElementById(id);
       if (!el) return;
-      el.className = `text-xs flex items-center space-x-1.5 ${pass ? 'text-emerald-600' : 'text-slate-400'}`;
+      el.className = `text-sm flex items-center space-x-1.5 ${pass ? 'text-emerald-400 font-bold' : 'text-slate-500'}`;
       const icon = el.querySelector('i');
       if (icon) {
         icon.setAttribute('data-lucide', pass ? 'check-circle' : 'circle');
-        icon.className = pass ? 'w-2.5 h-2.5' : 'w-2.5 h-2.5';
+        icon.className = pass ? 'w-3 h-3' : 'w-3 h-3';
       }
     });
 
@@ -440,81 +388,23 @@ const ProfileApp = {
       fill.style.width = '25%';
       fill.className = 'h-full rounded-full bg-red-400 transition-all duration-300';
       label.textContent = 'Weak';
-      label.className = 'text-xs text-red-500 font-medium mt-1';
+      label.className = 'text-sm text-red-500 font-bold mt-1';
     } else if (score === 2) {
       fill.style.width = '50%';
       fill.className = 'h-full rounded-full bg-amber-400 transition-all duration-300';
       label.textContent = 'Fair';
-      label.className = 'text-xs text-amber-500 font-medium mt-1';
+      label.className = 'text-sm text-amber-500 font-bold mt-1';
     } else if (score === 3) {
       fill.style.width = '75%';
       fill.className = 'h-full rounded-full bg-blue-500 transition-all duration-300';
       label.textContent = 'Good';
-      label.className = 'text-xs text-blue-500 font-medium mt-1';
+      label.className = 'text-sm text-blue-500 font-bold mt-1';
     } else {
       fill.style.width = '100%';
       fill.className = 'h-full rounded-full bg-emerald-500 transition-all duration-300';
       label.textContent = 'Strong';
-      label.className = 'text-xs text-emerald-500 font-medium mt-1';
+      label.className = 'text-sm text-emerald-600 font-bold mt-1';
     }
-  },
-
-  changePassword() {
-    const current = document.getElementById('pf-currentPw');
-    const newPw = document.getElementById('pf-newPw');
-    const confirm = document.getElementById('pf-confirmPw');
-    const status = document.getElementById('pw-status');
-
-    if (!current || !newPw || !confirm) return;
-
-    const curVal = current.value.trim();
-    const newVal = newPw.value.trim();
-    const confVal = confirm.value.trim();
-
-    if (!curVal) {
-      this.showToast('Please enter your current password', 'error');
-      current.focus();
-      return;
-    }
-    if (!newVal) {
-      this.showToast('Please enter a new password', 'error');
-      newPw.focus();
-      return;
-    }
-
-    const hasLength = newVal.length >= 8;
-    const hasUpper = /[A-Z]/.test(newVal);
-    const hasNumber = /\d/.test(newVal);
-    const hasSpecial = /[^a-zA-Z0-9]/.test(newVal);
-    const score = [hasLength, hasUpper, hasNumber, hasSpecial].filter(Boolean).length;
-
-    if (score < 3) {
-      this.showToast('Password is not strong enough. Aim for at least Good strength.', 'error');
-      return;
-    }
-
-    if (newVal !== confVal) {
-      const errEl = document.getElementById('pf-confirmPw-error');
-      if (errEl) { errEl.textContent = 'Passwords do not match'; errEl.classList.remove('hidden'); }
-      confirm.className = confirm.className.replace('border-slate-300', 'border-red-400') + ' border-red-400';
-      this.showToast('Passwords do not match', 'error');
-      return;
-    }
-
-    const errEl = document.getElementById('pf-confirmPw-error');
-    if (errEl) errEl.classList.add('hidden');
-    confirm.className = confirm.className.replace('border-red-400', 'border-slate-300');
-
-    current.value = '';
-    newPw.value = '';
-    confirm.value = '';
-    this.checkPasswordStrength('');
-    if (status) status.textContent = '';
-
-    // Enregistrement du nouveau mot de passe dans le localStorage pour la persistance
-    this.data.password = newVal;
-    localStorage.setItem('mocoach_user', JSON.stringify(this.data));
-    this.showToast('Password changed successfully!', 'success');
   },
 
   renderBadges() {
@@ -527,8 +417,8 @@ const ProfileApp = {
       const dateKey = isReceived ? 'dateEarned' : 'dateGiven';
       return `
         <div class="relative badge-cell group flex items-center justify-center">
-          <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-blue-500/10 to-emerald-500/10 flex items-center justify-center border border-slate-200/60 group-hover:border-blue-300 group-hover:shadow-md group-hover:scale-110 transition-all duration-200 cursor-default">
-            <i data-lucide="${this._esc(b.icon)}" class="w-5 h-5 md:w-6 md:h-6 text-blue-600"></i>
+          <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-blue-500/10 to-emerald-500/10 flex items-center justify-center border border-slate-800/80 bg-slate-950/40 group-hover:border-blue-500/50 group-hover:shadow-md group-hover:scale-110 transition-all duration-200 cursor-default">
+            <i data-lucide="${this._esc(b.icon)}" class="w-5 h-5 md:w-6 md:h-6 text-blue-400"></i>
           </div>
           <div class="badge-tooltip">
             <div class="badge-tooltip-inner">
@@ -546,8 +436,8 @@ const ProfileApp = {
 
     if (received.length === 0 && given.length === 0) {
       el.innerHTML = `
-        <div class="flex flex-col items-center justify-center py-12 text-slate-400">
-          <i data-lucide="award" class="w-12 h-12 mb-3 text-slate-300"></i>
+        <div class="flex flex-col items-center justify-center py-12 text-slate-500">
+          <i data-lucide="award" class="w-12 h-12 mb-3 text-slate-400"></i>
           <p class="text-sm font-semibold text-slate-500">No badges yet</p>
           <p class="text-xs text-slate-400 mt-1">Complete sessions with coaches to earn achievements!</p>
         </div>
@@ -565,11 +455,11 @@ const ProfileApp = {
 
     if (received.length > 0) {
       html += `
-        <div class="mb-8">
+        <div class="mb-8 relative z-10">
           <div class="flex items-center space-x-2 mb-4">
-            <i data-lucide="download" class="w-4 h-4 text-emerald-500"></i>
-            <h3 class="text-sm font-bold text-slate-700">Badges from Coaches</h3>
-            <span class="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">${received.length}</span>
+            <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
+            <h3 class="text-base font-bold text-slate-300">Badges from Coaches</h3>
+            <span class="text-[10px] text-slate-400 font-bold bg-slate-800 px-2 py-0.5 rounded-full">${received.length}</span>
           </div>
           ${renderGrid(received, true)}
         </div>
@@ -578,17 +468,11 @@ const ProfileApp = {
 
     if (given.length > 0) {
       html += `
-        <div>
+        <div class="relative z-10">
           <div class="flex items-center space-x-2 mb-4">
-<<<<<<< HEAD
-            <i data-lucide="upload" class="w-4 h-4 text-blue-600"></i>
+            <i data-lucide="upload" class="w-4 h-4 text-blue-400"></i>
             <h3 class="text-base font-bold text-slate-300">Badges You've Given</h3>
             <span class="text-[10px] text-slate-400 font-bold bg-slate-800 px-2 py-0.5 rounded-full">${given.length}</span>
-=======
-            <i data-lucide="upload" class="w-4 h-4 text-blue-500"></i>
-            <h3 class="text-sm font-bold text-slate-700">Badges You've Given</h3>
-            <span class="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">${given.length}</span>
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
           </div>
           ${renderGrid(given, false)}
         </div>

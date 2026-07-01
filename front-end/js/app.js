@@ -24,8 +24,12 @@ function showMainView() {
     currentView = 'home';
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
+    const footer = document.getElementById('footer-placeholder'); // Cible l'élément footer
+    
     if (main) main.classList.remove('hidden');
     if (profile) profile.classList.add('hidden');
+    if (footer) footer.classList.remove('hidden'); // Affiche le footer sur la page d'accueil
+    
     document.body.classList.remove('overflow-hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -34,8 +38,12 @@ function showProfileView() {
     currentView = 'profile';
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
+    const footer = document.getElementById('footer-placeholder'); // Cible l'élément footer
+    
     if (main) main.classList.add('hidden');
     if (profile) profile.classList.remove('hidden');
+    if (footer) footer.classList.add('hidden'); // Masque le footer sur la vue profil
+    
     window.scrollTo({ top: 0 });
 }
 
@@ -56,7 +64,7 @@ function updateHeaderProfilePic() {
         }
         if (dropdown) {
             dropdown.innerHTML = `
-                <a href="#" id="dropdown-profile-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-850 hover:text-white transition font-semibold">My Profile</a>
+                <a href="#" id="dropdown-profile-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition font-semibold">My Profile</a>
                 <hr class="border-slate-800 my-1">
                 <a href="#" id="dropdown-logout-link" class="block px-4 py-2 text-sm text-red-400 hover:bg-red-950/30 hover:text-red-300 transition font-bold">Logout</a>
             `;
@@ -66,7 +74,7 @@ function updateHeaderProfilePic() {
         if (window.lucide) lucide.createIcons();
         if (dropdown) {
             dropdown.innerHTML = `
-                <a href="#" id="dropdown-login-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-850 hover:text-white transition font-semibold">Se connecter / S'inscrire</a>
+                <a href="#" id="dropdown-login-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition font-semibold">Se connecter / S'inscrire</a>
             `;
         }
     }
@@ -107,13 +115,12 @@ const runAppInit = () => {
         lucide.createIcons();
     }
 
-    // Chargement des composants asynchrones
+    // Chargement dynamique des composants asynchrones
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
     loadComponent('profile-placeholder', 'components/profile.html');
 
-<<<<<<< HEAD
     // Liaison des clics d'onglets de la pop-up
     document.addEventListener('click', (e) => {
         if (e.target.id === 'tab-register-btn') {
@@ -249,25 +256,20 @@ const runAppInit = () => {
     });
 
     // Gestion de l'opacité et de l'effet flou du Header au défilement (Glassmorphism)
-=======
-    // Gestion dynamique de la transparence du header au défilement
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
     window.addEventListener('scroll', () => {
         const header = document.querySelector('header');
         if (header) {
             if (window.scrollY > 20) {
-                // Effet lors du défilement (Glassmorphism : fond bleu/slate transparent avec flou)
                 header.classList.remove('bg-slate-950', 'border-slate-900/20');
                 header.classList.add('bg-slate-950/70', 'backdrop-blur-md', 'border-slate-900/40', 'shadow-lg');
             } else {
-                // État initial tout en haut de la page (Opaque et solide)
                 header.classList.remove('bg-slate-950/70', 'backdrop-blur-md', 'border-slate-900/40', 'shadow-lg');
                 header.classList.add('bg-slate-950', 'border-slate-900/20');
             }
         }
     });
 
-    // Carousel
+    // Configuration et défilement du carrousel de cartes de coachs
     const carousel = document.getElementById('coach-carousel');
     const btnLeft = document.getElementById('slide-left');
     const btnRight = document.getElementById('slide-right');
@@ -278,7 +280,7 @@ const runAppInit = () => {
         btnRight.addEventListener('click', () => carousel.scrollBy({ left: scrollOffset, behavior: 'smooth' }));
     }
 
-    // Search
+    // Filtrage et recherche de coach par nom ou par discipline
     const searchInput = document.getElementById('search-input');
     const coachCards = document.querySelectorAll('.coach-card');
 
@@ -297,11 +299,7 @@ const runAppInit = () => {
         });
     }
 
-<<<<<<< HEAD
     // INTERACTION AU CLIC : Bascule l'affichage du menu déroulant et fermeture si clic extérieur
-=======
-    // Profile button (delegated because header loads async)
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('#profile-btn');
         const dropdown = document.getElementById('profile-dropdown');
@@ -318,7 +316,6 @@ const runAppInit = () => {
         }
     });
 
-<<<<<<< HEAD
     // Bouton "Back to Home" délégué pour garantir la redirection dans tous les cas de figure
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('#profile-back-btn');
@@ -342,8 +339,6 @@ const runAppInit = () => {
         }
     });
 
-=======
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
     // Home nav link (delegated)
     document.addEventListener('click', (e) => {
         const link = e.target.closest('nav a[href="#"]');
@@ -352,7 +347,6 @@ const runAppInit = () => {
             showMainView();
         }
     });
-<<<<<<< HEAD
 };
 
 if (document.readyState === 'loading') {
@@ -360,6 +354,3 @@ if (document.readyState === 'loading') {
 } else {
     runAppInit();
 }
-=======
-});
->>>>>>> 0f0bd0cafd0f38b4b31b7381ec85857f11e0e4dd
