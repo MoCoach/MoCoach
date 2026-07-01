@@ -289,7 +289,7 @@ const runAppInit = () => {
     // See All Coaches: open new tab with full coach listing
     if (seeAllBtn) {
         seeAllBtn.addEventListener('click', () => {
-            window.open('http://localhost:5679/all-coaches.html', '_blank');
+            window.location.href = 'all-coaches.html';
         });
     }
 
