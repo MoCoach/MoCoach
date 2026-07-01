@@ -5,7 +5,8 @@ const PROFILE_DATA = {
   email: '',
   phone: '',
   city: '',
-  bio: '', // Ajout de la propriété bio par défaut
+  bio: '',
+  aboutMeImages: [], // Commence vide par défaut
   avatar: 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   badges: [
     {
@@ -86,6 +87,11 @@ const ProfileApp = {
       this.data = JSON.parse(JSON.stringify(PROFILE_DATA));
     }
 
+    // Assure la présence du tableau d'images "About Me"
+    if (!this.data.aboutMeImages) {
+      this.data.aboutMeImages = [];
+    }
+
     this.render();
     this.bindEvents();
     this.generateTwinklingStars(); // Génère les 220 étoiles scintillantes
@@ -93,6 +99,7 @@ const ProfileApp = {
 
   render() {
     this.renderHeader();
+    this.renderAboutMe(); // Nouveau rendu pour la galerie de séances
     this.renderPersonalInfo();
     this.renderSecurity();
     this.renderBadges();
@@ -137,7 +144,6 @@ const ProfileApp = {
     if (!el) return;
     const d = this.data;
 
-    // Modification pour intégrer la Bio sous le nom de compte
     el.innerHTML = `
       <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
         <div class="relative flex-shrink-0">
@@ -166,12 +172,99 @@ const ProfileApp = {
     `;
   },
 
+  renderAboutMe() {
+    const container = document.getElementById('aboutme-images-container');
+    if (!container) return;
+
+    const images = this.data.aboutMeImages || [];
+    let html = '';
+
+    // 1. Rendu des miniatures ajoutées (Affiche 4 par écran grâce à la largeur de 25%)
+    html += images.map((img, index) => `
+      <div class="relative group rounded-2xl overflow-hidden min-w-[200px] sm:min-w-[calc(25%-12px)] max-w-[calc(25%-12px)] aspect-[16/10] snap-start flex-shrink-0 shadow-lg border border-slate-800/80">
+        <img src="${this._esc(img)}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+        <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+          <button onclick="ProfileApp.deleteAboutMeImage(${index})" class="w-10 h-10 rounded-xl bg-red-650/90 text-white flex items-center justify-center transition hover:bg-red-700 shadow-md">
+            <i data-lucide="trash-2" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+    // 2. Rendu de la case d'ajout dynamique s'il reste de la place (< 7 photos)
+    if (images.length < 7) {
+        html += `
+          <div onclick="document.getElementById('aboutme-file-input').click()" 
+            class="relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-800 hover:border-blue-500/50 bg-slate-950/40 min-w-[200px] sm:min-w-[calc(25%-12px)] max-w-[calc(25%-12px)] aspect-[16/10] snap-start flex-shrink-0 cursor-pointer transition duration-300 text-slate-500 hover:text-blue-400 group">
+            <i data-lucide="plus-circle" class="w-8 h-8 transition-transform group-hover:scale-110"></i>
+            <span class="text-xs font-semibold mt-2">Add Photo (${images.length}/7)</span>
+          </div>
+        `;
+    }
+
+    container.innerHTML = html;
+  },
+
+  deleteAboutMeImage(index) {
+    if (!this.data.aboutMeImages) return;
+    this.data.aboutMeImages.splice(index, 1);
+    localStorage.setItem('mocoach_user', JSON.stringify(this.data));
+    this.renderAboutMe();
+    if (window.lucide) lucide.createIcons();
+    this.showToast('Photo removed successfully!', 'success');
+  },
+
+  compressAndAddImage(file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        // Redimensionnement et compression de l'image (pour rester robuste vis-à-vis du localStorage)
+        const canvas = document.createElement('canvas');
+        const max_width = 800; // Résolution optimale pour paysage de carrousel
+        const scale = max_width / img.width;
+        canvas.width = max_width;
+        canvas.height = img.height * scale;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        // Exportation en JPEG compressé à 70% de qualité
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        
+        if (!this.data.aboutMeImages) this.data.aboutMeImages = [];
+        if (this.data.aboutMeImages.length < 7) {
+          this.data.aboutMeImages.push(compressedBase64);
+          localStorage.setItem('mocoach_user', JSON.stringify(this.data));
+          this.renderAboutMe();
+        }
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  },
+
+  handleAboutMeUpload(e) {
+    const files = e.target.files;
+    if (!files.length) return;
+
+    const currentCount = (this.data.aboutMeImages || []).length;
+    const availableSlots = 7 - currentCount;
+
+    if (files.length > availableSlots) {
+      alert(`You can only add up to ${availableSlots} more photo(s). (Maximum is 7).`);
+      return;
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      this.compressAndAddImage(files[i]);
+    }
+  },
+
   renderPersonalInfo() {
     const el = document.getElementById('profile-personal-form');
     if (!el) return;
     const d = this.data;
-    
-    // Ajout du champ "Bio" à la liste des champs éditables
     const fields = [
       { id: 'pf-nickname', label: 'Pseudo', value: d.nickname || '', placeholder: 'ex: pseudo', type: 'text', required: true, colSpan: false },
       { id: 'pf-firstName', label: 'First Name', value: d.firstName || '', placeholder: 'ex: yourname', type: 'text', required: true, colSpan: false },
@@ -185,7 +278,6 @@ const ProfileApp = {
     el.innerHTML = `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         ${fields.map(f => {
-          // Gestion des champs d'entrée simples et de la zone de texte multi-ligne pour la bio
           const inputHtml = f.type === 'textarea'
             ? `<textarea id="${f.id}" rows="3" placeholder="${this._esc(f.placeholder)}"
                  class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base resize-none">${this._esc(f.value)}</textarea>`
@@ -219,7 +311,7 @@ const ProfileApp = {
     const fields = ['nickname', 'firstName', 'lastName', 'email', 'phone', 'city', 'bio'];
     const fieldIds = {
       nickname: 'pf-nickname', firstName: 'pf-firstName', lastName: 'pf-lastName',
-      email: 'pf-email', phone: 'pf-phone', city: 'pf-city', bio: 'pf-bio',
+      email: 'pf-email', phone: 'pf-phone', city: 'pf-city', bio: 'pf-bio'
     };
     const validators = {
       nickname: (v) => {
@@ -526,6 +618,24 @@ const ProfileApp = {
   },
 
   bindEvents() {
+    // Écouteur pour l'importation de photos "About Me"
+    document.getElementById('aboutme-file-input')?.addEventListener('change', (e) => this.handleAboutMeUpload(e));
+
+    // Liaison des clics pour faire défiler le carrousel About Me de gauche à droite
+    const aboutmeContainer = document.getElementById('aboutme-images-container');
+    const slideLeftBtn = document.getElementById('aboutme-slide-left');
+    const slideRightBtn = document.getElementById('aboutme-slide-right');
+
+    if (aboutmeContainer && slideLeftBtn && slideRightBtn) {
+        const offset = 260; // Distance de défilement horizontal en pixels
+        slideLeftBtn.addEventListener('click', () => {
+            aboutmeContainer.scrollBy({ left: -offset, behavior: 'smooth' });
+        });
+        slideRightBtn.addEventListener('click', () => {
+            aboutmeContainer.scrollBy({ left: offset, behavior: 'smooth' });
+        });
+    }
+
     document.getElementById('profile-back-btn')?.addEventListener('click', (e) => {
       e.preventDefault();
       if (window.showMainView) window.showMainView();
