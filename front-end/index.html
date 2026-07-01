@@ -13,6 +13,10 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- External CSS stylesheet link -->
   <link class="rounded-full" rel="stylesheet" href="css/style.css">
+  <style>
+    .coach-card { cursor: pointer; }
+    .coach-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(59,130,246,0.15); }
+  </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
 
@@ -129,7 +133,7 @@
       <div class="max-w-[1600px] mx-auto px-8">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <span class="text-blue-500 text-xs font-bold uppercase tracking-wider">Simple Coaching Journey</span>
-          <h2 class="text-3xl font-extrabold text-white mt-2">How MoCoach Simplifies Your Booking</h2>
+          <h2 class="text-3xl font-extrabold text-white mt-2">How MoCoach Simplifies Your Booking ?</h2>
           <p class="text-slate-400 text-sm mt-3">From selection to training without standard social media friction.</p>
         </div>
 
@@ -161,12 +165,12 @@
               </div>
               <h3 class="font-bold text-xl text-white mb-3">Book Centrally</h3>
               <p class="text-base text-slate-300 leading-relaxed mb-8">
-                Choose available time slots in real-time, pick location details (home, hotel beach, or gym), and confirm reservation in one location.
+              Choose your coach based on your preferred activity and location.
               </p>
             </div>
             <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
-              <span class="flex items-center space-x-1.5"><i data-lucide="clock" class="w-4 h-4 text-blue-500"></i> <span>Sat, 9:00 AM</span></span>
-              <span class="font-semibold text-emerald-400">Instantly Booked</span>
+              <span class="flex items-center space-x-1.5"><i data-lucide="clock" class="w-4 h-4 text-blue-500"></i> <span>Contact Coach</span></span>
+              <span class="font-semibold text-emerald-400"></span>
             </div>
           </div>
 
@@ -184,7 +188,7 @@
             </div>
             <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
               <span class="flex items-center space-x-1.5"><i data-lucide="thumbs-up" class="w-4 h-4 text-emerald-400"></i> <span>Rate Session</span></span>
-              <span class="text-amber-400 text-sm">★★★★★</span>
+              <span class="text-amber-400 text-sm"></span>
             </div>
           </div>
         </div>
@@ -199,7 +203,7 @@
           <div class="max-w-xl">
             <span class="text-blue-500 text-xs font-bold uppercase tracking-widest">Explore Coaches</span>
             <h2 class="text-3xl font-extrabold text-white mt-2">Meet Our Certified Coaches</h2>
-            <p class="text-slate-400 text-sm mt-2">Every coach undergoes credential checks, profile reviews, and physical vetting to ensure safety and professionalism.</p>
+            <p class="text-slate-400 text-sm mt-2">Every coach undergoes credential checks to ensure safety and professionalism.</p>
           </div>
           
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
@@ -249,7 +253,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">450 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-1')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -275,7 +279,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">600 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 600<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-2')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -301,7 +305,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">550 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-3')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -327,7 +331,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">750 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 750<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-4')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -353,7 +357,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">400 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 400<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-5')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -379,7 +383,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">650 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 650<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-6')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -405,7 +409,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">700 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 700<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-7')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -431,7 +435,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">350 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 350<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-8')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -457,7 +461,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">500 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 500<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-9')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -483,7 +487,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">650 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 650<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-10')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -509,7 +513,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">550 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-11')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -535,7 +539,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">450 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-12')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -561,7 +565,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">480 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 480<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-13')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -587,7 +591,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">500 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 500<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-14')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -613,7 +617,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">800 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 800<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-15')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -639,7 +643,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">550 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-16')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -665,7 +669,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">450 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-17')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -691,7 +695,7 @@
               </div>
             </div>
             <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">400 Rs<span class="text-sm text-white font-normal">/h</span></span>
+              <span class="text-xl font-black text-white">Rs 400<span class="text-sm text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-18')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
