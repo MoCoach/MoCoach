@@ -1,10 +1,15 @@
 from flask import Flask, render_template
 
-app = Flask(__name__)  # Flask automatically uses the 'templates' and 'static' folders by default
+import os
+app = Flask(__name__, template_folder=os.path.dirname(os.path.abspath(__file__)))
 
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/all-coaches.html')
+def all_coaches():
+    return render_template('all-coaches.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5679)

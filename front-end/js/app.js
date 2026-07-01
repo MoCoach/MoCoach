@@ -270,33 +270,26 @@ const runAppInit = () => {
         }
     });
 
-    // Configuration et défilement du carrousel de cartes de coachs
-    const carousel = document.getElementById('coach-carousel');
-    const btnLeft = document.getElementById('slide-left');
-    const btnRight = document.getElementById('slide-right');
-
-    if (carousel && btnLeft && btnRight) {
-        const scrollOffset = 380;
-        btnLeft.addEventListener('click', () => carousel.scrollBy({ left: -scrollOffset, behavior: 'smooth' }));
-        btnRight.addEventListener('click', () => carousel.scrollBy({ left: scrollOffset, behavior: 'smooth' }));
-    }
-
-    // Filtrage et recherche de coach par nom ou par discipline
+    const seeAllBtn = document.getElementById('see-all-coaches');
     const searchInput = document.getElementById('search-input');
-    const coachCards = document.querySelectorAll('.coach-card');
 
+    // Search: filter among visible explore cards only
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            coachCards.forEach(card => {
+        const exploreCards = () => document.querySelectorAll('#coach-carousel .coach-card:not(.hidden)');
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase().trim();
+            exploreCards().forEach(card => {
                 const name = card.getAttribute('data-name').toLowerCase();
                 const discipline = card.getAttribute('data-discipline').toLowerCase();
-                if (name.includes(query) || discipline.includes(query)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = (name.includes(query) || discipline.includes(query)) ? 'flex' : 'none';
             });
+        });
+    }
+
+    // See All Coaches: open new tab with full coach listing
+    if (seeAllBtn) {
+        seeAllBtn.addEventListener('click', () => {
+            window.open('http://localhost:5679/all-coaches.html', '_blank');
         });
     }
 
