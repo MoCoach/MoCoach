@@ -23,13 +23,12 @@ class Coach(Base):
     description = Column(String(500), nullable=False)
     city_id     = Column(Integer, ForeignKey('cities.id'), nullable=False)
     price       = Column(Integer, nullable=True)
-    photo_url   = Column(String(500), nullable=True)
 
     user = relationship("User", back_populates="coach")
     tags = relationship("Tag", secondary=coach_tags)
     city = relationship("City")
 
-    def __init__(self, description, city_id, price=None, photo_url=None):
+    def __init__(self, description, city_id, price=None):
         if not isinstance(description, str):
             raise TypeError("description must be a string")
         if not isinstance(city_id, int):
@@ -37,7 +36,6 @@ class Coach(Base):
         self.description = description
         self.city_id = city_id
         self.price = price
-        self.photo_url = photo_url
 
     def add_tag(self, tag):
         if not isinstance(tag, Tag):
@@ -70,7 +68,6 @@ class Coach(Base):
             "description": self.description,
             "city": self.city.name if self.city else None,
             "price": self.price,
-            "photo_url": self.photo_url,
             "tags": [tag.to_dict() for tag in self.tags],
         }
 

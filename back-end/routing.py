@@ -64,7 +64,6 @@ def register():
             is_admin    = False,
             city_id     = data.get("city_id"),
             price       = data.get("price"),
-            photo_url   = data.get("photo_url"),
         )
         return jsonify(result), 201
     except DbError as e:
@@ -121,8 +120,6 @@ def edit_profile():
             kwargs["city_id"] = data["city_id"]
         if "price" in data:
             kwargs["price"] = data["price"]
-        if "photo_url" in data:
-            kwargs["photo_url"] = data["photo_url"]
         result = db.update_profile(**kwargs)
         return jsonify(result), 200
     except DbError as e:

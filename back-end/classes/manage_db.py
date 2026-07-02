@@ -105,7 +105,7 @@ class Db_Management:
 
     def register_user(self, username, email, password, is_coach, description,
                       tags_data, phone, is_admin=False, name=None, city_id=None,
-                      price=None, photo_url=None):
+                      price=None):
         """Create a new user account.
 
         :param username: unique login identifier (required)
@@ -113,7 +113,6 @@ class Db_Management:
         :param is_admin: grant admin privileges (default False)
         :param city_id: city id (required for coaches)
         :param price: coaching price per hour (coaches only, optional)
-        :param photo_url: URL to coach photo (coaches only, optional)
         """
         session = self._session()
         try:
@@ -135,7 +134,7 @@ class Db_Management:
                         is_coach=is_coach, description=description,
                         tags=tags if is_coach else None,
                         phone=phone, is_admin=is_admin, name=name,
-                        city_id=city_id, price=price, photo_url=photo_url)
+                        city_id=city_id, price=price)
             session.add(user)
             session.commit()
             return user.to_dict()
@@ -164,8 +163,7 @@ class Db_Management:
 
     def update_profile(self, user_id, name=_UNSET, description=None,
                        tags_data=None, email=_UNSET, phone=_UNSET,
-                       username=_UNSET, city_id=None, price=None,
-                       photo_url=None):
+                       username=_UNSET, city_id=None, price=None):
         """Update profile fields for the user identified by *user_id*."""
         session = self._session()
         try:
@@ -210,8 +208,6 @@ class Db_Management:
                 kwargs["city_id"] = city_id
             if price is not None:
                 kwargs["price"] = price
-            if photo_url is not None:
-                kwargs["photo_url"] = photo_url
             user.update_profile(**kwargs)
             session.commit()
             return user.to_dict()
@@ -250,7 +246,6 @@ class Db_Management:
             "description": coach.description,
             "price": coach.price,
             "city": coach.city.name if coach.city else None,
-            "photo_url": coach.photo_url,
             "phone": coach.user.phone,
             "tags": [{"name": t.name, "description": t.description}
                      for t in coach.tags],
