@@ -1,0 +1,12 @@
+Role,Username,First Name (opt),Last Name (opt),Email,Password,Phone (opt),"Tags (opt, 5 max)",City,Description,Price (opt)
+User,kevin_mark,Kevin,Mark,123kevin@gmail.com,Kevin123,,,,,
+User,sarah_main,Sarah,Smith,Smithsarah@gmail.com,12345678,,,,,
+User,davidj99,David,James,54davidjames@yahoo.com,D@vid123,,,,,
+User,priyankase,Priyanka,Seetaram,priyanka.seetaram@gmail.com,Pebble@1,,,,,
+User,vivekl45,Vivek,Lall,vivek145@gmail.com,Silver*904,,,,,
+Coach,cedriclamarque1,Cedric,Lamarque,cedriclamarque@gmail.com,Orange%731,5502 4565,Boxing,Curepipe,"We train basics, fitness, and simple techniques",600
+Coach,manojsingh_5,Manoj,Singh,98manoj@yahoo.com,FoRest&265,5888 1111,Water sports,Rose Hill,I go step by step so you don’t feel scared or rushed,700
+Coach,dev_m,Dev,Mangur,devmangur2020@gmail.com,Galaxy!843,5999 8888,Football,Vacoas,"I help players improve their stamina, ball control, and confidence on the field.",400
+Coach,natasha_d,Natasha,Dupond,Natasha.Business12@gmail.com,@nchor#519,5887 4447,Strength training,Port Louis,Personalized strength and conditioning sessions tailored to your fitness goals.,500
+Coach,priyargm54,Priya,Ramgoolam,ramgoolampriya@yahoo.com,Velvet@376,5454 6060,Yoga,Beau Bassin,"Gentle yoga sessions that improve flexibility, balance, and relaxation.",550
+Admin,admin01,Arveen,Loopesh,admin@mocoach.com,@rv33nJ0bs,5570 5555,,,,
