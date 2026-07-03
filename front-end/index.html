@@ -1035,24 +1035,13 @@
   <!-- Internal script guaranteeing modal runs directly with no cache/path limits -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const becomeCoachBtn = document.getElementById('become-coach-btn');
       const coachModal = document.getElementById('coach-modal');
       const closeModalBtn = document.getElementById('close-modal-btn');
       const uploadZone = document.getElementById('upload-zone');
       const fileInput = document.getElementById('modal-file-input');
       const previewsContainer = document.getElementById('modal-previews-container');
 
-      // 1. OPEN MODAL
-      if (becomeCoachBtn && coachModal) {
-        becomeCoachBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          coachModal.classList.remove('hidden');
-          document.body.classList.add('overflow-hidden'); // Lock background scroll
-        });
-      }
-
-      // 2. CLOSE MODAL (X BUTTON)
+      // 1. CLOSE MODAL (X BUTTON)
       if (closeModalBtn && coachModal) {
         closeModalBtn.addEventListener('click', (e) => {
           e.preventDefault();

@@ -35,13 +35,26 @@
             <h2 class="text-3xl font-extrabold text-white mt-2">Browse All Certified Coaches</h2>
             <p class="text-slate-400 text-sm mt-2">Every coach undergoes credential checks to ensure safety and professionalism.</p>
           </div>
-          <a href="index.html" class="flex items-center gap-2 text-slate-400 hover:text-white transition text-sm font-medium">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Explore
-          </a>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
+            <div class="relative w-full sm:w-80">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500">
+                <i data-lucide="search" class="w-5 h-5"></i>
+              </div>
+              <input 
+                id="search-input"
+                type="text" 
+                placeholder="Search coach, discipline..." 
+                class="w-full rounded-xl border border-slate-800 bg-slate-900 py-3 pl-11 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-colors"
+              >
+            </div>
+            <button onclick="window.location.href='index.html'" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap">
+              Back to Explore
+            </button>
+          </div>
         </div>
 
         <!-- ALL COACHES GRID: 6 per row -->
-        <div id="all-coaches-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+        <div id="all-coaches-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
 <!-- 1. Zumba -->
           <div data-coach-id="coach-1" data-name="Priya S." data-discipline="Zumba" class="coach-card coach-card-sm bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition">
             <div class="relative">
@@ -62,8 +75,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Sega rhythm, move your body, feel free and enjoy the vibes</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 450<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-1')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -88,8 +101,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Focused pad work, boxing fundamentals, and intense conditioning drills.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 600<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 600<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-2')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -114,8 +127,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Vinyasa flow, pranayama, and core functional stability sessions on the beach.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 550<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-3')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -140,8 +153,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Individual coaching on serve dynamics, footwork, and tactical court play.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 750<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 750<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-4')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -166,8 +179,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Skill development, technical drills, agility, and tactical preparation.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 400<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 400<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-5')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -192,8 +205,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Core strength, floor routines, and balance for all ages.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 650<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 650<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-6')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -218,8 +231,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Open water swimming progression and paddleboarding instruction.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 700<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 700<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-7')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -244,8 +257,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Pacing, running mechanics, and base running conditioning.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 350<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 350<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-8')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -270,8 +283,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Hypertrophy, postural alignment, and progressive overload.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 500<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 500<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-9')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -296,8 +309,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Guided mountain navigation and trail routing across the island.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 650<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 650<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-10')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -322,8 +335,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Self-defense, kickboxing coordination, and mental conditioning.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 550<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-11')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -348,8 +361,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Contemporary and hip-hop. Rhythm and physical coordination.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 450<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-12')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -374,8 +387,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Improve racket swing mechanics and court coverage agility.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 480<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 480<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-13')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -400,8 +413,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Passing accuracy, tactical sprint work, and defense structures.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 500<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 500<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-14')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -426,8 +439,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Posture control, swing analytics, and short-game precision.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 800<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 800<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-15')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -452,8 +465,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Vertical jump programs, shooting dynamics, and handle drills.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 550<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 550<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-16')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -478,8 +491,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Passing accuracy, rapid positioning, and defensive tracking.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 450<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 450<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-17')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>
@@ -504,8 +517,8 @@
                 <p class="text-sm text-slate-400 leading-relaxed mb-4">Reflex sharpening, spin stroke precision, and placement control.</p>
               </div>
             </div>
-            <div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40">
-              <span class="text-xl font-black text-white">Rs 400<span class="text-sm text-white font-normal"> per session</span></span>
+            <div class="px-4 pb-6 pt-3 border-t border-slate-900 flex flex-col items-center bg-slate-950/40 gap-2">
+              <span class="text-base font-black text-white whitespace-nowrap">Rs 400<span class="text-xs text-white font-normal"> per session</span></span>
               <button onclick="ChatApp.open('coach-18')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button>
             </div>
           </div>

@@ -50,6 +50,33 @@ function showProfileView() {
 window.showMainView = showMainView;
 window.showProfileView = showProfileView;
 
+function showToast(msg) {
+    const existing = document.getElementById('toast-msg');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'toast-msg';
+    toast.textContent = msg;
+    Object.assign(toast.style, {
+        position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
+        background: '#1e293b', color: '#e2e8f0', padding: '10px 24px',
+        borderRadius: '12px', fontSize: '14px', fontWeight: '600',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)', zIndex: '9999',
+        border: '1px solid #334155', transition: 'opacity 0.3s'
+    });
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
+}
+
+function handleHomeNavigation() {
+    if (window.location.pathname.includes('all-coaches.html')) {
+        window.location.href = 'index.html';
+    } else if (currentView === 'profile') {
+        showMainView();
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
 // Gère le remplacement de l'icône par l'image de profil dans le Header (Accueil)
 function updateHeaderProfilePic() {
     const btn = document.getElementById('profile-btn');
@@ -273,12 +300,13 @@ const runAppInit = () => {
     const seeAllBtn = document.getElementById('see-all-coaches');
     const searchInput = document.getElementById('search-input');
 
-    // Search: filter among visible explore cards only
+    // Search: filter among visible coach cards (works on index.html and all-coaches.html)
     if (searchInput) {
-        const exploreCards = () => document.querySelectorAll('#coach-carousel .coach-card:not(.hidden)');
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.toLowerCase().trim();
-            exploreCards().forEach(card => {
+            const grid = document.querySelector('#coach-carousel') || document.querySelector('#all-coaches-grid');
+            if (!grid) return;
+            grid.querySelectorAll('.coach-card').forEach(card => {
                 const name = card.getAttribute('data-name').toLowerCase();
                 const discipline = card.getAttribute('data-discipline').toLowerCase();
                 card.style.display = (name.includes(query) || discipline.includes(query)) ? 'flex' : 'none';
@@ -333,12 +361,39 @@ const runAppInit = () => {
         }
     });
 
-    // Home nav link (delegated)
+    // Comprehensive nav handler: logo, Home, section links, and footer links
     document.addEventListener('click', (e) => {
-        const link = e.target.closest('nav a[href="#"]');
-        if (link && currentView === 'profile') {
+        const link = e.target.closest('a[href]');
+        if (!link) return;
+        const href = link.getAttribute('href');
+
+        // Logo (header a[href="#"] not inside nav, contains an img)
+        if (href === '#' && link.closest('header') && !link.closest('nav') && link.querySelector('img')) {
             e.preventDefault();
-            showMainView();
+            handleHomeNavigation();
+            return;
+        }
+
+        // Home nav link
+        if (href === '#' && link.closest('nav')) {
+            e.preventDefault();
+            handleHomeNavigation();
+            return;
+        }
+
+        // Section nav links (e.g. #how-it-works, #explore, #features, #about)
+        if (href && href.startsWith('#') && href.length > 1 && link.closest('nav')) {
+            if (window.location.pathname.includes('all-coaches.html')) {
+                e.preventDefault();
+                window.location.href = 'index.html' + href;
+            }
+            return;
+        }
+
+        // Footer links (Terms, Privacy)
+        if (href === '#' && link.closest('footer')) {
+            e.preventDefault();
+            showToast('Coming soon');
         }
     });
 };
