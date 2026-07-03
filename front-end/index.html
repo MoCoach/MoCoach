@@ -210,7 +210,7 @@
         <div class="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-12 gap-6">
           <div class="max-w-xl">
             <span class="text-blue-500 text-xs font-bold uppercase tracking-widest">Explore Coaches</span>
-            <h2 class="text-3xl font-extrabold text-white mt-2">Meet Our Certified Coaches</h2>
+            <h2 class="text-3xl font-extrabold text-white mt-2">Meet Our   Coaches</h2>
             <p class="text-slate-400 text-sm mt-2">Every coach undergoes credential checks to ensure safety and professionalism.</p>
           </div>
           
@@ -914,9 +914,12 @@
     <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl p-8 relative my-auto shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
       
       <!-- Modal Header -->
-      <div class="flex justify-between items-center mb-6">
-        <h2 id="modal-title" class="text-2xl font-bold text-white">Register</h2>
-        <button id="close-modal-btn" class="text-slate-400 hover:text-white transition focus:outline-none">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h2 id="modal-title" class="text-2xl font-bold text-white">Join the Community</h2>
+          <p id="modal-subtitle" class="text-sm text-slate-400 mt-0.5">Create your account and start connecting with coaches</p>
+        </div>
+        <button id="close-modal-btn" class="text-slate-400 hover:text-white transition focus:outline-none flex-shrink-0">
           <i data-lucide="x" class="w-6 h-6"></i>
         </button>
       </div>
@@ -927,37 +930,37 @@
         <button id="tab-login-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-transparent text-slate-400 hover:text-white transition focus:outline-none">Login</button>
       </div>
 
-      <!-- Inscription / Registration Form (Fully translated into English with Placeholders) -->
-      <form id="register-form" class="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
-        
-        <!-- Pseudo / Nickname -->
-        <div class="md:col-span-2">
+      <!-- Registration Form -->
+      <form id="register-form" class="flex flex-col gap-5 text-left">
+
+        <!-- Username -->
+        <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username (Pseudo) *</label>
-          <input type="text" id="reg-nickname" placeholder="ex: pseudo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-650 focus:outline-none focus:border-blue-500 transition">
+          <input type="text" id="reg-nickname" placeholder="ex: pseudo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
         <!-- First Name -->
         <div>
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name *</label>
-          <input type="text" id="reg-firstname" placeholder="ex: yourname" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-650 focus:outline-none focus:border-blue-500 transition">
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name</label>
+          <input type="text" id="reg-firstname" placeholder="ex: yourname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
         <!-- Last Name -->
         <div>
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name *</label>
-          <input type="text" id="reg-lastname" placeholder="ex: yourlastname" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-650 focus:outline-none focus:border-blue-500 transition">
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name</label>
+          <input type="text" id="reg-lastname" placeholder="ex: yourlastname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
-        <!-- Email Address -->
-        <div class="md:col-span-2">
+        <!-- Email -->
+        <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Email Address *</label>
           <input type="email" id="reg-email" placeholder="ex: @example.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
-        <!-- City (Replaces Zip Code) -->
-        <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">City *</label>
-          <input type="text" id="reg-city" placeholder="ex: Grand Baie" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        <!-- City -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">City</label>
+          <input type="text" id="reg-city" placeholder="ex: Grand Baie" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
         <!-- Password -->
@@ -972,46 +975,24 @@
           <input type="password" id="reg-confirm-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
-        <!-- Bio -->
-        <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Bio</label>
-          <textarea id="reg-bio" rows="3" placeholder="Describe your coaching background..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+        <!-- Profile Picture (optional, single) -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Profile Picture <span class="text-slate-500 font-normal">(optional)</span></label>
+          <input type="file" id="modal-file-input" accept="image/*" class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer">
+          <div id="modal-previews-container" class="mt-3 flex"></div>
         </div>
 
-        <!-- Photo Upload -->
-        <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Photos <span class="text-slate-500 font-normal">( select your profile )</span></label>
-          
-          <!-- Hidden file input linked to browser explorer -->
-          <input type="file" id="modal-file-input" accept="image/*" class="hidden" multiple>
-          
-          <div id="upload-zone" class="border-2 border-dashed border-slate-800 hover:border-blue-500/50 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer transition duration-300 bg-slate-950/40">
-            <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-500 mb-2"></i>
-            <p class="text-sm text-slate-400 font-medium">Drag & drop photos here or click to browse</p>
-          </div>
-
-          <!-- File Previews -->
-          <div id="modal-previews-container" class="flex gap-4 mt-4"></div>
-        </div>
-
-        <!-- Qualifications Message -->
-        <div class="md:col-span-2 mt-4 bg-blue-950/40 border border-blue-900/30 text-blue-400 p-4 rounded-xl text-center text-sm font-medium">
-          To become a vetted coach, send your proof of qualifications and ID to <a href="mailto:kyc@mocoach.mu" class="underline hover:text-blue-300">kyc@mocoach.mu</a>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="md:col-span-2 mt-2">
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg">
-            Register
-          </button>
-        </div>
+        <!-- Submit -->
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg mt-2">
+          Join the Community
+        </button>
       </form>
 
       <!-- Connexion / Login Form (Fully translated into English with Placeholders) -->
       <form id="login-form" class="hidden flex flex-col gap-5 text-left">
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username or Email *</label>
-          <input type="text" id="login-identity" placeholder="ex: pseudo or arveentest@gmail.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <input type="text" id="login-identity" placeholder="ex: pseudo or yourname@email.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
 
         <div>
@@ -1037,20 +1018,19 @@
     document.addEventListener('DOMContentLoaded', () => {
       const coachModal = document.getElementById('coach-modal');
       const closeModalBtn = document.getElementById('close-modal-btn');
-      const uploadZone = document.getElementById('upload-zone');
       const fileInput = document.getElementById('modal-file-input');
       const previewsContainer = document.getElementById('modal-previews-container');
 
-      // 1. CLOSE MODAL (X BUTTON)
+      // CLOSE MODAL (X BUTTON)
       if (closeModalBtn && coachModal) {
         closeModalBtn.addEventListener('click', (e) => {
           e.preventDefault();
           coachModal.classList.add('hidden');
-          document.body.classList.remove('overflow-hidden'); // Restore scroll
+          document.body.classList.remove('overflow-hidden');
         });
       }
 
-      // 3. CLOSE MODAL (CLICKING OUTSIDE CARD)
+      // CLOSE MODAL (CLICKING OUTSIDE CARD)
       if (coachModal) {
         coachModal.addEventListener('click', (e) => {
           if (e.target === coachModal) {
@@ -1060,94 +1040,21 @@
         });
       }
 
-      // 4. TRIGGER NATIVE FILE EXPLORER DIALOG ON CLICK
-      if (uploadZone && fileInput) {
-        uploadZone.addEventListener('click', () => {
-          fileInput.click();
-        });
-      }
-
-      // 5. DRAG & DROP FUNCTIONALITY ON UPLOAD ZONE
-      if (uploadZone && fileInput) {
-        ['dragenter', 'dragover'].forEach(eventName => {
-          uploadZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadZone.classList.add('border-blue-500', 'bg-blue-950/20');
-          }, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-          uploadZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadZone.classList.remove('border-blue-500', 'bg-blue-950/20');
-          }, false);
-        });
-
-        uploadZone.addEventListener('drop', (e) => {
-          const dt = e.dataTransfer;
-          const files = dt.files;
-          if (files && files.length > 0) {
-            fileInput.files = files; // Pass files to the input
-            fileInput.dispatchEvent(new Event('change')); // Trigger rendering
-          }
-        }, false);
-      }
-
-      // 6. RENDER DYNAMIC IMAGE THUMBNAILS ONCE SELECTED WITH CLICK-TO-SWITCH PROFILE PIC
+      // SINGLE PROFILE PICTURE PREVIEW
       if (fileInput && previewsContainer) {
         fileInput.addEventListener('change', (e) => {
-          previewsContainer.innerHTML = ''; // Clear previews container
-          const files = e.target.files;
-          
-          for (let i = 0; i < Math.min(files.length, 10); i++) {
-            const file = files[i];
-            const reader = new FileReader();
-            
-            reader.onload = (event) => {
-              const div = document.createElement('div');
-              div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border cursor-pointer transition duration-300 ' + 
-                            (i === 0 ? 'border-blue-500 shadow-lg profile-selected' : 'border-slate-800');
-              
-              let badge = '';
-              if (i === 0) {
-                badge = `<span class="profile-badge absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>`;
-              }
-
-              div.innerHTML = `
-                <img src="${event.target.result}" class="w-full h-full object-cover">
-                ${badge}
-              `;
-
-              // CLICK EVENT TO SWITCH WHICH PHOTO IS THE PROFILE PIC
-              div.addEventListener('click', () => {
-                // Reset all sibling previews to default border and remove badge
-                const siblings = previewsContainer.children;
-                for (let sibling of siblings) {
-                  sibling.classList.remove('border-blue-500', 'shadow-lg', 'profile-selected');
-                  sibling.classList.add('border-slate-800');
-                  const badgeSpan = sibling.querySelector('.profile-badge');
-                  if (badgeSpan) {
-                    badgeSpan.remove();
-                  }
-                }
-
-                // Set current preview as active profile picture
-                div.classList.remove('border-slate-800');
-                div.classList.add('border-blue-500', 'shadow-lg', 'profile-selected');
-                
-                const span = document.createElement('span');
-                span.className = 'profile-badge absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded';
-                span.innerText = 'PROFILE';
-                div.appendChild(span);
-              });
-
-              previewsContainer.appendChild(div);
-            };
-            
-            reader.readAsDataURL(file);
-          }
+          previewsContainer.innerHTML = '';
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const div = document.createElement('div');
+            div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border-2 border-blue-500 shadow-lg';
+            div.innerHTML = '<span class="absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>' +
+              '<img src="' + event.target.result + '" class="w-full h-full object-cover">';
+            previewsContainer.appendChild(div);
+          };
+          reader.readAsDataURL(file);
         });
       }
     });

@@ -115,6 +115,7 @@ function switchModalTab(tab) {
     const regTabBtn = document.getElementById('tab-register-btn');
     const loginTabBtn = document.getElementById('tab-login-btn');
     const modalTitle = document.getElementById('modal-title');
+    const modalSubtitle = document.getElementById('modal-subtitle');
 
     if (!registerForm || !loginForm) return;
 
@@ -125,7 +126,8 @@ function switchModalTab(tab) {
         regTabBtn.classList.remove('border-transparent', 'text-slate-400');
         loginTabBtn.classList.remove('border-blue-500', 'text-white');
         loginTabBtn.classList.add('border-transparent', 'text-slate-400');
-        if (modalTitle) modalTitle.textContent = "Register";
+        if (modalTitle) modalTitle.innerHTML = '<span class="flex items-center gap-2"><span class="text-amber-400">✨</span> Join the Community</span>';
+        if (modalSubtitle) modalSubtitle.textContent = 'Create your account and start connecting with coaches';
     } else {
         loginForm.classList.remove('hidden');
         registerForm.classList.add('hidden');
@@ -133,7 +135,8 @@ function switchModalTab(tab) {
         loginTabBtn.classList.remove('border-transparent', 'text-slate-400');
         regTabBtn.classList.remove('border-blue-500', 'text-white');
         regTabBtn.classList.add('border-transparent', 'text-slate-400');
-        if (modalTitle) modalTitle.textContent = "Login";
+        if (modalTitle) modalTitle.textContent = 'Login';
+        if (modalSubtitle) modalSubtitle.textContent = 'Welcome back \u2014 log in to connect with your coaches';
     }
 }
 
@@ -202,28 +205,20 @@ const runAppInit = () => {
             }
 
             // Récupération de l'image sélectionnée comme profil (Base64)
-            const selectedPreview = document.querySelector('#modal-previews-container .profile-selected img');
-            const avatarSrc = selectedPreview ? selectedPreview.src : 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop';
+            const previewImg = document.querySelector('#modal-previews-container img');
+            const avatarSrc = previewImg ? previewImg.src : 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop';
 
             // Création de l'objet utilisateur
             const newUser = {
                 nickname: document.getElementById('reg-nickname').value.trim(),
-                firstName: document.getElementById('reg-firstname').value.trim(),
-                lastName: document.getElementById('reg-lastname').value.trim(),
+                firstName: document.getElementById('reg-firstname').value.trim() || '',
+                lastName: document.getElementById('reg-lastname').value.trim() || '',
                 email: document.getElementById('reg-email').value.trim(),
-                city: document.getElementById('reg-city').value.trim(),
-                phone: '', // Initialement vide pour être édité sur le profil
+                city: document.getElementById('reg-city').value.trim() || '',
+                phone: '',
                 password: pass,
                 avatar: avatarSrc,
-                bio: document.getElementById('reg-bio').value.trim(), // Sauvegarde bien la bio à l'inscription
-                badges: [
-                    {
-                        id: 'b1', icon: 'flame', title: 'Unparalleled Force',
-                        description: 'Completed 20 strength training sessions and achieved a new personal record in deadlifts.',
-                        coachId: 'coach-9', coachName: 'Kavir D.', dateEarned: '2026-05-15',
-                    }
-                ],
-                badgesGiven: []
+                role: 'customer',
             };
 
             // Sauvegarde dans la session locale (localStorage)
@@ -273,6 +268,13 @@ const runAppInit = () => {
                 }
 
                 showProfileView();
+
+                // Auto-retry: if user was trying to contact a coach before login
+                const pending = window.__pendingCoachId;
+                if (pending) {
+                    window.__pendingCoachId = null;
+                    if (window.ChatApp) ChatApp.open(pending);
+                }
             } else {
                 // Erreur de connexion
                 if (errorDiv) {

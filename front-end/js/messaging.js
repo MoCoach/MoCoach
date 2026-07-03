@@ -98,6 +98,26 @@ const ChatApp = {
   },
 
   open(coachId) {
+    // Auth check: must be logged in as customer to contact coach
+    const raw = localStorage.getItem('mocoach_user');
+    if (!raw) {
+      window.__pendingCoachId = coachId || null;
+      const modal = document.getElementById('coach-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        if (window.switchModalTab) switchModalTab('login');
+      }
+      return;
+    }
+    const user = JSON.parse(raw);
+    if (user.role === 'coach') {
+      if (window.showToast) {
+        showToast('Coaches cannot contact other coaches during MVP');
+      }
+      return;
+    }
+
     this.isOpen = true;
     const overlay = document.getElementById('messaging-overlay');
     overlay.classList.remove('hidden');
