@@ -56,7 +56,8 @@ def register():
             username    = username,
             email       = email,
             password    = password,
-            name        = data.get("name"),
+            first_name  = data.get("first_name"),
+            last_name   = data.get("last_name"),
             is_coach    = data.get("is_coach", False),
             description = data.get("description"),
             tags_data   = data.get("tags", []),
@@ -108,8 +109,10 @@ def edit_profile():
             description = data.get("description"),
             tags_data   = data.get("tags"),
         )
-        if "name" in data:
-            kwargs["name"] = data["name"]
+        if "first_name" in data:
+            kwargs["first_name"] = data["first_name"]
+        if "last_name" in data:
+            kwargs["last_name"] = data["last_name"]
         if "email" in data:
             kwargs["email"] = data["email"]
         if "phone" in data:

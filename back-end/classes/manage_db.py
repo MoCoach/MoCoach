@@ -104,12 +104,13 @@ class Db_Management:
     # ------------------------------------------------------------------
 
     def register_user(self, username, email, password, is_coach, description,
-                      tags_data, phone, is_admin=False, name=None, city_id=None,
-                      price=None):
+                      tags_data, phone, is_admin=False, first_name=None,
+                      last_name=None, city_id=None, price=None):
         """Create a new user account.
 
         :param username: unique login identifier (required)
-        :param name: display name (required for coaches, optional otherwise)
+        :param first_name: first name (required for coaches, optional otherwise)
+        :param last_name: last name (required for coaches, optional otherwise)
         :param is_admin: grant admin privileges (default False)
         :param city_id: city id (required for coaches)
         :param price: coaching price per hour (coaches only, optional)
@@ -133,8 +134,8 @@ class Db_Management:
             user = User(username=username, email=email, pwd=password,
                         is_coach=is_coach, description=description,
                         tags=tags if is_coach else None,
-                        phone=phone, is_admin=is_admin, name=name,
-                        city_id=city_id, price=price)
+                        phone=phone, is_admin=is_admin, first_name=first_name,
+                        last_name=last_name, city_id=city_id, price=price)
             session.add(user)
             session.commit()
             return user.to_dict()
@@ -161,9 +162,10 @@ class Db_Management:
     # Profile management
     # ------------------------------------------------------------------
 
-    def update_profile(self, user_id, name=_UNSET, description=None,
-                       tags_data=None, email=_UNSET, phone=_UNSET,
-                       username=_UNSET, city_id=None, price=None):
+    def update_profile(self, user_id, first_name=_UNSET, last_name=_UNSET,
+                       description=None, tags_data=None, email=_UNSET,
+                       phone=_UNSET, username=_UNSET, city_id=None,
+                       price=None):
         """Update profile fields for the user identified by *user_id*."""
         session = self._session()
         try:
@@ -196,8 +198,10 @@ class Db_Management:
                     tags.append(tag)
 
             kwargs = dict(description=description, tags=tags)
-            if name is not _UNSET:
-                kwargs["name"] = name
+            if first_name is not _UNSET:
+                kwargs["first_name"] = first_name
+            if last_name is not _UNSET:
+                kwargs["last_name"] = last_name
             if email is not _UNSET:
                 kwargs["email"] = email
             if phone is not _UNSET:
@@ -242,7 +246,9 @@ class Db_Management:
         """Serialize a coach record to a public-facing dictionary."""
         return {
             "id": coach.id,
-            "name": coach.user.name,
+            "username": coach.user.username,
+            "first_name": coach.user.first_name,
+            "last_name": coach.user.last_name,
             "description": coach.description,
             "price": coach.price,
             "city": coach.city.name if coach.city else None,
@@ -362,8 +368,8 @@ class Db_Management:
                 ).first()
                 result.append({
                     "id": chat.id,
-                    "coach": {"id": coach.id, "name": coach.name},
-                    "customer": {"id": customer.id, "name": customer.name},
+                    "coach": {"id": coach.id, "username": coach.username, "first_name": coach.first_name, "last_name": coach.last_name},
+                    "customer": {"id": customer.id, "username": customer.username, "first_name": customer.first_name, "last_name": customer.last_name},
                 })
             return result
         finally:
@@ -396,8 +402,8 @@ class Db_Management:
                 ).first()
                 result.append({
                     "id": chat.id,
-                    "coach": {"id": coach.id, "name": coach.name},
-                    "customer": {"id": customer.id, "name": customer.name},
+                    "coach": {"id": coach.id, "username": coach.username, "first_name": coach.first_name, "last_name": coach.last_name},
+                    "customer": {"id": customer.id, "username": customer.username, "first_name": customer.first_name, "last_name": customer.last_name},
                 })
             return result
         finally:
@@ -431,8 +437,8 @@ class Db_Management:
             coach = session.query(User).filter_by(id=chat.id_coach).first()
             customer = session.query(User).filter_by(id=chat.id_cust).first()
             senders = {
-                coach.id: coach.name,
-                customer.id: customer.name,
+                coach.id: {"first_name": coach.first_name, "last_name": coach.last_name, "username": coach.username},
+                customer.id: {"first_name": customer.first_name, "last_name": customer.last_name, "username": customer.username},
             }
 
             messages = session.query(Message).filter_by(
@@ -448,7 +454,7 @@ class Db_Management:
                 entry = {
                     "sender": {
                         "id": msg.sender_id,
-                        "name": senders.get(msg.sender_id, "Unknown"),
+                        **senders.get(msg.sender_id, {"first_name": None, "last_name": None, "username": None}),
                     },
                     "timestamp": msg.timestamp,
                     "text": msg.text,
@@ -498,7 +504,7 @@ class Db_Management:
 
             return {
                 "id": msg.id,
-                "sender": {"id": sender.id, "name": sender.name},
+                "sender": {"id": sender.id, "first_name": sender.first_name, "last_name": sender.last_name, "username": sender.username},
                 "timestamp": msg.timestamp,
                 "text": msg.text,
             }

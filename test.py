@@ -228,7 +228,7 @@ def test_register():
 
     r = requests.post(f"{BASE}/register", json={
         "username": "alice", "email": "alice@x.com", "password": "alicepass",
-        "name": "Alice", "phone": "111",
+        "first_name": "Alice", "phone": "111",
     })
     print(r.json())
     report("POST /register (customer)", r.status_code == 201 and r.json().get("username") == "alice")
@@ -248,7 +248,8 @@ def test_register():
 
     r = requests.post(f"{BASE}/register", json={
         "username": "bob", "email": "bob@x.com", "password": "bobpass8",
-        "name": "Bob", "is_coach": True, "description": "I am Bob",
+        "first_name": "Bob", "last_name": "Builder", "is_coach": True,
+        "description": "I am Bob",
         "tags": [{"name": "fitness", "description": "Fitness coaching"}],
         "city_id": DATA["city_id"],
     })
@@ -260,14 +261,15 @@ def test_register():
 
     r = requests.post(f"{BASE}/register", json={
         "username": "bob2", "email": "bob2@x.com", "password": "bobpass8",
-        "is_coach": True,
+        "first_name": "Bob2", "last_name": "Builder", "is_coach": True,
     })
     print(r.json())
     report("POST /register (coach missing description)", r.status_code == 400)
 
     r = requests.post(f"{BASE}/register", json={
         "username": "bob3", "email": "bob3@x.com", "password": "bobpass8",
-        "name": "Bob3", "is_coach": True, "description": "I am Bob3",
+        "first_name": "Bob3", "last_name": "Builder", "is_coach": True,
+        "description": "I am Bob3",
         "tags": [{"name": "fitness", "description": "Fitness coaching"}],
     })
     print(r.json())
@@ -350,9 +352,9 @@ def test_coaches():
     r = requests.get(f"{BASE}/coach")
     print(r.json())
     coaches = r.json()
-    report("GET /coach (lists coaches)", r.status_code == 200 and any(c["name"] == "Bob" for c in coaches))
+    report("GET /coach (lists coaches)", r.status_code == 200 and any(c["first_name"] == "Bob" for c in coaches))
 
-    bob_coach = next(c for c in coaches if c["name"] == "Bob")
+    bob_coach = next(c for c in coaches if c["first_name"] == "Bob")
     tag_names = {t["name"] for t in bob_coach["tags"]}
     report("GET /coach (bob has fitness tag)", r.status_code == 200 and "fitness" in tag_names)
     report("GET /coach (bob has city)", r.status_code == 200 and bob_coach.get("city") == "Paris")
@@ -360,7 +362,7 @@ def test_coaches():
     # Get bob by ID (coach id = user id in this schema)
     r = requests.get(f"{BASE}/coach/{DATA['bob_coach_id']}")
     print(r.json())
-    report("GET /coach/<id> (bob by id)", r.status_code == 200 and r.json().get("name") == "Bob")
+    report("GET /coach/<id> (bob by id)", r.status_code == 200 and r.json().get("first_name") == "Bob")
     report("GET /coach/<id> (bob city)", r.status_code == 200 and r.json().get("city") == "Paris")
 
     # Not found
@@ -371,7 +373,7 @@ def test_coaches():
     # Filter by tag
     r = requests.get(f"{BASE}/coach/tag/fitness")
     print(r.json())
-    report("GET /coach/tag/fitness (lists bob)", r.status_code == 200 and any(c["name"] == "Bob" for c in r.json()))
+    report("GET /coach/tag/fitness (lists bob)", r.status_code == 200 and any(c["first_name"] == "Bob" for c in r.json()))
 
     # Non-existent tag
     r = requests.get(f"{BASE}/coach/tag/nonexistent")
@@ -601,18 +603,18 @@ def test_profile():
     headers_alice = {"Authorization": f"Bearer {alice}"}
     headers_bob = {"Authorization": f"Bearer {bob}"}
 
-    r = requests.put(f"{BASE}/profile", json={"name": "X"})
+    r = requests.put(f"{BASE}/profile", json={"first_name": "X"})
     print(r.json())
     report("PUT /profile (no token)", r.status_code == 401)
 
-    r = requests.put(f"{BASE}/profile", json={"name": "Alice Updated"}, headers=headers_alice)
+    r = requests.put(f"{BASE}/profile", json={"first_name": "Alice", "last_name": "Updated"}, headers=headers_alice)
     print(r.json())
-    report("PUT /profile (update name)", r.status_code == 200 and r.json().get("name") == "Alice Updated")
+    report("PUT /profile (update name)", r.status_code == 200 and r.json().get("first_name") == "Alice" and r.json().get("last_name") == "Updated")
 
     uid = r.json()["id"]
     r = requests.get(f"{BASE}/profile/{uid}", headers=headers_alice)
     print(r.json())
-    report("GET /profile/<own>", r.status_code == 200 and r.json().get("name") == "Alice Updated")
+    report("GET /profile/<own>", r.status_code == 200 and r.json().get("first_name") == "Alice" and r.json().get("last_name") == "Updated")
 
     r = requests.get(f"{BASE}/profile/{uid}", headers=headers_bob)
     print(r.json())
