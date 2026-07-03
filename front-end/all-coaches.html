@@ -539,11 +539,149 @@
   <!-- Components -->
   <div id="messaging-placeholder"></div>
   <div id="profile-placeholder"></div>
+  <div id="coach-profile-placeholder"></div>
   <div id="footer-placeholder"></div>
+
+  <!-- MODAL "APPLY AS A COACH" (Dual Register & Login Tabs) -->
+  <div id="coach-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl p-8 relative my-auto shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
+
+      <!-- Modal Header -->
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h2 id="modal-title" class="text-2xl font-bold text-white">Join the Community</h2>
+          <p id="modal-subtitle" class="text-sm text-slate-400 mt-0.5">Create your account and start connecting with coaches</p>
+        </div>
+        <button id="close-modal-btn" class="text-slate-400 hover:text-white transition focus:outline-none flex-shrink-0">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex border-b border-slate-800 mb-6">
+        <button id="tab-register-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-blue-500 text-white transition focus:outline-none">Register</button>
+        <button id="tab-login-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-transparent text-slate-400 hover:text-white transition focus:outline-none">Login</button>
+      </div>
+
+      <!-- Registration Form -->
+      <form id="register-form" class="flex flex-col gap-5 text-left">
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username (Pseudo) *</label>
+          <input type="text" id="reg-nickname" placeholder="ex: pseudo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name</label>
+          <input type="text" id="reg-firstname" placeholder="ex: yourname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name</label>
+          <input type="text" id="reg-lastname" placeholder="ex: yourlastname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Email Address *</label>
+          <input type="email" id="reg-email" placeholder="ex: @example.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">City</label>
+          <input type="text" id="reg-city" placeholder="ex: Grand Baie" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
+          <input type="password" id="reg-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Confirm Password *</label>
+          <input type="password" id="reg-confirm-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+        <!-- Profile Picture (optional, single) -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Profile Picture <span class="text-slate-500 font-normal">(optional)</span></label>
+          <input type="file" id="modal-file-input" accept="image/*" class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer">
+          <div id="modal-previews-container" class="mt-3 flex"></div>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg mt-2">
+          Join the Community
+        </button>
+      </form>
+
+      <!-- Login Form -->
+      <form id="login-form" class="hidden flex flex-col gap-5 text-left">
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username or Email *</label>
+          <input type="text" id="login-identity" placeholder="ex: pseudo or yourname@email.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
+          <input type="password" id="login-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+        </div>
+        <div id="login-error-feedback" class="hidden text-red-400 text-sm font-medium"></div>
+        <div class="mt-2">
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg">
+            Login
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Internal script guaranteeing modal runs directly with no cache/path limits -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const coachModal = document.getElementById('coach-modal');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+      const fileInput = document.getElementById('modal-file-input');
+      const previewsContainer = document.getElementById('modal-previews-container');
+
+      if (closeModalBtn && coachModal) {
+        closeModalBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          coachModal.classList.add('hidden');
+          document.body.classList.remove('overflow-hidden');
+        });
+      }
+
+      if (coachModal) {
+        coachModal.addEventListener('click', (e) => {
+          if (e.target === coachModal) {
+            coachModal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+          }
+        });
+      }
+
+      if (fileInput && previewsContainer) {
+        fileInput.addEventListener('change', (e) => {
+          previewsContainer.innerHTML = '';
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const div = document.createElement('div');
+            div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border-2 border-blue-500 shadow-lg';
+            div.innerHTML = '<span class="absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>' +
+              '<img src="' + event.target.result + '" class="w-full h-full object-cover">';
+            previewsContainer.appendChild(div);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    });
+  </script>
 
   <!-- External JS scripts -->
   <script src="js/app.js"></script>
   <script src="js/messaging.js"></script>
   <script src="js/profile.js"></script>
+  <script src="js/coach-profile.js"></script>
 </body>
 </html>

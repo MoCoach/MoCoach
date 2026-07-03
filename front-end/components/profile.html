@@ -30,10 +30,9 @@
       <!-- Rempli dynamiquement par profile.js -->
     </div>
 
-    <!-- CARTE ABOUT ME (Nouveau Carrousel d'aperçu de séances) -->
+    <!-- CARTE ABOUT ME (Single Profile Photo) -->
     <div id="profile-aboutme-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
-      
-      <!-- Schéma tactique d'arrière-plan sportif (Lignes d'agilité et pistes) -->
+
       <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-36 h-36 text-blue-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <line x1="10" y1="10" x2="90" y2="10" stroke-dasharray="2,2" />
         <line x1="10" y1="50" x2="90" y2="50" />
@@ -42,38 +41,20 @@
         <path d="M 30 20 L 70 80" stroke-dasharray="4,4" />
       </svg>
 
-      <!-- En-tête simple et épuré -->
       <div class="flex items-center space-x-3 mb-6 relative z-10">
         <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
           <i data-lucide="image" class="w-5 h-5"></i>
         </div>
         <div>
           <h2 class="text-xl font-extrabold text-white">About Me</h2>
-          <p class="text-sm text-slate-300 font-medium mt-0.5">Session preview photos (Max 7)</p>
+          <p class="text-sm text-slate-300 font-medium mt-0.5">Profile Photo</p>
         </div>
       </div>
 
-      <!-- Entrée cachée pour l'importateur -->
-      <input type="file" id="aboutme-file-input" accept="image/*" class="hidden" multiple>
+      <input type="file" id="aboutme-file-input" accept="image/*" class="hidden">
 
-      <!-- Carrousel avec contrôles fléchés superposés à gauche et à droite -->
-      <div class="relative z-10 group/carousel">
-        
-        <!-- Flèche Gauche (Glassmorphism absolu tout à gauche) -->
-        <button id="aboutme-slide-left" aria-label="Scroll Left" class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-950 hover:scale-105 hover:border-slate-700 shadow-2xl transition duration-200 flex items-center justify-center focus:outline-none">
-          <i data-lucide="chevron-left" class="w-5 h-5"></i>
-        </button>
-
-        <!-- Galerie horizontale à défilement -->
-        <div id="aboutme-images-container" class="flex gap-4 overflow-x-auto no-scrollbar pb-2 relative snap-x snap-mandatory scroll-smooth">
-          <!-- Rempli dynamiquement par profile.js -->
-        </div>
-
-        <!-- Flèche Droite (Glassmorphism absolu tout à droite) -->
-        <button id="aboutme-slide-right" aria-label="Scroll Right" class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-950 hover:scale-105 hover:border-slate-700 shadow-2xl transition duration-200 flex items-center justify-center focus:outline-none">
-          <i data-lucide="chevron-right" class="w-5 h-5"></i>
-        </button>
-
+      <div id="aboutme-images-container" class="relative z-10">
+        <!-- Rempli dynamiquement par profile.js -->
       </div>
     </div>
 

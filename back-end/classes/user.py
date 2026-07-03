@@ -23,20 +23,21 @@ class User(Base):
     """Represents a user of the app."""
 
     __tablename__ = 'users'
-    id       = Column(Integer,     nullable=False, primary_key=True)
-    username = Column(String(128), nullable=False, unique=True)
-    name     = Column(String(128), nullable=True)
-    email    = Column(String(128), nullable=False, unique=True)
-    password = Column(String(255), nullable=False)
-    phone    = Column(String(16),  nullable=True)
-    is_coach = Column(Boolean,     nullable=False)
-    is_admin = Column(Boolean,     nullable=False, default=False)
+    id         = Column(Integer,     nullable=False, primary_key=True)
+    username   = Column(String(128), nullable=False, unique=True)
+    first_name = Column(String(128), nullable=True)
+    last_name  = Column(String(128), nullable=True)
+    email      = Column(String(128), nullable=False, unique=True)
+    password   = Column(String(255), nullable=False)
+    phone      = Column(String(16),  nullable=True)
+    is_coach   = Column(Boolean,     nullable=False)
+    is_admin   = Column(Boolean,     nullable=False, default=False)
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
     def __init__(self, username, email, pwd, is_coach=False, description=None,
-                 tags=None, phone=None, is_admin=False, name=None, city_id=None,
-                 price=None):
+                 tags=None, phone=None, is_admin=False, first_name=None,
+                 last_name=None, city_id=None, price=None):
         """Generates a new user profile.
 
         :param username: unique login identifier
@@ -46,7 +47,8 @@ class User(Base):
         :param description: profile description (required for coaches)
         :param tags: list of Tag objects (0-5, for coaches only)
         :param is_admin: whether the user has admin privileges
-        :param name: display name (required for coaches, optional otherwise)
+        :param first_name: first name (required for coaches, optional otherwise)
+        :param last_name: last name (required for coaches, optional otherwise)
         :param city_id: id of the city (required for coaches)
         :param price: coaching price per hour (coaches only, optional)
         """
@@ -69,17 +71,26 @@ class User(Base):
         if len(pwd) < 8:
             raise ValueError("password must be at least 8 characters")
 
-        elif is_coach or name is not None:
-            if is_coach and name is None:
-                raise ValueError("name is mandatory for coaches")
-            if not isinstance(name, str):
-                raise TypeError("name must be a string")
-            if len(name) < 3:
-                raise ValueError("name must be at least 3 characters")
+        def _validate_name(val, label):
+            if val is not None:
+                if not isinstance(val, str):
+                    raise TypeError(f"{label} must be a string")
+                if len(val) < 1:
+                    raise ValueError(f"{label} must be at least 1 character")
+
+        if is_coach:
+            if not first_name:
+                raise ValueError("first_name is mandatory for coaches")
+            if not last_name:
+                raise ValueError("last_name is mandatory for coaches")
+
+        _validate_name(first_name, "first_name")
+        _validate_name(last_name, "last_name")
 
         self.password = generate_password_hash(pwd)
         self.username = username
-        self.name     = name
+        self.first_name = first_name
+        self.last_name  = last_name
         self.email    = email
         self.is_coach = is_coach
         self.phone    = phone
@@ -102,12 +113,13 @@ class User(Base):
         """
         return check_password_hash(self.password, pwd)
 
-    def update_profile(self, name=_UNSET, email=_UNSET, pwd=None,
-                       description=None, tags=None, phone=_UNSET,
+    def update_profile(self, first_name=_UNSET, last_name=_UNSET, email=_UNSET,
+                       pwd=None, description=None, tags=None, phone=_UNSET,
                        username=_UNSET, city_id=None, price=None):
         """Update the user profile fields.
 
-        :param name: new display name (_UNSET = no change, None = clear)
+        :param first_name: new first name (_UNSET = no change, None = clear)
+        :param last_name: new last name (_UNSET = no change, None = clear)
         :param email: new email (optional)
         :param pwd: new password (optional)
         :param description: new description (coach only, optional)
@@ -126,15 +138,24 @@ class User(Base):
                 raise ValueError(f"username '{username}' is not allowed")
             self.username = username
 
-        if name is not _UNSET:
-            if name is not None:
-                if not isinstance(name, str):
-                    raise TypeError("name must be a string")
-                if len(name) < 3:
-                    raise ValueError("name must be at least 3 characters")
-            elif self.is_coach:
-                raise ValueError("name is required for coaches")
-            self.name = name
+        def _validate_name(val, label):
+            if val is not None:
+                if not isinstance(val, str):
+                    raise TypeError(f"{label} must be a string")
+                if len(val) < 1:
+                    raise ValueError(f"{label} must be at least 1 character")
+
+        if first_name is not _UNSET:
+            _validate_name(first_name, "first_name")
+            if first_name is None and self.is_coach:
+                raise ValueError("first_name is required for coaches")
+            self.first_name = first_name
+
+        if last_name is not _UNSET:
+            _validate_name(last_name, "last_name")
+            if last_name is None and self.is_coach:
+                raise ValueError("last_name is required for coaches")
+            self.last_name = last_name
 
         if email is not _UNSET:
             if not isinstance(email, str):
@@ -176,7 +197,8 @@ class User(Base):
         d = {
             "id": self.id,
             "username": self.username,
-            "name": self.name,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
             "email": self.email,
             "is_coach": self.is_coach,
             "is_admin": self.is_admin,
@@ -187,7 +209,7 @@ class User(Base):
         return d
 
     def __repr__(self):
-        return f"User(id={self.id!r}, name={self.name!r}, is_coach={self.is_coach!r})"
+        return f"User(id={self.id!r}, first_name={self.first_name!r}, last_name={self.last_name!r}, is_coach={self.is_coach!r})"
 
     def __str__(self):
-        return f"User(name={self.name!r}, is_coach={self.is_coach!r})"
+        return f"User(first_name={self.first_name!r}, last_name={self.last_name!r}, is_coach={self.is_coach!r})"

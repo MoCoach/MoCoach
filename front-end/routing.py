@@ -11,5 +11,9 @@ def home():
 def all_coaches():
     return render_template('all-coaches.html')
 
+@app.route('/coach-register.html')
+def coach_register():
+    return render_template('coach-register.html')
+
 if __name__ == '__main__':
     app.run(debug=True, port=5679)

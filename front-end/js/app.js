@@ -24,28 +24,73 @@ function showMainView() {
     currentView = 'home';
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
-    const footer = document.getElementById('footer-placeholder'); // Cible l'élément footer
+    const coachView = document.getElementById('coach-profile-view');
+    const footer = document.getElementById('footer-placeholder');
     
     if (main) main.classList.remove('hidden');
     if (profile) profile.classList.add('hidden');
-    if (footer) footer.classList.remove('hidden'); // Affiche le footer sur la page d'accueil
+    if (coachView) coachView.classList.add('hidden');
+    if (footer) footer.classList.remove('hidden');
     
     document.body.classList.remove('overflow-hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function showProfileView() {
+    const savedUser = localStorage.getItem('mocoach_user');
+    if (savedUser) {
+        try {
+            const user = JSON.parse(savedUser);
+            if (user.role === 'coach') {
+                showCoachProfileView();
+                return;
+            }
+        } catch (_) {}
+    }
+
     currentView = 'profile';
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
-    const footer = document.getElementById('footer-placeholder'); // Cible l'élément footer
+    const coachView = document.getElementById('coach-profile-view');
+    const footer = document.getElementById('footer-placeholder');
     
     if (main) main.classList.add('hidden');
+    if (coachView) coachView.classList.add('hidden');
     if (profile) profile.classList.remove('hidden');
-    if (footer) footer.classList.add('hidden'); // Masque le footer sur la vue profil
+    if (footer) footer.classList.add('hidden');
     
     window.scrollTo({ top: 0 });
 }
+
+function showCoachProfileView(coachId) {
+    currentView = 'coach-profile';
+    const main = document.querySelector('main');
+    const profile = document.getElementById('profile-view');
+    const coachView = document.getElementById('coach-profile-view');
+    const footer = document.getElementById('footer-placeholder');
+    
+    if (main) main.classList.add('hidden');
+    if (profile) profile.classList.add('hidden');
+    if (footer) footer.classList.add('hidden');
+    if (coachView) coachView.classList.remove('hidden');
+    
+    if (window.CoachProfileApp) {
+        if (coachId) {
+            CoachProfileApp.open(coachId);
+        } else {
+            try {
+                const user = JSON.parse(localStorage.getItem('mocoach_user'));
+                if (user && user.role === 'coach') {
+                    CoachProfileApp.open(user.nickname);
+                }
+            } catch (_) {}
+        }
+    }
+    
+    window.scrollTo({ top: 0 });
+}
+
+window.showCoachProfileView = showCoachProfileView;
 
 window.showMainView = showMainView;
 window.showProfileView = showProfileView;
@@ -70,7 +115,7 @@ function showToast(msg) {
 function handleHomeNavigation() {
     if (window.location.pathname.includes('all-coaches.html')) {
         window.location.href = 'index.html';
-    } else if (currentView === 'profile') {
+    } else if (currentView === 'profile' || currentView === 'coach-profile') {
         showMainView();
     } else {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -115,6 +160,7 @@ function switchModalTab(tab) {
     const regTabBtn = document.getElementById('tab-register-btn');
     const loginTabBtn = document.getElementById('tab-login-btn');
     const modalTitle = document.getElementById('modal-title');
+    const modalSubtitle = document.getElementById('modal-subtitle');
 
     if (!registerForm || !loginForm) return;
 
@@ -125,7 +171,8 @@ function switchModalTab(tab) {
         regTabBtn.classList.remove('border-transparent', 'text-slate-400');
         loginTabBtn.classList.remove('border-blue-500', 'text-white');
         loginTabBtn.classList.add('border-transparent', 'text-slate-400');
-        if (modalTitle) modalTitle.textContent = "Register";
+        if (modalTitle) modalTitle.innerHTML = '<span class="flex items-center gap-2"><span class="text-amber-400">✨</span> Join the Community</span>';
+        if (modalSubtitle) modalSubtitle.textContent = 'Create your account and start connecting with coaches';
     } else {
         loginForm.classList.remove('hidden');
         registerForm.classList.add('hidden');
@@ -133,7 +180,8 @@ function switchModalTab(tab) {
         loginTabBtn.classList.remove('border-transparent', 'text-slate-400');
         regTabBtn.classList.remove('border-blue-500', 'text-white');
         regTabBtn.classList.add('border-transparent', 'text-slate-400');
-        if (modalTitle) modalTitle.textContent = "Login";
+        if (modalTitle) modalTitle.textContent = 'Login';
+        if (modalSubtitle) modalSubtitle.textContent = 'Welcome back \u2014 log in to connect with your coaches';
     }
 }
 
@@ -147,6 +195,7 @@ const runAppInit = () => {
     loadComponent('footer-placeholder', 'components/footer.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
     loadComponent('profile-placeholder', 'components/profile.html');
+    loadComponent('coach-profile-placeholder', 'components/coach-profile.html');
 
     // Liaison des clics d'onglets de la pop-up
     document.addEventListener('click', (e) => {
@@ -164,7 +213,7 @@ const runAppInit = () => {
     document.addEventListener('click', (e) => {
         if (e.target.id === 'dropdown-profile-link') {
             e.preventDefault();
-            document.getElementById('profile-dropdown')?.classList.add('hidden'); // Ferme le menu après sélection
+            document.getElementById('profile-dropdown')?.classList.add('hidden');
             showProfileView();
         }
         if (e.target.id === 'dropdown-logout-link') {
@@ -179,7 +228,7 @@ const runAppInit = () => {
         }
         if (e.target.id === 'dropdown-login-link') {
             e.preventDefault();
-            document.getElementById('profile-dropdown')?.classList.add('hidden'); // Ferme le menu
+            document.getElementById('profile-dropdown')?.classList.add('hidden');
             const modal = document.getElementById('coach-modal');
             if (modal) {
                 modal.classList.remove('hidden');
@@ -202,28 +251,20 @@ const runAppInit = () => {
             }
 
             // Récupération de l'image sélectionnée comme profil (Base64)
-            const selectedPreview = document.querySelector('#modal-previews-container .profile-selected img');
-            const avatarSrc = selectedPreview ? selectedPreview.src : 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop';
+            const previewImg = document.querySelector('#modal-previews-container img');
+            const avatarSrc = previewImg ? previewImg.src : 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop';
 
             // Création de l'objet utilisateur
             const newUser = {
                 nickname: document.getElementById('reg-nickname').value.trim(),
-                firstName: document.getElementById('reg-firstname').value.trim(),
-                lastName: document.getElementById('reg-lastname').value.trim(),
+                firstName: document.getElementById('reg-firstname').value.trim() || '',
+                lastName: document.getElementById('reg-lastname').value.trim() || '',
                 email: document.getElementById('reg-email').value.trim(),
-                city: document.getElementById('reg-city').value.trim(),
-                phone: '', // Initialement vide pour être édité sur le profil
+                city: document.getElementById('reg-city').value.trim() || '',
+                phone: '',
                 password: pass,
                 avatar: avatarSrc,
-                bio: document.getElementById('reg-bio').value.trim(), // Sauvegarde bien la bio à l'inscription
-                badges: [
-                    {
-                        id: 'b1', icon: 'flame', title: 'Unparalleled Force',
-                        description: 'Completed 20 strength training sessions and achieved a new personal record in deadlifts.',
-                        coachId: 'coach-9', coachName: 'Kavir D.', dateEarned: '2026-05-15',
-                    }
-                ],
-                badgesGiven: []
+                role: 'customer',
             };
 
             // Sauvegarde dans la session locale (localStorage)
@@ -255,26 +296,35 @@ const runAppInit = () => {
             const pass = document.getElementById('login-password').value;
             const errorDiv = document.getElementById('login-error-feedback');
 
-            // Récupère l'utilisateur enregistré localement
             const savedUser = JSON.parse(localStorage.getItem('mocoach_user'));
 
             if (savedUser && (savedUser.nickname === identity || savedUser.email === identity) && savedUser.password === pass) {
-                // Connexion réussie
                 if (errorDiv) errorDiv.classList.add('hidden');
                 document.getElementById('coach-modal').classList.add('hidden');
                 document.body.classList.remove('overflow-hidden');
                 e.target.reset();
 
-                // On rafraîchit l'avatar dans le header à l'accueil
                 updateHeaderProfilePic();
 
-                if (window.ProfileApp) {
-                    window.ProfileApp.init();
+                if (savedUser.role === 'coach') {
+                    if (window.CoachProfileApp) {
+                        showCoachProfileView();
+                    } else {
+                        showProfileView();
+                    }
+                } else {
+                    if (window.ProfileApp) {
+                        window.ProfileApp.init();
+                    }
+                    showProfileView();
                 }
 
-                showProfileView();
+                const pending = window.__pendingCoachId;
+                if (pending) {
+                    window.__pendingCoachId = null;
+                    if (window.ChatApp) ChatApp.open(pending);
+                }
             } else {
-                // Erreur de connexion
                 if (errorDiv) {
                     errorDiv.textContent = "Incorrect Username/Email or Password.";
                     errorDiv.classList.remove('hidden');
@@ -347,16 +397,24 @@ const runAppInit = () => {
         }
     });
 
-    // Liaison du clic sur "Register as a Coach" pour ouvrir l'onglet d'inscription d'office
+    // Liaison du clic sur "Register as a Coach" pour rediriger vers la page d'inscription coach
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('#become-coach-btn');
         if (btn) {
             e.preventDefault();
-            const modal = document.getElementById('coach-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-                switchModalTab('register'); // Ouvre d'office sur l'onglet d'inscription "S'inscrire"
+            window.location.href = 'coach-register.html';
+        }
+    });
+
+    // Coach card click → open coach profile (ignore Contact button clicks)
+    document.addEventListener('click', (e) => {
+        const card = e.target.closest('.coach-card');
+        const contactBtn = e.target.closest('button[onclick*="ChatApp.open"]');
+        if (card && !contactBtn) {
+            const coachId = card.getAttribute('data-coach-id');
+            if (coachId) {
+                e.preventDefault();
+                showCoachProfileView(coachId);
             }
         }
     });

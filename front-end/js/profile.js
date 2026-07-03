@@ -159,9 +159,9 @@ const ProfileApp = {
           <p class="text-slate-300 text-sm mt-2.5 leading-relaxed italic max-w-xl break-words">${this._esc(d.bio || 'No bio written yet.')}</p>
         </div>
         <div class="flex-shrink-0 mt-4 md:mt-0 flex items-center space-x-3">
-          <button onclick="ProfileApp.scrollToPersonal()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
+          <button onclick="ProfileApp.editing ? ProfileApp.cancelEdit() : ProfileApp.startEdit()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
-            <span>Edit Profile</span>
+            <span>${this.editing ? 'Cancel' : 'Edit Profile'}</span>
           </button>
           <button onclick="ProfileApp.logout()" class="bg-red-950/40 border border-red-900/50 hover:bg-red-900/40 text-red-400 text-sm font-bold px-4 py-2.5 rounded-xl transition flex items-center space-x-2">
             <i data-lucide="log-out" class="w-4 h-4"></i>
@@ -177,32 +177,33 @@ const ProfileApp = {
     if (!container) return;
 
     const images = this.data.aboutMeImages || [];
-    let html = '';
 
-    // 1. Rendu des miniatures ajoutées (Affiche 4 par écran grâce à la largeur de 25%)
-    html += images.map((img, index) => `
-      <div class="relative group rounded-2xl overflow-hidden min-w-[200px] sm:min-w-[calc(25%-12px)] max-w-[calc(25%-12px)] aspect-[16/10] snap-start flex-shrink-0 shadow-lg border border-slate-800/80">
-        <img src="${this._esc(img)}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
-        <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-          <button onclick="ProfileApp.deleteAboutMeImage(${index})" class="w-10 h-10 rounded-xl bg-red-650/90 text-white flex items-center justify-center transition hover:bg-red-700 shadow-md">
-            <i data-lucide="trash-2" class="w-5 h-5"></i>
+    if (images.length > 0) {
+      container.innerHTML = `
+        <div class="flex flex-col items-start gap-3">
+          <div class="relative w-48 h-48 rounded-2xl overflow-hidden shadow-lg border border-slate-800/80 group">
+            <img src="${this._esc(images[0])}" class="w-full h-full object-cover" loading="lazy">
+            <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+              <button onclick="ProfileApp.deleteAboutMeImage(0)" class="w-10 h-10 rounded-xl bg-red-600/90 text-white flex items-center justify-center transition hover:bg-red-700 shadow-md">
+                <i data-lucide="trash-2" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+          <button onclick="document.getElementById('aboutme-file-input').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium px-4 py-2 rounded-xl transition flex items-center space-x-2">
+            <i data-lucide="camera" class="w-4 h-4"></i>
+            <span>Change Photo</span>
           </button>
         </div>
-      </div>
-    `).join('');
-
-    // 2. Rendu de la case d'ajout dynamique s'il reste de la place (< 7 photos)
-    if (images.length < 7) {
-        html += `
-          <div onclick="document.getElementById('aboutme-file-input').click()" 
-            class="relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-800 hover:border-blue-500/50 bg-slate-950/40 min-w-[200px] sm:min-w-[calc(25%-12px)] max-w-[calc(25%-12px)] aspect-[16/10] snap-start flex-shrink-0 cursor-pointer transition duration-300 text-slate-500 hover:text-blue-400 group">
-            <i data-lucide="plus-circle" class="w-8 h-8 transition-transform group-hover:scale-110"></i>
-            <span class="text-xs font-semibold mt-2">Add Photo (${images.length}/7)</span>
-          </div>
-        `;
+      `;
+    } else {
+      container.innerHTML = `
+        <button onclick="document.getElementById('aboutme-file-input').click()"
+          class="w-48 h-48 rounded-2xl border-2 border-dashed border-slate-800 hover:border-blue-500/50 bg-slate-950/40 flex flex-col items-center justify-center cursor-pointer transition text-slate-500 hover:text-blue-400 group">
+          <i data-lucide="camera" class="w-10 h-10 transition-transform group-hover:scale-110"></i>
+          <span class="text-sm font-semibold mt-2">Upload Photo</span>
+        </button>
+      `;
     }
-
-    container.innerHTML = html;
   },
 
   deleteAboutMeImage(index) {
@@ -233,7 +234,7 @@ const ProfileApp = {
         const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
         
         if (!this.data.aboutMeImages) this.data.aboutMeImages = [];
-        if (this.data.aboutMeImages.length < 7) {
+        if (this.data.aboutMeImages.length < 1) {
           this.data.aboutMeImages.push(compressedBase64);
           localStorage.setItem('mocoach_user', JSON.stringify(this.data));
           this.renderAboutMe();
@@ -249,10 +250,10 @@ const ProfileApp = {
     if (!files.length) return;
 
     const currentCount = (this.data.aboutMeImages || []).length;
-    const availableSlots = 7 - currentCount;
+    const availableSlots = 1 - currentCount;
 
     if (files.length > availableSlots) {
-      alert(`You can only add up to ${availableSlots} more photo(s). (Maximum is 7).`);
+      alert(`You can only add up to ${availableSlots} more photo(s). (Maximum is 1).`);
       return;
     }
 
@@ -261,18 +262,70 @@ const ProfileApp = {
     }
   },
 
+  toggleEdit() {
+    this.editing = !this.editing;
+    this.renderPersonalInfo();
+    this.renderHeader();
+  },
+
+  startEdit() {
+    this.editing = true;
+    this.renderPersonalInfo();
+    this.renderHeader();
+    setTimeout(() => document.getElementById('pf-nickname')?.focus(), 100);
+  },
+
+  cancelEdit() {
+    this.editing = false;
+    this.renderPersonalInfo();
+    this.renderHeader();
+  },
+
   renderPersonalInfo() {
     const el = document.getElementById('profile-personal-form');
     if (!el) return;
     const d = this.data;
+
+    if (!this.editing) {
+      // View mode: show data as labeled text
+      const rows = [
+        { label: 'Pseudo', value: d.nickname },
+        { label: 'First Name', value: d.firstName },
+        { label: 'Last Name', value: d.lastName },
+        { label: 'Email', value: d.email },
+        { label: 'Phone', value: d.phone },
+        { label: 'City', value: d.city },
+        { label: 'Bio', value: d.bio },
+      ];
+      el.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          ${rows.map(r => `
+            <div class="${r.label === 'Bio' ? 'md:col-span-2' : ''}">
+              <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">${this._esc(r.label)}</label>
+              <p class="text-base text-white">${r.value ? this._esc(r.value) : '<span class="text-slate-500 italic">Not set</span>'}</p>
+            </div>
+          `).join('')}
+        </div>
+        <div class="mt-6 flex items-center justify-between">
+          <p class="text-sm text-slate-500">Click "Edit Profile" above to update your details</p>
+          <button onclick="ProfileApp.startEdit()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+            <span>Edit</span>
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    // Edit mode: show inputs
     const fields = [
-      { id: 'pf-nickname', label: 'Pseudo', value: d.nickname || '', placeholder: 'ex: pseudo', type: 'text', required: true, colSpan: false },
-      { id: 'pf-firstName', label: 'First Name', value: d.firstName || '', placeholder: 'ex: yourname', type: 'text', required: true, colSpan: false },
-      { id: 'pf-lastName', label: 'Last Name', value: d.lastName || '', placeholder: 'ex: yourlastname', type: 'text', required: true, colSpan: false },
-      { id: 'pf-email', label: 'Email', value: d.email || '', placeholder: 'ex: @example.com', type: 'email', required: true, colSpan: false },
-      { id: 'pf-phone', label: 'Phone Number', value: d.phone || '', placeholder: 'ex: +230 5000 0000', type: 'tel', required: false, colSpan: false },
-      { id: 'pf-city', label: 'City', value: d.city || '', placeholder: 'ex: Grand Baie', type: 'text', required: true, colSpan: false },
-      { id: 'pf-bio', label: 'Bio', value: d.bio || '', placeholder: 'Describe your coaching background...', type: 'textarea', required: false, colSpan: true },
+      { id: 'pf-nickname', label: 'Pseudo', value: d.nickname || '', placeholder: 'ex: pseudo', type: 'text', required: true },
+      { id: 'pf-firstName', label: 'First Name', value: d.firstName || '', placeholder: 'ex: yourname', type: 'text', required: false },
+      { id: 'pf-lastName', label: 'Last Name', value: d.lastName || '', placeholder: 'ex: yourlastname', type: 'text', required: false },
+      { id: 'pf-email', label: 'Email', value: d.email || '', placeholder: 'ex: @example.com', type: 'email', required: true },
+      { id: 'pf-phone', label: 'Phone Number', value: d.phone || '', placeholder: 'ex: +230 5000 0000', type: 'tel', required: false },
+      { id: 'pf-city', label: 'City', value: d.city || '', placeholder: 'ex: Grand Baie', type: 'text', required: false },
+      { id: 'pf-bio', label: 'Bio', value: d.bio || '', placeholder: 'Tell us about yourself...', type: 'textarea', required: false },
     ];
 
     el.innerHTML = `
@@ -287,7 +340,7 @@ const ProfileApp = {
                  class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">`;
 
           return `
-            <div class="${f.colSpan ? 'md:col-span-2' : ''}">
+            <div>
               <label for="${f.id}" class="block text-base font-semibold text-slate-200 mb-2">
                 ${this._esc(f.label)} ${f.required ? '<span class="text-red-500">*</span>' : ''}
               </label>
@@ -299,10 +352,15 @@ const ProfileApp = {
       </div>
       <div class="mt-6 flex items-center justify-between">
         <p id="pf-status" class="text-sm text-slate-500"></p>
-        <button onclick="ProfileApp.savePersonalInfo()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
-          <i data-lucide="save" class="w-4 h-4"></i>
-          <span>Save Changes</span>
-        </button>
+        <div class="flex items-center space-x-3">
+          <button onclick="ProfileApp.cancelEdit()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold px-6 py-2.5 rounded-xl transition flex items-center space-x-2">
+            <span>Cancel</span>
+          </button>
+          <button onclick="ProfileApp.savePersonalInfo()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Save Changes</span>
+          </button>
+        </div>
       </div>
     `;
   },
@@ -321,13 +379,13 @@ const ProfileApp = {
         return '';
       },
       firstName: (v) => {
-        if (!v) return 'First name is required';
+        if (!v) return '';
         if (v.length < 2 || v.length > 50) return 'Must be 2–50 characters';
         if (!/^[a-zA-Z\s'-]+$/.test(v)) return 'Letters only';
         return '';
       },
       lastName: (v) => {
-        if (!v) return 'Last name is required';
+        if (!v) return '';
         if (v.length < 2 || v.length > 50) return 'Must be 2–50 characters';
         if (!/^[a-zA-Z\s'-]+$/.test(v)) return 'Letters only';
         return '';
@@ -343,7 +401,7 @@ const ProfileApp = {
         return '';
       },
       city: (v) => {
-        if (!v) return 'City is required';
+        if (!v) return '';
         if (v.length < 2 || v.length > 50) return 'Must be 2–50 characters';
         if (!/^[a-zA-Z\s'-,]+$/.test(v)) return 'Letters, spaces, and commas only';
         return '';
@@ -386,8 +444,10 @@ const ProfileApp = {
         window.updateHeaderProfilePic();
     }
     
+    this.editing = false;
     this.showToast('Profile updated successfully!', 'success');
     this.renderHeader();
+    this.renderPersonalInfo();
   },
 
   renderSecurity() {
@@ -593,6 +653,7 @@ const ProfileApp = {
   },
 
   scrollToPersonal() {
+    if (!this.editing) this.startEdit();
     const el = document.getElementById('profile-personal-card');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     const input = document.getElementById('pf-nickname');
@@ -618,23 +679,7 @@ const ProfileApp = {
   },
 
   bindEvents() {
-    // Écouteur pour l'importation de photos "About Me"
     document.getElementById('aboutme-file-input')?.addEventListener('change', (e) => this.handleAboutMeUpload(e));
-
-    // Liaison des clics pour faire défiler le carrousel About Me de gauche à droite
-    const aboutmeContainer = document.getElementById('aboutme-images-container');
-    const slideLeftBtn = document.getElementById('aboutme-slide-left');
-    const slideRightBtn = document.getElementById('aboutme-slide-right');
-
-    if (aboutmeContainer && slideLeftBtn && slideRightBtn) {
-        const offset = 260; // Distance de défilement horizontal en pixels
-        slideLeftBtn.addEventListener('click', () => {
-            aboutmeContainer.scrollBy({ left: -offset, behavior: 'smooth' });
-        });
-        slideRightBtn.addEventListener('click', () => {
-            aboutmeContainer.scrollBy({ left: offset, behavior: 'smooth' });
-        });
-    }
 
     document.getElementById('profile-back-btn')?.addEventListener('click', (e) => {
       e.preventDefault();
