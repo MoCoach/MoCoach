@@ -1,0 +1,149 @@
+<div id="coach-profile-view" class="relative bg-[#020617] min-h-screen py-12 overflow-hidden hidden">
+
+  <div id="cp-stars-container" class="absolute inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+  <div class="max-w-4xl mx-auto px-6 relative z-10">
+
+    <!-- Back -->
+    <a href="#" id="coach-profile-back-btn" class="inline-flex items-center space-x-2 text-slate-400 hover:text-white mb-8 text-base transition group">
+      <i data-lucide="arrow-left" class="w-5 h-5 transition-transform group-hover:-translate-x-1"></i>
+      <span>Back</span>
+    </a>
+
+    <!-- Header -->
+    <div id="cp-header-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
+      <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-44 h-44 text-blue-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M 15 25 L 25 35 M 25 25 L 15 35" />
+        <path d="M 45 15 L 55 25 M 55 15 L 45 25" />
+        <path d="M 20 38 Q 40 50 50 30" stroke-dasharray="2,2" />
+        <path d="M 46 28 L 51 30 L 49 35" fill="currentColor" />
+        <circle cx="55" cy="55" r="8" stroke-dasharray="3,3" />
+        <circle cx="55" cy="55" r="2" fill="currentColor" />
+        <line x1="5" y1="95" x2="95" y2="95" />
+        <line x1="5" y1="95" x2="5" y2="5" />
+        <line x1="5" y1="50" x2="95" y2="50" stroke-dasharray="4,4" />
+      </svg>
+
+      <div id="cp-header-content" class="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
+        <!-- Avatar -->
+        <div class="relative flex-shrink-0">
+          <div id="cp-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-blue-500/30 shadow-xl bg-slate-800 bg-cover bg-center"></div>
+        </div>
+        <!-- Info -->
+        <div class="text-center md:text-left flex-1 min-w-0">
+          <h1 id="cp-name" class="text-2xl md:text-3xl font-extrabold text-white"></h1>
+          <p id="cp-discipline" class="text-emerald-400 font-semibold text-lg mt-1"></p>
+          <p id="cp-price" class="text-xl font-black text-white mt-1"></p>
+        </div>
+        <!-- Actions -->
+        <div id="cp-actions" class="flex-shrink-0 flex flex-col gap-3">
+          <button id="cp-contact-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25">
+            <i data-lucide="message-circle" class="w-4 h-4 inline mr-1.5"></i>Contact
+          </button>
+          <button id="cp-edit-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold px-6 py-2.5 rounded-xl transition hidden">
+            <i data-lucide="edit-3" class="w-4 h-4 inline mr-1.5"></i>Edit Profile
+          </button>
+          <button id="cp-save-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition hidden">
+            <i data-lucide="save" class="w-4 h-4 inline mr-1.5"></i>Save
+          </button>
+          <button id="cp-cancel-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold px-6 py-2.5 rounded-xl transition hidden">
+            <span>Cancel</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    <div id="cp-gallery-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
+      <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-36 h-36 text-blue-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+        <line x1="10" y1="10" x2="90" y2="10" stroke-dasharray="2,2" />
+        <line x1="10" y1="50" x2="90" y2="50" />
+        <line x1="10" y1="90" x2="90" y2="90" stroke-dasharray="2,2" />
+        <circle cx="50" cy="50" r="30" />
+        <path d="M 30 20 L 70 80" stroke-dasharray="4,4" />
+      </svg>
+
+      <div class="flex items-center space-x-3 mb-6 relative z-10">
+        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+          <i data-lucide="image" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-extrabold text-white">Gallery</h2>
+          <p id="cp-gallery-subtitle" class="text-sm text-slate-300 font-medium mt-0.5">Photos & videos</p>
+        </div>
+      </div>
+
+      <div id="cp-gallery-upload" class="hidden relative z-10 mb-4">
+        <div class="flex items-center gap-3">
+          <input type="file" id="cp-gallery-input" accept="image/*,video/*" multiple class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer max-w-xs">
+          <span id="cp-gallery-count" class="text-xs text-slate-500 font-medium"></span>
+        </div>
+      </div>
+
+      <div id="cp-gallery-grid" class="relative z-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        <!-- Filled by coach-profile.js -->
+      </div>
+    </div>
+
+    <!-- Description & Tags -->
+    <div id="cp-info-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
+      <svg class="absolute right-6 bottom-6 w-36 h-36 text-emerald-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M 10 80 A 70 70 0 0 1 80 10" stroke-dasharray="3,3" />
+        <path d="M 75 15 L 85 25 M 85 15 L 75 25" />
+        <circle cx="45" cy="45" r="12" />
+        <circle cx="45" cy="45" r="6" />
+        <circle cx="45" cy="45" r="1.5" fill="currentColor" />
+        <line x1="10" y1="90" x2="90" y2="90" />
+        <line x1="15" y1="85" x2="15" y2="95" />
+        <line x1="30" y1="85" x2="30" y2="95" />
+        <line x1="45" y1="85" x2="45" y2="95" />
+        <line x1="60" y1="85" x2="60" y2="95" />
+        <line x1="75" y1="85" x2="75" y2="95" />
+      </svg>
+
+      <div class="flex items-center space-x-3 mb-6 relative z-10">
+        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+          <i data-lucide="file-text" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-extrabold text-white">About</h2>
+          <p class="text-sm text-slate-300 font-medium mt-0.5">Description & specialties</p>
+        </div>
+      </div>
+
+      <div class="relative z-10 space-y-4">
+        <div id="cp-description-view" class="text-slate-300 leading-relaxed"></div>
+        <textarea id="cp-description-edit" rows="4" class="hidden w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+        <div id="cp-tags" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div id="cp-badges-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] relative overflow-hidden">
+      <svg class="absolute right-6 bottom-6 w-36 h-36 text-purple-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M 10 90 L 10 10 L 90 90 Z" />
+        <line x1="10" y1="50" x2="50" y2="50" stroke-dasharray="2,2" />
+        <circle cx="50" cy="50" r="15" stroke-dasharray="4,2" />
+        <path d="M 20 80 Q 50 40 80 20" />
+        <path d="M 75 18 L 81 19 L 79 25" fill="currentColor" />
+      </svg>
+
+      <div class="flex items-center space-x-3 mb-6 relative z-10">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+          <i data-lucide="award" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-extrabold text-white">Coach Badges</h2>
+          <p class="text-sm text-slate-300 font-medium mt-0.5">Awarded by customers</p>
+        </div>
+      </div>
+
+      <div id="cp-badges-grid" class="relative z-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        <!-- Filled by coach-profile.js -->
+      </div>
+    </div>
+
+  </div>
+
+  <div id="cp-toast-container" class="fixed top-24 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+</div>

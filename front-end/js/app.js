@@ -24,28 +24,73 @@ function showMainView() {
     currentView = 'home';
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
-    const footer = document.getElementById('footer-placeholder'); // Cible l'élément footer
+    const coachView = document.getElementById('coach-profile-view');
+    const footer = document.getElementById('footer-placeholder');
     
     if (main) main.classList.remove('hidden');
     if (profile) profile.classList.add('hidden');
-    if (footer) footer.classList.remove('hidden'); // Affiche le footer sur la page d'accueil
+    if (coachView) coachView.classList.add('hidden');
+    if (footer) footer.classList.remove('hidden');
     
     document.body.classList.remove('overflow-hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function showProfileView() {
+    const savedUser = localStorage.getItem('mocoach_user');
+    if (savedUser) {
+        try {
+            const user = JSON.parse(savedUser);
+            if (user.role === 'coach') {
+                showCoachProfileView();
+                return;
+            }
+        } catch (_) {}
+    }
+
     currentView = 'profile';
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
-    const footer = document.getElementById('footer-placeholder'); // Cible l'élément footer
+    const coachView = document.getElementById('coach-profile-view');
+    const footer = document.getElementById('footer-placeholder');
     
     if (main) main.classList.add('hidden');
+    if (coachView) coachView.classList.add('hidden');
     if (profile) profile.classList.remove('hidden');
-    if (footer) footer.classList.add('hidden'); // Masque le footer sur la vue profil
+    if (footer) footer.classList.add('hidden');
     
     window.scrollTo({ top: 0 });
 }
+
+function showCoachProfileView(coachId) {
+    currentView = 'coach-profile';
+    const main = document.querySelector('main');
+    const profile = document.getElementById('profile-view');
+    const coachView = document.getElementById('coach-profile-view');
+    const footer = document.getElementById('footer-placeholder');
+    
+    if (main) main.classList.add('hidden');
+    if (profile) profile.classList.add('hidden');
+    if (footer) footer.classList.add('hidden');
+    if (coachView) coachView.classList.remove('hidden');
+    
+    if (window.CoachProfileApp) {
+        if (coachId) {
+            CoachProfileApp.open(coachId);
+        } else {
+            try {
+                const user = JSON.parse(localStorage.getItem('mocoach_user'));
+                if (user && user.role === 'coach') {
+                    CoachProfileApp.open(user.nickname);
+                }
+            } catch (_) {}
+        }
+    }
+    
+    window.scrollTo({ top: 0 });
+}
+
+window.showCoachProfileView = showCoachProfileView;
 
 window.showMainView = showMainView;
 window.showProfileView = showProfileView;
@@ -70,7 +115,7 @@ function showToast(msg) {
 function handleHomeNavigation() {
     if (window.location.pathname.includes('all-coaches.html')) {
         window.location.href = 'index.html';
-    } else if (currentView === 'profile') {
+    } else if (currentView === 'profile' || currentView === 'coach-profile') {
         showMainView();
     } else {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -150,6 +195,7 @@ const runAppInit = () => {
     loadComponent('footer-placeholder', 'components/footer.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
     loadComponent('profile-placeholder', 'components/profile.html');
+    loadComponent('coach-profile-placeholder', 'components/coach-profile.html');
 
     // Liaison des clics d'onglets de la pop-up
     document.addEventListener('click', (e) => {
@@ -167,7 +213,7 @@ const runAppInit = () => {
     document.addEventListener('click', (e) => {
         if (e.target.id === 'dropdown-profile-link') {
             e.preventDefault();
-            document.getElementById('profile-dropdown')?.classList.add('hidden'); // Ferme le menu après sélection
+            document.getElementById('profile-dropdown')?.classList.add('hidden');
             showProfileView();
         }
         if (e.target.id === 'dropdown-logout-link') {
@@ -182,7 +228,7 @@ const runAppInit = () => {
         }
         if (e.target.id === 'dropdown-login-link') {
             e.preventDefault();
-            document.getElementById('profile-dropdown')?.classList.add('hidden'); // Ferme le menu
+            document.getElementById('profile-dropdown')?.classList.add('hidden');
             const modal = document.getElementById('coach-modal');
             if (modal) {
                 modal.classList.remove('hidden');
@@ -250,33 +296,35 @@ const runAppInit = () => {
             const pass = document.getElementById('login-password').value;
             const errorDiv = document.getElementById('login-error-feedback');
 
-            // Récupère l'utilisateur enregistré localement
             const savedUser = JSON.parse(localStorage.getItem('mocoach_user'));
 
             if (savedUser && (savedUser.nickname === identity || savedUser.email === identity) && savedUser.password === pass) {
-                // Connexion réussie
                 if (errorDiv) errorDiv.classList.add('hidden');
                 document.getElementById('coach-modal').classList.add('hidden');
                 document.body.classList.remove('overflow-hidden');
                 e.target.reset();
 
-                // On rafraîchit l'avatar dans le header à l'accueil
                 updateHeaderProfilePic();
 
-                if (window.ProfileApp) {
-                    window.ProfileApp.init();
+                if (savedUser.role === 'coach') {
+                    if (window.CoachProfileApp) {
+                        showCoachProfileView();
+                    } else {
+                        showProfileView();
+                    }
+                } else {
+                    if (window.ProfileApp) {
+                        window.ProfileApp.init();
+                    }
+                    showProfileView();
                 }
 
-                showProfileView();
-
-                // Auto-retry: if user was trying to contact a coach before login
                 const pending = window.__pendingCoachId;
                 if (pending) {
                     window.__pendingCoachId = null;
                     if (window.ChatApp) ChatApp.open(pending);
                 }
             } else {
-                // Erreur de connexion
                 if (errorDiv) {
                     errorDiv.textContent = "Incorrect Username/Email or Password.";
                     errorDiv.classList.remove('hidden');
@@ -349,16 +397,24 @@ const runAppInit = () => {
         }
     });
 
-    // Liaison du clic sur "Register as a Coach" pour ouvrir l'onglet d'inscription d'office
+    // Liaison du clic sur "Register as a Coach" pour rediriger vers la page d'inscription coach
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('#become-coach-btn');
         if (btn) {
             e.preventDefault();
-            const modal = document.getElementById('coach-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-                switchModalTab('register'); // Ouvre d'office sur l'onglet d'inscription "S'inscrire"
+            window.location.href = 'coach-register.html';
+        }
+    });
+
+    // Coach card click → open coach profile (ignore Contact button clicks)
+    document.addEventListener('click', (e) => {
+        const card = e.target.closest('.coach-card');
+        const contactBtn = e.target.closest('button[onclick*="ChatApp.open"]');
+        if (card && !contactBtn) {
+            const coachId = card.getAttribute('data-coach-id');
+            if (coachId) {
+                e.preventDefault();
+                showCoachProfileView(coachId);
             }
         }
     });
