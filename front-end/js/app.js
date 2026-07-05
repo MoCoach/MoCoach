@@ -5,10 +5,7 @@ async function loadComponent(id, url) {
             const response = await fetch(url);
             const html = await response.text();
             element.innerHTML = html;
-            if (window.lucide) {
-                lucide.createIcons();
-            }
-            // Met à jour la photo de profil du Header dès que celui-ci est chargé
+            if (window.lucide) lucide.createIcons();
             if (id === 'header-placeholder') {
                 updateHeaderProfilePic();
             }
@@ -20,32 +17,121 @@ async function loadComponent(id, url) {
 
 let currentView = 'home';
 
+const AuthService = {
+    ADMIN_USERNAME: 'Admin1',
+    ADMIN_PASSWORD: 'Admin123',
+
+    login(identity, password) {
+        if (identity === this.ADMIN_USERNAME && password === this.ADMIN_PASSWORD) {
+            const session = { role: 'admin', username: 'Admin1', userId: 'admin-1' };
+            sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
+            return { success: true, role: 'admin', user: session };
+        }
+
+        const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
+        const coach = coaches.find(c => (c.username === identity || c.email === identity) && c.password === password);
+        if (coach) {
+            const session = {
+                role: 'coach', username: coach.username, userId: coach.username,
+                firstName: coach.firstName, lastName: coach.lastName, email: coach.email,
+                city: coach.city, avatar: coach.avatar || '', bio: coach.bio || '',
+                tags: coach.tags || [], price: coach.price || '', discipline: coach.discipline || '',
+                gallery: coach.gallery || [],
+            };
+            sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
+            return { success: true, role: 'coach', user: session };
+        }
+
+        const users = JSON.parse(localStorage.getItem('mocoach_users') || '[]');
+        const user = users.find(u => (u.username === identity || u.email === identity) && u.password === password);
+        if (user) {
+            const session = { role: 'customer', username: user.username, userId: user.username, email: user.email, avatar: user.avatar || '' };
+            sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
+            return { success: true, role: 'customer', user: session };
+        }
+
+        return { success: false };
+    },
+
+    register(data) {
+        const users = JSON.parse(localStorage.getItem('mocoach_users') || '[]');
+        if (users.some(u => u.username === data.username)) return { success: false, error: 'Username already taken' };
+        if (users.some(u => u.email === data.email)) return { success: false, error: 'Email already registered' };
+        users.push(data);
+        localStorage.setItem('mocoach_users', JSON.stringify(users));
+        return { success: true };
+    },
+
+    logout() {
+        sessionStorage.removeItem('mocoach_auth');
+        window.location.reload();
+    },
+
+    getCurrentUser() {
+        try { return JSON.parse(sessionStorage.getItem('mocoach_auth')); }
+        catch { return null; }
+    },
+
+    isLoggedIn() {
+        return !!this.getCurrentUser();
+    },
+
+    getRole() {
+        const user = this.getCurrentUser();
+        return user ? user.role : null;
+    },
+
+    getAdminData() {
+        try { return JSON.parse(localStorage.getItem('mocoach_admin_data') || '{"coaches":{},"customers":{}}'); }
+        catch { return { coaches: {}, customers: {} }; }
+    },
+
+    isUserBlocked(userId, type) {
+        const admin = this.getAdminData();
+        if (type === 'coach') return !!(admin.coaches[userId] && admin.coaches[userId].is_blocked);
+        return !!(admin.customers[userId] && admin.customers[userId].is_blocked);
+    },
+
+    isMessagingBlocked(userId, type) {
+        const admin = this.getAdminData();
+        if (type === 'coach') return !!(admin.coaches[userId] && admin.coaches[userId].messaging_blocked);
+        return !!(admin.customers[userId] && admin.customers[userId].messaging_blocked);
+    },
+};
+
+window.AuthService = AuthService;
+
 function showMainView() {
     currentView = 'home';
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
     const coachView = document.getElementById('coach-profile-view');
     const footer = document.getElementById('footer-placeholder');
-    
+
     if (main) main.classList.remove('hidden');
     if (profile) profile.classList.add('hidden');
     if (coachView) coachView.classList.add('hidden');
     if (footer) footer.classList.remove('hidden');
-    
+
     document.body.classList.remove('overflow-hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function showProfileView() {
-    const savedUser = localStorage.getItem('mocoach_user');
-    if (savedUser) {
-        try {
-            const user = JSON.parse(savedUser);
-            if (user.role === 'coach') {
-                showCoachProfileView();
-                return;
-            }
-        } catch (_) {}
+    const user = AuthService.getCurrentUser();
+    if (!user) {
+        showLoginModal();
+        return;
+    }
+
+    if (user.role === 'admin') {
+        window.location.href = 'admin.html';
+        return;
+    }
+
+    if (user.role === 'coach') {
+        showCoachProfileView(user.userId);
+        return;
     }
 
     currentView = 'profile';
@@ -53,13 +139,22 @@ function showProfileView() {
     const profile = document.getElementById('profile-view');
     const coachView = document.getElementById('coach-profile-view');
     const footer = document.getElementById('footer-placeholder');
-    
+
     if (main) main.classList.add('hidden');
     if (coachView) coachView.classList.add('hidden');
-    if (profile) profile.classList.remove('hidden');
+    if (profile && profile.classList.contains('hidden')) profile.classList.remove('hidden');
     if (footer) footer.classList.add('hidden');
-    
+
     window.scrollTo({ top: 0 });
+}
+
+function showLoginModal() {
+    const modal = document.getElementById('coach-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        if (window.switchModalTab) switchModalTab('login');
+    }
 }
 
 function showCoachProfileView(coachId) {
@@ -68,30 +163,27 @@ function showCoachProfileView(coachId) {
     const profile = document.getElementById('profile-view');
     const coachView = document.getElementById('coach-profile-view');
     const footer = document.getElementById('footer-placeholder');
-    
+
     if (main) main.classList.add('hidden');
     if (profile) profile.classList.add('hidden');
     if (footer) footer.classList.add('hidden');
     if (coachView) coachView.classList.remove('hidden');
-    
+
     if (window.CoachProfileApp) {
         if (coachId) {
             CoachProfileApp.open(coachId);
         } else {
-            try {
-                const user = JSON.parse(localStorage.getItem('mocoach_user'));
-                if (user && user.role === 'coach') {
-                    CoachProfileApp.open(user.nickname);
-                }
-            } catch (_) {}
+            const user = AuthService.getCurrentUser();
+            if (user && user.role === 'coach') {
+                CoachProfileApp.open(user.userId);
+            }
         }
     }
-    
+
     window.scrollTo({ top: 0 });
 }
 
 window.showCoachProfileView = showCoachProfileView;
-
 window.showMainView = showMainView;
 window.showProfileView = showProfileView;
 
@@ -122,21 +214,25 @@ function handleHomeNavigation() {
     }
 }
 
-// Gère le remplacement de l'icône par l'image de profil dans le Header (Accueil)
 function updateHeaderProfilePic() {
     const btn = document.getElementById('profile-btn');
     const dropdown = document.getElementById('profile-dropdown');
     if (!btn) return;
-    
-    const savedUser = localStorage.getItem('mocoach_user');
-    if (savedUser) {
-        const user = JSON.parse(savedUser);
-        if (user && user.avatar) {
+
+    const user = AuthService.getCurrentUser();
+
+    if (user) {
+        if (user.avatar) {
             btn.innerHTML = `<img src="${user.avatar}" class="w-full h-full object-cover rounded-full" alt="Profile">`;
+        } else {
+            btn.innerHTML = `<i data-lucide="user" class="w-6 h-6"></i>`;
+            if (window.lucide) lucide.createIcons();
         }
         if (dropdown) {
+            const roleLabel = user.role === 'admin' ? 'Admin Panel' : user.role === 'coach' ? 'My Coach Profile' : 'My Profile';
+            const roleLink = user.role === 'admin' ? 'admin.html' : '#';
             dropdown.innerHTML = `
-                <a href="#" id="dropdown-profile-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition font-semibold">My Profile</a>
+                <a href="${roleLink}" id="dropdown-profile-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition font-semibold">${roleLabel}</a>
                 <hr class="border-slate-800 my-1">
                 <a href="#" id="dropdown-logout-link" class="block px-4 py-2 text-sm text-red-400 hover:bg-red-950/30 hover:text-red-300 transition font-bold">Logout</a>
             `;
@@ -153,7 +249,6 @@ function updateHeaderProfilePic() {
 }
 window.updateHeaderProfilePic = updateHeaderProfilePic;
 
-// Gère le basculement des onglets de Connexion / Inscription dans la Pop-up
 function switchModalTab(tab) {
     const registerForm = document.getElementById('register-form');
     const loginForm = document.getElementById('login-form');
@@ -181,23 +276,19 @@ function switchModalTab(tab) {
         regTabBtn.classList.remove('border-blue-500', 'text-white');
         regTabBtn.classList.add('border-transparent', 'text-slate-400');
         if (modalTitle) modalTitle.textContent = 'Login';
-        if (modalSubtitle) modalSubtitle.textContent = 'Welcome back \u2014 log in to connect with your coaches';
+        if (modalSubtitle) modalSubtitle.textContent = 'Welcome back — log in to connect with your coaches';
     }
 }
 
 const runAppInit = () => {
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+    if (window.lucide) lucide.createIcons();
 
-    // Chargement dynamique des composants asynchrones
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
     loadComponent('profile-placeholder', 'components/profile.html');
     loadComponent('coach-profile-placeholder', 'components/coach-profile.html');
 
-    // Liaison des clics d'onglets de la pop-up
     document.addEventListener('click', (e) => {
         if (e.target.id === 'tab-register-btn') {
             e.preventDefault();
@@ -209,7 +300,6 @@ const runAppInit = () => {
         }
     });
 
-    // Événements de clic sur le dropdown d'en-tête du Header
     document.addEventListener('click', (e) => {
         if (e.target.id === 'dropdown-profile-link') {
             e.preventDefault();
@@ -219,12 +309,7 @@ const runAppInit = () => {
         if (e.target.id === 'dropdown-logout-link') {
             e.preventDefault();
             document.getElementById('profile-dropdown')?.classList.add('hidden');
-            if (window.ProfileApp) {
-                window.ProfileApp.logout();
-            } else {
-                localStorage.removeItem('mocoach_user');
-                window.location.reload();
-            }
+            AuthService.logout();
         }
         if (e.target.id === 'dropdown-login-link') {
             e.preventDefault();
@@ -238,7 +323,6 @@ const runAppInit = () => {
         }
     });
 
-    // ÉCOUTEUR FORMULAIRE D'INSCRIPTION (Contrôle de mot de passe)
     document.addEventListener('submit', (e) => {
         if (e.target.id === 'register-form') {
             e.preventDefault();
@@ -250,45 +334,37 @@ const runAppInit = () => {
                 return;
             }
 
-            // Récupération de l'image sélectionnée comme profil (Base64)
             const previewImg = document.querySelector('#modal-previews-container img');
-            const avatarSrc = previewImg ? previewImg.src : 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop';
+            const avatarSrc = previewImg ? previewImg.src : '';
 
-            // Création de l'objet utilisateur
             const newUser = {
-                nickname: document.getElementById('reg-nickname').value.trim(),
-                firstName: document.getElementById('reg-firstname').value.trim() || '',
-                lastName: document.getElementById('reg-lastname').value.trim() || '',
+                username: document.getElementById('reg-nickname').value.trim(),
                 email: document.getElementById('reg-email').value.trim(),
-                city: document.getElementById('reg-city').value.trim() || '',
-                phone: '',
                 password: pass,
                 avatar: avatarSrc,
                 role: 'customer',
             };
 
-            // Sauvegarde dans la session locale (localStorage)
-            localStorage.setItem('mocoach_user', JSON.stringify(newUser));
+            const result = AuthService.register(newUser);
+            if (!result.success) {
+                alert(result.error || 'Registration failed');
+                return;
+            }
 
-            // Fermeture de la pop-up et reset du formulaire
             document.getElementById('coach-modal').classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
             e.target.reset();
             document.getElementById('modal-previews-container').innerHTML = '';
 
-            // Met à jour la photo de profil du Header à l'accueil
-            updateHeaderProfilePic();
-
-            // Initialise et rafraîchit le profil de façon instantanée avec les nouvelles données
-            if (window.ProfileApp) {
-                window.ProfileApp.init();
+            const loginResult = AuthService.login(newUser.username, pass);
+            if (loginResult.success) {
+                updateHeaderProfilePic();
+                if (window.ProfileApp) window.ProfileApp.init();
+                showProfileView();
             }
-
-            showProfileView();
         }
     });
 
-    // ÉCOUTEUR FORMULAIRE DE CONNEXION (Reconnexion par Pseudo/E-mail et mot de passe)
     document.addEventListener('submit', (e) => {
         if (e.target.id === 'login-form') {
             e.preventDefault();
@@ -296,9 +372,9 @@ const runAppInit = () => {
             const pass = document.getElementById('login-password').value;
             const errorDiv = document.getElementById('login-error-feedback');
 
-            const savedUser = JSON.parse(localStorage.getItem('mocoach_user'));
+            const result = AuthService.login(identity, pass);
 
-            if (savedUser && (savedUser.nickname === identity || savedUser.email === identity) && savedUser.password === pass) {
+            if (result.success) {
                 if (errorDiv) errorDiv.classList.add('hidden');
                 document.getElementById('coach-modal').classList.add('hidden');
                 document.body.classList.remove('overflow-hidden');
@@ -306,16 +382,19 @@ const runAppInit = () => {
 
                 updateHeaderProfilePic();
 
-                if (savedUser.role === 'coach') {
+                if (result.role === 'admin') {
+                    window.location.href = 'admin.html';
+                    return;
+                }
+
+                if (result.role === 'coach') {
                     if (window.CoachProfileApp) {
-                        showCoachProfileView();
+                        showCoachProfileView(result.user.userId);
                     } else {
                         showProfileView();
                     }
                 } else {
-                    if (window.ProfileApp) {
-                        window.ProfileApp.init();
-                    }
+                    if (window.ProfileApp) window.ProfileApp.init();
                     showProfileView();
                 }
 
@@ -333,7 +412,6 @@ const runAppInit = () => {
         }
     });
 
-    // Gestion de l'opacité et de l'effet flou du Header au défilement (Glassmorphism)
     window.addEventListener('scroll', () => {
         const header = document.querySelector('header');
         if (header) {
@@ -350,45 +428,42 @@ const runAppInit = () => {
     const seeAllBtn = document.getElementById('see-all-coaches');
     const searchInput = document.getElementById('search-input');
 
-    // Search: filter among visible coach cards (works on index.html and all-coaches.html)
     if (searchInput) {
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.toLowerCase().trim();
             const grid = document.querySelector('#coach-carousel') || document.querySelector('#all-coaches-grid');
             if (!grid) return;
             grid.querySelectorAll('.coach-card').forEach(card => {
-                const name = card.getAttribute('data-name').toLowerCase();
-                const discipline = card.getAttribute('data-discipline').toLowerCase();
-                card.style.display = (name.includes(query) || discipline.includes(query)) ? 'flex' : 'none';
+                const name = (card.getAttribute('data-name') || '').toLowerCase();
+                const discipline = (card.getAttribute('data-discipline') || '').toLowerCase();
+                const city = (card.getAttribute('data-city') || '').toLowerCase();
+                const bio = (card.getAttribute('data-bio') || '').toLowerCase();
+                const tags = (card.getAttribute('data-tags') || '').toLowerCase();
+                const match = name.includes(query) || discipline.includes(query) || city.includes(query) || bio.includes(query) || tags.includes(query);
+                card.style.display = match ? 'flex' : 'none';
             });
         });
     }
 
-    // See All Coaches: open new tab with full coach listing
     if (seeAllBtn) {
         seeAllBtn.addEventListener('click', () => {
             window.location.href = 'all-coaches.html';
         });
     }
 
-    // INTERACTION AU CLIC : Bascule l'affichage du menu déroulant et fermeture si clic extérieur
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('#profile-btn');
         const dropdown = document.getElementById('profile-dropdown');
-        
+
         if (btn) {
             e.preventDefault();
-            e.stopPropagation(); // Évite la fermeture immédiate par l'écouteur global
-            if (dropdown) {
-                dropdown.classList.toggle('hidden');
-            }
+            e.stopPropagation();
+            if (dropdown) dropdown.classList.toggle('hidden');
         } else if (dropdown && !e.target.closest('#profile-dropdown')) {
-            // Clic effectué ailleurs sur la page : ferme le menu déroulant
             dropdown.classList.add('hidden');
         }
     });
 
-    // Bouton "Back to Home" délégué pour garantir la redirection dans tous les cas de figure
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('#profile-back-btn');
         if (btn) {
@@ -397,7 +472,6 @@ const runAppInit = () => {
         }
     });
 
-    // Liaison du clic sur "Register as a Coach" pour rediriger vers la page d'inscription coach
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('#become-coach-btn');
         if (btn) {
@@ -406,10 +480,9 @@ const runAppInit = () => {
         }
     });
 
-    // Coach card click → open coach profile (ignore Contact button clicks)
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.coach-card');
-        const contactBtn = e.target.closest('button[onclick*="ChatApp.open"]');
+        const contactBtn = e.target.closest('button[onclick*="ChatApp.open"], button.cp-contact-btn');
         if (card && !contactBtn) {
             const coachId = card.getAttribute('data-coach-id');
             if (coachId) {
@@ -419,27 +492,23 @@ const runAppInit = () => {
         }
     });
 
-    // Comprehensive nav handler: logo, Home, section links, and footer links
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a[href]');
         if (!link) return;
         const href = link.getAttribute('href');
 
-        // Logo (header a[href="#"] not inside nav, contains an img)
         if (href === '#' && link.closest('header') && !link.closest('nav') && link.querySelector('img')) {
             e.preventDefault();
             handleHomeNavigation();
             return;
         }
 
-        // Home nav link
         if (href === '#' && link.closest('nav')) {
             e.preventDefault();
             handleHomeNavigation();
             return;
         }
 
-        // Section nav links (e.g. #how-it-works, #explore, #features, #about)
         if (href && href.startsWith('#') && href.length > 1 && link.closest('nav')) {
             if (window.location.pathname.includes('all-coaches.html')) {
                 e.preventDefault();
@@ -448,7 +517,6 @@ const runAppInit = () => {
             return;
         }
 
-        // Footer links (Terms, Privacy)
         if (href === '#' && link.closest('footer')) {
             e.preventDefault();
             showToast('Coming soon');

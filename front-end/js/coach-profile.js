@@ -1,16 +1,16 @@
 const COACH_PROFILES = {
   'coach-1': {
     id: 'coach-1', name: 'Priya S.', discipline: 'Zumba',
-    price: '450 Rs/h', priceValue: 450,
+    price: '450 Rs/h', priceValue: 450, city: 'Grand Baie',
     photoUrl: 'assets/img/Certified_coaches/zumba.jpg',
     avatarUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=300&q=80',
-    description: 'With over 8 years of experience in dance and fitness, Priya brings the energy of sega rhythms to every Zumba session. Her classes blend high-energy cardio with island-inspired moves, making fitness feel like a celebration. Whether you are a beginner or a seasoned dancer, she will have you moving, sweating, and smiling.',
+    description: 'With over 8 years of experience in dance and fitness, Priya brings the energy of sega rhythms to every Zumba session. Her classes blend high-energy cardio with island-inspired moves, making fitness feel like a celebration.',
     tags: ['Zumba', 'Dance Fitness', 'Sega Rhythms', 'Cardio'],
     gallery: [],
   },
   'coach-2': {
     id: 'coach-2', name: 'Cedric L.', discipline: 'Boxing',
-    price: '600 Rs/h', priceValue: 600,
+    price: '600 Rs/h', priceValue: 600, city: 'Port Louis',
     photoUrl: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=300&q=80',
     description: 'Cedric is a former national boxing champion with 10 years of coaching experience.',
@@ -19,7 +19,7 @@ const COACH_PROFILES = {
   },
   'coach-3': {
     id: 'coach-3', name: 'Leana Marou', discipline: 'Yoga',
-    price: '550 Rs/h', priceValue: 550,
+    price: '550 Rs/h', priceValue: 550, city: 'Pereybere',
     photoUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80',
     description: 'Leana is a 500-RYT certified yoga instructor who blends Vinyasa flow with breathwork and meditation.',
@@ -28,7 +28,7 @@ const COACH_PROFILES = {
   },
   'coach-4': {
     id: 'coach-4', name: 'Sarah B.', discipline: 'Tennis',
-    price: '750 Rs/h', priceValue: 750,
+    price: '750 Rs/h', priceValue: 750, city: 'Belle Mare',
     photoUrl: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=300&q=80',
     description: 'Sarah is a certified tennis professional with experience coaching players from beginners to tournament level.',
@@ -37,7 +37,7 @@ const COACH_PROFILES = {
   },
   'coach-5': {
     id: 'coach-5', name: 'Mathieu R.', discipline: 'Football',
-    price: '400 Rs/h', priceValue: 400,
+    price: '400 Rs/h', priceValue: 400, city: 'Curepipe',
     photoUrl: 'https://images.unsplash.com/photo-1517747614396-d21a78b850e8?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1517747614396-d21a78b850e8?auto=format&fit=crop&w=300&q=80',
     description: 'Mathieu played semi-professional football in Europe before returning to Mauritius to coach.',
@@ -46,7 +46,7 @@ const COACH_PROFILES = {
   },
   'coach-6': {
     id: 'coach-6', name: 'Amisha K.', discipline: 'Gymnastics',
-    price: '650 Rs/h', priceValue: 650,
+    price: '650 Rs/h', priceValue: 650, city: 'Quatre Bornes',
     photoUrl: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=300&q=80',
     description: 'Amisha is a former national gymnast with over 12 years of coaching experience.',
@@ -55,7 +55,7 @@ const COACH_PROFILES = {
   },
   'coach-7': {
     id: 'coach-7', name: 'Jean-Pierre S.', discipline: 'Water Sports',
-    price: '700 Rs/h', priceValue: 700,
+    price: '700 Rs/h', priceValue: 700, city: 'Flic en Flac',
     photoUrl: 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&w=300&q=80',
     description: 'Jean-Pierre is a certified open-water swim coach and paddleboarding instructor.',
@@ -64,7 +64,7 @@ const COACH_PROFILES = {
   },
   'coach-8': {
     id: 'coach-8', name: 'Chloe A.', discipline: 'Jogging/Running',
-    price: '350 Rs/h', priceValue: 350,
+    price: '350 Rs/h', priceValue: 350, city: 'Tamarin',
     photoUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=300&q=80',
     description: 'Chloe is a marathon runner and certified running coach who helps clients of all levels.',
@@ -73,7 +73,7 @@ const COACH_PROFILES = {
   },
   'coach-9': {
     id: 'coach-9', name: 'Kavir D.', discipline: 'Strength Training',
-    price: '500 Rs/h', priceValue: 500,
+    price: '500 Rs/h', priceValue: 500, city: 'Moka',
     photoUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=300&q=80',
     description: 'Kavir is a certified strength and conditioning specialist with a background in sports science.',
@@ -82,7 +82,7 @@ const COACH_PROFILES = {
   },
   'coach-10': {
     id: 'coach-10', name: 'Arnaud G.', discipline: 'Hiking',
-    price: '650 Rs/h', priceValue: 650,
+    price: '650 Rs/h', priceValue: 650, city: 'Black River',
     photoUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=300&q=80',
     description: 'Arnaud is an experienced mountain guide who knows every trail in Mauritius.',
@@ -91,7 +91,7 @@ const COACH_PROFILES = {
   },
   'coach-11': {
     id: 'coach-11', name: 'Gael B.', discipline: 'Combat Sports',
-    price: '550 Rs/h', priceValue: 550,
+    price: '550 Rs/h', priceValue: 550, city: 'Port Louis',
     photoUrl: 'https://images.unsplash.com/photo-1517438476312-10d79c01926d?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1517438476312-10d79c01926d?auto=format&fit=crop&w=300&q=80',
     description: 'Gael has trained in martial arts for over 15 years, holding black belts in multiple disciplines.',
@@ -100,7 +100,7 @@ const COACH_PROFILES = {
   },
   'coach-12': {
     id: 'coach-12', name: 'Ryan M.', discipline: 'Dance',
-    price: '450 Rs/h', priceValue: 450,
+    price: '450 Rs/h', priceValue: 450, city: 'Grand Baie',
     photoUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=300&q=80',
     description: 'Ryan is a professional dancer and choreographer with experience in contemporary, hip-hop, and sega.',
@@ -109,7 +109,7 @@ const COACH_PROFILES = {
   },
   'coach-13': {
     id: 'coach-13', name: 'Nicholas W.', discipline: 'Badminton',
-    price: '480 Rs/h', priceValue: 480,
+    price: '480 Rs/h', priceValue: 480, city: 'Rose Hill',
     photoUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=300&q=80',
     description: 'Nicholas is a national-level badminton player with a passion for teaching.',
@@ -118,7 +118,7 @@ const COACH_PROFILES = {
   },
   'coach-14': {
     id: 'coach-14', name: 'Dev M.', discipline: 'Rugby',
-    price: '500 Rs/h', priceValue: 500,
+    price: '500 Rs/h', priceValue: 500, city: 'Curepipe',
     photoUrl: 'https://images.unsplash.com/photo-1533560904424-a0c61dc306fc?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1533560904424-a0c61dc306fc?auto=format&fit=crop&w=300&q=80',
     description: 'Dev played rugby for the Mauritius national team and now coaches the next generation.',
@@ -127,7 +127,7 @@ const COACH_PROFILES = {
   },
   'coach-15': {
     id: 'coach-15', name: 'Robert T.', discipline: 'Golf',
-    price: '800 Rs/h', priceValue: 800,
+    price: '800 Rs/h', priceValue: 800, city: 'Belle Mare',
     photoUrl: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=300&q=80',
     description: 'Robert is a PGA-accredited golf instructor with years of experience teaching at premier Mauritian golf courses.',
@@ -136,7 +136,7 @@ const COACH_PROFILES = {
   },
   'coach-16': {
     id: 'coach-16', name: 'David L.', discipline: 'Basketball',
-    price: '550 Rs/h', priceValue: 550,
+    price: '550 Rs/h', priceValue: 550, city: 'Port Louis',
     photoUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=300&q=80',
     description: 'David played college basketball internationally and brings modern training methods to Mauritius.',
@@ -145,7 +145,7 @@ const COACH_PROFILES = {
   },
   'coach-17': {
     id: 'coach-17', name: 'Melissa P.', discipline: 'Handball',
-    price: '450 Rs/h', priceValue: 450,
+    price: '450 Rs/h', priceValue: 450, city: 'Quatre Bornes',
     photoUrl: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=300&q=80',
     description: 'Melissa is a former national handball player who now coaches youth and adult players.',
@@ -154,7 +154,7 @@ const COACH_PROFILES = {
   },
   'coach-18': {
     id: 'coach-18', name: 'Alan Y.', discipline: 'Table Tennis',
-    price: '400 Rs/h', priceValue: 400,
+    price: '400 Rs/h', priceValue: 400, city: 'Rose Hill',
     photoUrl: 'https://images.unsplash.com/photo-1534067783941-51c9c23eccfd?auto=format&fit=crop&w=600&q=80',
     avatarUrl: 'https://images.unsplash.com/photo-1534067783941-51c9c23eccfd?auto=format&fit=crop&w=300&q=80',
     description: 'Alan is a table tennis specialist with multiple island championship titles.',
@@ -164,27 +164,11 @@ const COACH_PROFILES = {
 };
 
 const BADGE_CATEGORIES = [
-  { key: 'technical_knowledge', label: 'Technical Knowledge', icon: 'book-open', desc: 'Deep expertise in their discipline' },
+  { key: 'technical_coach', label: 'Technical Coach', icon: 'book-open', desc: 'Deep expertise in their discipline' },
+  { key: 'flexibility_adaptability', label: 'Flexibility & Adaptability', icon: 'shuffle', desc: 'Adjusts sessions to individual needs' },
   { key: 'motivator', label: 'Motivator', icon: 'heart', desc: 'Inspires and pushes clients to excel' },
-  { key: 'adaptable', label: 'Adaptable', icon: 'shuffle', desc: 'Adjusts sessions to individual needs' },
-  { key: 'champion_maker', label: 'Champion-maker', icon: 'trophy', desc: 'Helps clients achieve real results' },
-  { key: 'great_location', label: 'Great Location', icon: 'map-pin', desc: 'Convenient and quality training venue' },
+  { key: 'champion_builder', label: 'Champion Builder', icon: 'trophy', desc: 'Helps clients achieve real results' },
 ];
-
-function getBadgeData() {
-  try {
-    return JSON.parse(localStorage.getItem('mocoach_badges')) || {};
-  } catch { return {}; }
-}
-
-function saveBadgeData(data) {
-  localStorage.setItem('mocoach_badges', JSON.stringify(data));
-}
-
-function getBadgesForCoach(coachId) {
-  const all = getBadgeData();
-  return all[coachId] || {};
-}
 
 const CoachProfileApp = {
   currentId: null,
@@ -202,8 +186,8 @@ const CoachProfileApp = {
   },
 
   open(coachId) {
-    const savedUser = this._getSavedUser();
-    this.isOwnProfile = savedUser && savedUser.role === 'coach' && savedUser.nickname === coachId;
+    const user = this._getAuthUser();
+    this.isOwnProfile = user && user.role === 'coach' && user.userId === coachId;
 
     const profile = COACH_PROFILES[coachId];
     if (profile) {
@@ -215,25 +199,27 @@ const CoachProfileApp = {
         this.currentData.gallery = saved.gallery || profile.gallery || [];
         this.currentData.price = saved.price || profile.price;
         this.currentData.avatarUrl = saved.avatar || profile.avatarUrl;
+        this.currentData.city = saved.city || profile.city;
       } else {
         this.currentData.gallery = profile.gallery || [];
       }
     } else {
       this.currentData = {
-        id: coachId, name: coachId, discipline: '', price: '',
+        id: coachId, name: coachId, discipline: '', price: '', city: '',
         photoUrl: '', avatarUrl: '', description: '', tags: [], gallery: [],
       };
     }
 
     if (this.isOwnProfile) {
       Object.assign(this.currentData, {
-        name: savedUser.firstName ? `${savedUser.firstName} ${savedUser.lastName}`.trim() : savedUser.nickname,
-        discipline: savedUser.discipline || this.currentData.discipline,
-        price: savedUser.price ? `Rs ${savedUser.price} per session` : this.currentData.price,
-        description: savedUser.description || this.currentData.description,
-        tags: savedUser.tags || this.currentData.tags,
-        gallery: savedUser.gallery || this.currentData.gallery || [],
-        avatarUrl: savedUser.avatar || this.currentData.avatarUrl,
+        name: user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.username,
+        discipline: user.discipline || this.currentData.discipline,
+        price: user.price ? `Rs ${user.price} per session` : this.currentData.price,
+        city: user.city || this.currentData.city,
+        description: user.bio || this.currentData.description,
+        tags: user.tags || this.currentData.tags,
+        gallery: user.gallery || this.currentData.gallery || [],
+        avatarUrl: user.avatar || this.currentData.avatarUrl,
       });
     }
 
@@ -243,13 +229,13 @@ const CoachProfileApp = {
     this.show();
   },
 
-  _getSavedUser() {
-    try { return JSON.parse(localStorage.getItem('mocoach_user')); } catch { return null; }
+  _getAuthUser() {
+    try { return JSON.parse(sessionStorage.getItem('mocoach_auth')); } catch { return null; }
   },
 
   _getSavedCoach(coachId) {
-    const all = getBadgeData();
-    return all[coachId] ? null : null;
+    const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
+    return coaches.find(c => c.username === coachId) || null;
   },
 
   render() {
@@ -257,6 +243,7 @@ const CoachProfileApp = {
     this.renderGallery();
     this.renderInfo();
     this.renderBadges();
+    this.renderRatings();
     this.generateTwinklingStars();
     if (window.lucide) lucide.createIcons();
   },
@@ -273,6 +260,7 @@ const CoachProfileApp = {
     this._setText('cp-name', d.name);
     this._setText('cp-discipline', d.discipline);
     this._setText('cp-price', d.price);
+    this._setText('cp-city', d.city ? `📍 ${d.city}` : '');
 
     const contactBtn = document.getElementById('cp-contact-btn');
     if (contactBtn) {
@@ -283,11 +271,13 @@ const CoachProfileApp = {
       }
     }
 
+    const chatBtn = document.getElementById('cp-chat-btn');
     const editBtn = document.getElementById('cp-edit-btn');
     const saveBtn = document.getElementById('cp-save-btn');
     const cancelBtn = document.getElementById('cp-cancel-btn');
 
     if (this.isOwnProfile) {
+      chatBtn.classList.remove('hidden');
       editBtn.classList.remove('hidden');
       if (this.editing) {
         editBtn.classList.add('hidden');
@@ -299,6 +289,7 @@ const CoachProfileApp = {
         cancelBtn.classList.add('hidden');
       }
     } else {
+      chatBtn.classList.add('hidden');
       editBtn.classList.add('hidden');
       saveBtn.classList.add('hidden');
       cancelBtn.classList.add('hidden');
@@ -429,11 +420,24 @@ const CoachProfileApp = {
   },
 
   _syncAndRender() {
-    const savedUser = this._getSavedUser();
-    if (savedUser && savedUser.role === 'coach') {
-      savedUser.gallery = this.currentData.gallery;
-      savedUser.avatar = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : savedUser.avatar;
-      localStorage.setItem('mocoach_user', JSON.stringify(savedUser));
+    const user = this._getAuthUser();
+    if (user && user.role === 'coach') {
+      const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
+      const idx = coaches.findIndex(c => c.username === user.userId);
+      if (idx >= 0) {
+        coaches[idx].gallery = this.currentData.gallery;
+        coaches[idx].avatar = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : coaches[idx].avatar;
+        coaches[idx].bio = this.currentData.description;
+        coaches[idx].tags = this.currentData.tags;
+        localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
+
+        const session = JSON.parse(sessionStorage.getItem('mocoach_auth') || '{}');
+        session.gallery = coaches[idx].gallery;
+        session.avatar = coaches[idx].avatar;
+        session.bio = coaches[idx].bio;
+        session.tags = coaches[idx].tags;
+        sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
+      }
     }
     this.renderGallery();
     this.renderHeader();
@@ -470,28 +474,141 @@ const CoachProfileApp = {
     const grid = document.getElementById('cp-badges-grid');
     if (!grid) return;
 
-    const badges = getBadgesForCoach(this.currentId);
+    const badgeVotes = this._getBadgeVotes();
+    const coachVotes = badgeVotes[this.currentId] || {};
 
-    const savedUser = this._getSavedUser();
-    const viewerIsCustomer = savedUser && savedUser.role === 'customer';
+    const user = this._getAuthUser();
+    const viewerIsCustomer = user && user.role === 'customer';
 
     grid.innerHTML = BADGE_CATEGORIES.map(cat => {
-      const count = badges[cat.key] || 0;
+      const count = coachVotes[cat.key] || 0;
       const isActive = count > 0;
+      const viewerHasVoted = viewerIsCustomer && !!(coachVotes[cat.key] && coachVotes[cat.key] > 0 && coachVotes[cat.key + '_voters'] && coachVotes[cat.key + '_voters'].includes(user.userId));
       return `
         <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50 flex flex-col items-center text-center transition ${isActive ? 'badge-active' : 'opacity-50'} ${viewerIsCustomer ? 'cursor-pointer hover:border-amber-500/50 hover:bg-slate-800/80' : ''}"
-             ${viewerIsCustomer ? `onclick="CoachProfileApp.awardBadge('${cat.key}')"` : ''}>
+             ${viewerIsCustomer ? `onclick="CoachProfileApp.toggleBadge('${cat.key}')"` : ''}>
           <div class="w-12 h-12 rounded-xl ${isActive ? 'bg-gradient-to-br from-amber-400/20 to-orange-500/20 border-amber-500/30' : 'bg-slate-800/80 border-slate-700/50'} flex items-center justify-center mb-2 border">
             <i data-lucide="${cat.icon}" class="w-6 h-6 ${isActive ? 'text-amber-400' : 'text-slate-600'}"></i>
           </div>
           <p class="text-xs font-bold text-white">${cat.label}</p>
           <p class="text-[10px] text-slate-400 mt-0.5 leading-tight">${cat.desc}</p>
           <div class="mt-2 w-7 h-7 rounded-full ${isActive ? 'bg-amber-400/20 text-amber-400' : 'bg-slate-800 text-slate-600'} flex items-center justify-center text-xs font-bold">${count}</div>
+          ${viewerHasVoted ? '<span class="text-[10px] text-emerald-400 font-bold mt-1">✓ You awarded this</span>' : ''}
         </div>
       `;
     }).join('');
 
     if (window.lucide) lucide.createIcons();
+  },
+
+  renderRatings() {
+    const container = document.getElementById('cp-ratings');
+    if (!container) return;
+
+    const ratings = this._getRatings();
+    const coachRatings = ratings[this.currentId] || {};
+    let upCount = 0, downCount = 0;
+    Object.values(coachRatings).forEach(v => {
+      if (v === 'up') upCount++;
+      if (v === 'down') downCount++;
+    });
+
+    const user = this._getAuthUser();
+    const viewerIsCustomer = user && user.role === 'customer';
+    const userVote = viewerIsCustomer ? (coachRatings[user.userId] || null) : null;
+
+    container.innerHTML = `
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+          <i data-lucide="thumbs-up" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-extrabold text-white">Ratings</h2>
+          <p class="text-sm text-slate-300 font-medium mt-0.5">Thumbs up/down from customers</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-center gap-8 py-4">
+        <button onclick="CoachProfileApp.vote('up')" ${viewerIsCustomer ? '' : 'disabled'} class="flex flex-col items-center gap-2 px-6 py-4 rounded-2xl transition ${userVote === 'up' ? 'bg-emerald-500/20 border-emerald-500/50 border' : viewerIsCustomer ? 'bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/50 cursor-pointer' : 'bg-slate-800/40 border border-slate-700/30 opacity-60'}">
+          <i data-lucide="thumbs-up" class="w-8 h-8 ${userVote === 'up' ? 'text-emerald-400' : 'text-slate-400'}"></i>
+          <span class="text-2xl font-black ${userVote === 'up' ? 'text-emerald-400' : 'text-white'}">${upCount}</span>
+          <span class="text-xs text-slate-500 font-medium">Up</span>
+        </button>
+        <button onclick="CoachProfileApp.vote('down')" ${viewerIsCustomer ? '' : 'disabled'} class="flex flex-col items-center gap-2 px-6 py-4 rounded-2xl transition ${userVote === 'down' ? 'bg-red-500/20 border-red-500/50 border' : viewerIsCustomer ? 'bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/50 cursor-pointer' : 'bg-slate-800/40 border border-slate-700/30 opacity-60'}">
+          <i data-lucide="thumbs-down" class="w-8 h-8 ${userVote === 'down' ? 'text-red-400' : 'text-slate-400'}"></i>
+          <span class="text-2xl font-black ${userVote === 'down' ? 'text-red-400' : 'text-white'}">${downCount}</span>
+          <span class="text-xs text-slate-500 font-medium">Down</span>
+        </button>
+      </div>
+      ${userVote ? `<p class="text-center text-xs text-slate-500">Click again to remove your vote</p>` : ''}
+    `;
+
+    if (window.lucide) lucide.createIcons();
+  },
+
+  vote(type) {
+    const user = this._getAuthUser();
+    if (!user || user.role !== 'customer') {
+      this.showToast('Only customers can vote', 'error');
+      return;
+    }
+    if (!this.currentId) return;
+
+    const ratings = this._getRatings();
+    if (!ratings[this.currentId]) ratings[this.currentId] = {};
+
+    const currentVote = ratings[this.currentId][user.userId];
+
+    if (currentVote === type) {
+      delete ratings[this.currentId][user.userId];
+      this.showToast('Vote removed', 'success');
+    } else {
+      ratings[this.currentId][user.userId] = type;
+      this.showToast(type === 'up' ? 'Thumbs up! 👍' : 'Thumbs down 👎', 'success');
+    }
+
+    localStorage.setItem('mocoach_ratings', JSON.stringify(ratings));
+    this.renderRatings();
+  },
+
+  toggleBadge(categoryKey) {
+    const user = this._getAuthUser();
+    if (!user || user.role !== 'customer') {
+      this.showToast('Only customers can award badges', 'error');
+      return;
+    }
+    if (!this.currentId) return;
+
+    const badgeVotes = this._getBadgeVotes();
+    if (!badgeVotes[this.currentId]) badgeVotes[this.currentId] = {};
+
+    const coachBadges = badgeVotes[this.currentId];
+    const voterKey = categoryKey + '_voters';
+    if (!coachBadges[voterKey]) coachBadges[voterKey] = [];
+
+    const alreadyVoted = coachBadges[voterKey].includes(user.userId);
+
+    if (alreadyVoted) {
+      coachBadges[categoryKey] = Math.max(0, (coachBadges[categoryKey] || 0) - 1);
+      coachBadges[voterKey] = coachBadges[voterKey].filter(id => id !== user.userId);
+      this.showToast('Badge removed', 'success');
+    } else {
+      coachBadges[categoryKey] = (coachBadges[categoryKey] || 0) + 1;
+      coachBadges[voterKey].push(user.userId);
+      this.showToast('Badge awarded! ⭐', 'success');
+    }
+
+    localStorage.setItem('mocoach_badge_votes', JSON.stringify(badgeVotes));
+    this.renderBadges();
+  },
+
+  _getRatings() {
+    try { return JSON.parse(localStorage.getItem('mocoach_ratings') || '{}'); }
+    catch { return {}; }
+  },
+
+  _getBadgeVotes() {
+    try { return JSON.parse(localStorage.getItem('mocoach_badge_votes') || '{}'); }
+    catch { return {}; }
   },
 
   startEdit() {
@@ -505,39 +622,38 @@ const CoachProfileApp = {
   },
 
   save() {
-    const savedUser = this._getSavedUser();
-    if (!savedUser || savedUser.role !== 'coach') return;
+    const user = this._getAuthUser();
+    if (!user || user.role !== 'coach') return;
 
     const descEdit = document.getElementById('cp-description-edit');
-    if (descEdit) savedUser.description = descEdit.value.trim();
+    if (descEdit) {
+      this.currentData.description = descEdit.value.trim();
+    }
 
-    savedUser.tags = this.currentData.tags;
-    savedUser.gallery = this.currentData.gallery;
-    savedUser.avatar = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : savedUser.avatar;
+    this.currentData.tags = this.currentData.tags;
+    this.currentData.gallery = this.currentData.gallery;
+    this.currentData.avatarUrl = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : this.currentData.avatarUrl;
 
-    localStorage.setItem('mocoach_user', JSON.stringify(savedUser));
+    const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
+    const idx = coaches.findIndex(c => c.username === user.userId);
+    if (idx >= 0) {
+      coaches[idx].bio = this.currentData.description;
+      coaches[idx].tags = this.currentData.tags;
+      coaches[idx].gallery = this.currentData.gallery;
+      coaches[idx].avatar = this.currentData.avatarUrl;
+      localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
+
+      const session = JSON.parse(sessionStorage.getItem('mocoach_auth') || '{}');
+      session.bio = coaches[idx].bio;
+      session.tags = coaches[idx].tags;
+      session.gallery = coaches[idx].gallery;
+      session.avatar = coaches[idx].avatar;
+      sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
+    }
+
     this.editing = false;
     this.showToast('Profile saved!', 'success');
     this.render();
-  },
-
-  awardBadge(categoryKey) {
-    const savedUser = this._getSavedUser();
-    if (!savedUser || savedUser.role !== 'customer') {
-      this.showToast('Only customers can award badges', 'error');
-      return;
-    }
-    if (!this.currentId) return;
-
-    const all = getBadgeData();
-    if (!all[this.currentId]) {
-      all[this.currentId] = {};
-    }
-    all[this.currentId][categoryKey] = (all[this.currentId][categoryKey] || 0) + 1;
-    saveBadgeData(all);
-
-    this.renderBadges();
-    this.showToast('Badge awarded!', 'success');
   },
 
   show() {
@@ -571,12 +687,12 @@ const CoachProfileApp = {
   },
 
   closeAndReturn() {
-    const savedUser = this._getSavedUser();
-    if (savedUser && savedUser.role === 'coach' && this.isOwnProfile) {
+    const user = this._getAuthUser();
+    if (user && user.role === 'coach' && this.isOwnProfile) {
       this.close();
       const coachView = document.getElementById('coach-profile-view');
       if (coachView) coachView.classList.remove('hidden');
-      this.open(savedUser.nickname);
+      this.open(user.userId);
     } else {
       this.close();
     }
@@ -609,6 +725,12 @@ const CoachProfileApp = {
       if (this.currentId && window.ChatApp) {
         this.close();
         ChatApp.open(this.currentId);
+      }
+    });
+
+    document.getElementById('cp-chat-btn')?.addEventListener('click', () => {
+      if (window.ChatApp) {
+        ChatApp.open();
       }
     });
 

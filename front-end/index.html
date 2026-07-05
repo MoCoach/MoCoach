@@ -1068,5 +1068,28 @@
   <script src="js/messaging.js"></script>
   <script src="js/profile.js"></script>
   <script src="js/coach-profile.js"></script>
+  <!-- Populate search data attributes from COACH_PROFILES (runs after coach-profile.js loads) -->
+  <script>
+    (function() {
+      var count = 0;
+      function tryPopulate() {
+        if (window.COACH_PROFILES) {
+          document.querySelectorAll('.coach-card').forEach(function(card) {
+            var id = card.getAttribute('data-coach-id');
+            if (id && COACH_PROFILES[id]) {
+              var p = COACH_PROFILES[id];
+              if (!card.hasAttribute('data-city')) card.setAttribute('data-city', p.city || '');
+              if (!card.hasAttribute('data-bio')) card.setAttribute('data-bio', p.description || '');
+              if (!card.hasAttribute('data-tags')) card.setAttribute('data-tags', (p.tags || []).join(' '));
+            }
+          });
+        } else if (count < 20) {
+          count++;
+          setTimeout(tryPopulate, 200);
+        }
+      }
+      tryPopulate();
+    })();
+  </script>
 </body>
 </html>

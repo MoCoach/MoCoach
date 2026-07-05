@@ -3,249 +3,197 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register as a Coach — MoCoach</title>
+  <title>Register as a Coach - MoCoach</title>
   <link rel="icon" type="image/png" href="assets/img/favicon_MoCoach_4.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    .coach-card { cursor: pointer; }
-    .coach-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(59,130,246,0.15); }
-    .coach-card-sm { transform: scale(0.9); transform-origin: top center; }
-    .coach-card-sm:hover { transform: scale(0.9) translateY(-2px); }
-  </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
+  <div id="header-placeholder" class="sticky top-0 z-50"></div>
 
-  <div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-    <div class="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none opacity-20"></div>
-    <div class="absolute -top-40 right-10 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="absolute top-40 -left-10 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[140px] pointer-events-none"></div>
+  <main class="py-16">
+    <div class="max-w-2xl mx-auto px-6">
+      <a href="index.html" class="inline-flex items-center space-x-2 text-slate-400 hover:text-white mb-8 text-base transition group">
+        <i data-lucide="arrow-left" class="w-5 h-5 transition-transform group-hover:-translate-x-1"></i>
+        <span>Back to Home</span>
+      </a>
 
-    <div class="relative w-full max-w-3xl bg-slate-900/90 border border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl backdrop-blur-md max-h-[95vh] overflow-y-auto no-scrollbar">
-
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-8">
-        <div>
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-amber-400 text-xl">✨</span>
-            <h1 class="text-2xl md:text-3xl font-extrabold text-white">Register as a Coach</h1>
+      <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)]">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+            <i data-lucide="award" class="w-5 h-5"></i>
           </div>
-          <p class="text-sm text-slate-400 mt-1">Share your expertise and grow your coaching business on MoCoach</p>
-        </div>
-        <a href="index.html" class="text-slate-400 hover:text-white transition flex-shrink-0">
-          <i data-lucide="x" class="w-6 h-6"></i>
-        </a>
-      </div>
-
-      <form id="coach-register-form" class="flex flex-col gap-6">
-
-        <!-- Row: Username + Email -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username (Pseudo) *</label>
-            <input type="text" id="cr-nickname" placeholder="ex: coachpriya" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <h1 class="text-2xl font-extrabold text-white">Register as a Coach</h1>
+            <p class="text-sm text-slate-300 mt-0.5">Join our network of verified coaches in Mauritius</p>
           </div>
+        </div>
+
+        <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6">
+          <div class="flex items-start space-x-3">
+            <i data-lucide="info" class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <p class="text-sm font-semibold text-amber-300">KYC (Know Your Customer) Required</p>
+              <p class="text-sm text-amber-200/80 mt-1">Please send a copy of your National ID or Passport and any relevant qualifications to <span class="font-bold text-amber-200">kyc@mocoach.mu</span> for verification before your profile goes live.</p>
+            </div>
+          </div>
+        </div>
+
+        <form id="coach-register-form" class="flex flex-col gap-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name *</label>
+              <input type="text" id="cr-firstname" required placeholder="ex: Jean" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name *</label>
+              <input type="text" id="cr-lastname" required placeholder="ex: Dupont" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username *</label>
+            <input type="text" id="cr-username" required placeholder="ex: jeandupont" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          </div>
+
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Email Address *</label>
-            <input type="email" id="cr-email" placeholder="ex: coach@example.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <input type="email" id="cr-email" required placeholder="ex: jean@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
           </div>
-        </div>
 
-        <!-- Row: First Name + Last Name -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name</label>
-            <input type="text" id="cr-firstname" placeholder="ex: Priya" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">City *</label>
+            <input type="text" id="cr-city" required placeholder="ex: Grand Baie" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
           </div>
-          <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name</label>
-            <input type="text" id="cr-lastname" placeholder="ex: S." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-          </div>
-        </div>
 
-        <!-- Row: City + Phone -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">City</label>
-            <input type="text" id="cr-city" placeholder="ex: Port Louis" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Phone Number</label>
-            <input type="tel" id="cr-phone" placeholder="ex: +230 5000 0000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-          </div>
-        </div>
-
-        <!-- Row: Password + Confirm -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
-            <input type="password" id="cr-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Confirm Password *</label>
-            <input type="password" id="cr-confirm-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-          </div>
-        </div>
-
-        <hr class="border-slate-800">
-
-        <!-- Coach-specific fields -->
-        <p class="text-sm font-bold text-blue-400 tracking-wider uppercase">Coaching Details</p>
-
-        <!-- Row: Discipline + Price -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Discipline / Sport *</label>
-            <input type="text" id="cr-discipline" placeholder="ex: Zumba, Yoga, Boxing" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Price per Session (Rs) *</label>
-            <input type="number" id="cr-price" placeholder="ex: 450" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div>
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Description</label>
-          <textarea id="cr-description" rows="3" placeholder="Tell potential clients about your experience, coaching style, and what makes your sessions special..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
-        </div>
-
-        <!-- Tags -->
-        <div>
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Tags <span class="text-slate-500 font-normal">(comma separated)</span></label>
-          <input type="text" id="cr-tags" placeholder="ex: Zumba, Dance Fitness, Cardio" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-        </div>
-
-        <!-- Gallery upload (photos + videos, max 7) -->
-        <div>
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">Photo Gallery <span class="text-slate-500 font-normal">(up to 7, first photo = profile picture)</span></label>
-          <div class="flex flex-wrap gap-3 items-center">
-            <div class="flex-shrink-0">
-              <input type="file" id="cr-gallery-input" accept="image/*,video/*" multiple class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer max-w-xs">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
+              <input type="password" id="cr-password" required placeholder="••••••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
             </div>
-            <span id="cr-gallery-count" class="text-xs text-slate-500 font-medium">0 / 7</span>
+            <div>
+              <label class="block text-sm font-semibold text-slate-400 mb-1.5">Confirm Password *</label>
+              <input type="password" id="cr-confirm-password" required placeholder="••••••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            </div>
           </div>
-          <div id="cr-gallery-previews" class="mt-3 flex flex-wrap gap-3"></div>
-        </div>
 
-        <!-- Submit -->
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg text-lg mt-2">
-          Register as a Coach
-        </button>
+          <hr class="border-slate-800">
 
-        <p class="text-center text-sm text-slate-500">
+          <div>
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Bio <span class="text-slate-500 font-normal">(optional)</span></label>
+            <textarea id="cr-bio" rows="3" placeholder="Tell potential clients about yourself, your experience, and coaching philosophy..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Tags / Specialties <span class="text-slate-500 font-normal">(optional, comma separated)</span></label>
+            <input type="text" id="cr-tags" placeholder="ex: Zumba, Dance Fitness, Cardio" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Price per Session (Rs) <span class="text-slate-500 font-normal">(optional)</span></label>
+            <input type="number" id="cr-price" min="0" placeholder="ex: 500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Discipline <span class="text-slate-500 font-normal">(optional)</span></label>
+            <input type="text" id="cr-discipline" placeholder="ex: Yoga, Boxing, Zumba..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Profile Photo <span class="text-slate-500 font-normal">(optional)</span></label>
+            <input type="file" id="cr-photo" accept="image/*" class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer">
+            <div id="cr-photo-preview" class="mt-3 hidden">
+              <div class="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-blue-500 shadow-lg">
+                <img id="cr-photo-img" class="w-full h-full object-cover">
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Gallery Photos <span class="text-slate-500 font-normal">(optional, up to 7)</span></label>
+            <input type="file" id="cr-gallery" accept="image/*" multiple class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer">
+            <div id="cr-gallery-previews" class="mt-3 grid grid-cols-4 gap-2"></div>
+          </div>
+
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg mt-2">
+            <i data-lucide="user-plus" class="w-5 h-5 inline mr-2"></i>
+            Register as Coach
+          </button>
+        </form>
+
+        <p class="text-center text-sm text-slate-500 mt-4">
           Already have an account?
           <a href="index.html" class="text-blue-400 hover:text-blue-300 font-semibold">Log in</a>
         </p>
-      </form>
-
+      </div>
     </div>
-  </div>
+  </main>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('coach-register-form');
-      const galleryInput = document.getElementById('cr-gallery-input');
-      const galleryPreviews = document.getElementById('cr-gallery-previews');
-      const galleryCount = document.getElementById('cr-gallery-count');
-      const MAX_GALLERY = 7;
-      let galleryItems = [];
+      const photoInput = document.getElementById('cr-photo');
+      const photoPreview = document.getElementById('cr-photo-preview');
+      const photoImg = document.getElementById('cr-photo-img');
 
-      // Gallery preview
-      galleryInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files);
-        const available = MAX_GALLERY - galleryItems.length;
-        if (files.length > available) {
-          alert(`You can only add up to ${available} more file(s). Maximum is ${MAX_GALLERY}.`);
-          return;
-        }
-        files.forEach(file => {
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-            galleryItems.push({ type: file.type.startsWith('video/') ? 'video' : 'image', src: ev.target.result });
-            renderGallery();
-          };
-          reader.readAsDataURL(file);
-        });
-        galleryInput.value = '';
+      photoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          photoImg.src = ev.target.result;
+          photoPreview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
       });
 
-      function renderGallery() {
-        galleryPreviews.innerHTML = '';
-        galleryItems.forEach((item, i) => {
-          const div = document.createElement('div');
-          div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border-2 border-slate-700 flex-shrink-0 group';
-          if (i === 0) {
-            div.classList.add('border-blue-500');
-            const badge = document.createElement('span');
-            badge.className = 'absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded z-10';
-            badge.textContent = 'PROFILE';
-            div.appendChild(badge);
-          }
-          if (item.type === 'video') {
-            const vid = document.createElement('video');
-            vid.src = item.src;
-            vid.className = 'w-full h-full object-cover';
-            vid.muted = true;
-            vid.loop = true;
-            vid.play();
-            div.appendChild(vid);
-            const playIcon = document.createElement('div');
-            playIcon.className = 'absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none';
-            playIcon.innerHTML = '<i data-lucide="play" class="w-5 h-5 text-white"></i>';
-            div.appendChild(playIcon);
-          } else {
-            const img = document.createElement('img');
-            img.src = item.src;
-            img.className = 'w-full h-full object-cover';
-            img.loading = 'lazy';
-            div.appendChild(img);
-          }
-          const del = document.createElement('button');
-          del.type = 'button';
-          del.className = 'absolute top-1 right-1 w-5 h-5 rounded-full bg-red-600/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs';
-          del.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i>';
-          del.addEventListener('click', () => { galleryItems.splice(i, 1); renderGallery(); });
-          div.appendChild(del);
-          galleryPreviews.appendChild(div);
-        });
-        galleryCount.textContent = `${galleryItems.length} / ${MAX_GALLERY}`;
-        if (window.lucide) lucide.createIcons();
-      }
-
-      // Form submit
-      form.addEventListener('submit', (e) => {
+      document.getElementById('coach-register-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const pass = document.getElementById('cr-password').value;
-        const confirm = document.getElementById('cr-confirm-password').value;
-        if (pass !== confirm) {
-          alert('Passwords do not match!');
+        const confirmPass = document.getElementById('cr-confirm-password').value;
+
+        if (pass !== confirmPass) {
+          alert('Error: Passwords do not match!');
           return;
         }
 
-        const coachUser = {
-          nickname: document.getElementById('cr-nickname').value.trim(),
-          firstName: document.getElementById('cr-firstname').value.trim() || '',
-          lastName: document.getElementById('cr-lastname').value.trim() || '',
+        const coachData = {
+          firstName: document.getElementById('cr-firstname').value.trim(),
+          lastName: document.getElementById('cr-lastname').value.trim(),
+          username: document.getElementById('cr-username').value.trim(),
           email: document.getElementById('cr-email').value.trim(),
-          city: document.getElementById('cr-city').value.trim() || '',
-          phone: document.getElementById('cr-phone').value.trim() || '',
+          city: document.getElementById('cr-city').value.trim(),
           password: pass,
-          role: 'coach',
+          bio: document.getElementById('cr-bio').value.trim(),
+          tags: document.getElementById('cr-tags').value.trim().split(',').map(t => t.trim()).filter(Boolean),
+          price: document.getElementById('cr-price').value || '',
           discipline: document.getElementById('cr-discipline').value.trim(),
-          price: document.getElementById('cr-price').value.trim(),
-          description: document.getElementById('cr-description').value.trim() || '',
-          tags: document.getElementById('cr-tags').value.split(',').map(t => t.trim()).filter(Boolean),
-          gallery: galleryItems,
-          avatar: galleryItems.length > 0 ? galleryItems[0].src : 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop',
+          role: 'coach',
+          avatar: photoImg.src || '',
+          gallery: [],
         };
 
-        localStorage.setItem('mocoach_user', JSON.stringify(coachUser));
+        const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
+        if (coaches.some(c => c.username === coachData.username)) {
+          alert('Username already taken. Please choose another.');
+          return;
+        }
+        if (coaches.some(c => c.email === coachData.email)) {
+          alert('Email already registered. Please use another.');
+          return;
+        }
+
+        coaches.push(coachData);
+        localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
+        alert('Registration successful! Please log in with your username and password.');
         window.location.href = 'index.html';
       });
     });
   </script>
 
+  <script src="js/app.js"></script>
+  <script>
+    if (window.lucide) lucide.createIcons();
+  </script>
 </body>
 </html>

@@ -66,11 +66,63 @@ const ChatApp = {
       setTimeout(() => this.init(), 50);
       return;
     }
+    this._syncFromStorage();
     this.bindEvents();
     this.renderConversations();
     this.renderChat(null);
     this.updateMobileView();
     window.addEventListener('resize', () => this.updateMobileView());
+  },
+
+  _syncFromStorage() {
+    const stored = localStorage.getItem('mocoach_chats');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.conversations = parsed;
+        }
+      } catch (e) {}
+    }
+  },
+
+  _saveToStorage() {
+    localStorage.setItem('mocoach_chats', JSON.stringify(this.conversations));
+  },
+
+  _getAuthUser() {
+    try { return JSON.parse(sessionStorage.getItem('mocoach_auth')); } catch { return null; }
+  },
+
+  _getAdminData() {
+    try { return JSON.parse(localStorage.getItem('mocoach_admin_data') || '{"coaches":{},"customers":{}}'); }
+    catch { return { coaches: {}, customers: {} }; }
+  },
+
+  _isBlocked() {
+    const user = this._getAuthUser();
+    if (!user) return false;
+    const admin = this._getAdminData();
+    if (user.role === 'coach') {
+      return !!(admin.coaches[user.userId] && admin.coaches[user.userId].messaging_blocked);
+    }
+    if (user.role === 'customer') {
+      return !!(admin.customers[user.userId] && admin.customers[user.userId].messaging_blocked);
+    }
+    return false;
+  },
+
+  _isFullyBlocked() {
+    const user = this._getAuthUser();
+    if (!user) return false;
+    const admin = this._getAdminData();
+    if (user.role === 'coach') {
+      return !!(admin.coaches[user.userId] && admin.coaches[user.userId].is_blocked);
+    }
+    if (user.role === 'customer') {
+      return !!(admin.customers[user.userId] && admin.customers[user.userId].is_blocked);
+    }
+    return false;
   },
 
   bindEvents() {
@@ -98,9 +150,9 @@ const ChatApp = {
   },
 
   open(coachId) {
-    // Auth check: must be logged in as customer to contact coach
-    const raw = localStorage.getItem('mocoach_user');
-    if (!raw) {
+    const user = this._getAuthUser();
+
+    if (!user) {
       window.__pendingCoachId = coachId || null;
       const modal = document.getElementById('coach-modal');
       if (modal) {
@@ -110,11 +162,25 @@ const ChatApp = {
       }
       return;
     }
-    const user = JSON.parse(raw);
+
     if (user.role === 'coach') {
-      if (window.showToast) {
-        showToast('Coaches cannot contact other coaches during MVP');
+      if (coachId && coachId !== user.userId) {
+        showToast('Coaches cannot contact other coaches or customers directly');
+        return;
       }
+      if (coachId && coachId === user.userId) {
+        this.isOpen = true;
+        const overlay = document.getElementById('messaging-overlay');
+        overlay.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        setTimeout(() => overlay.classList.add('open'), 10);
+        this.renderConversations();
+        return;
+      }
+    }
+
+    if (this._isFullyBlocked()) {
+      showToast('Your account has been blocked. Please contact support.');
       return;
     }
 
@@ -144,6 +210,7 @@ const ChatApp = {
             lastActivity: new Date().toISOString(),
           };
           this.conversations.unshift(conv);
+          this._saveToStorage();
         }
       }
       if (conv) {
@@ -180,6 +247,11 @@ const ChatApp = {
     const text = input.value.trim();
     if (!text || !this.activeId) return;
 
+    if (this._isBlocked() || this._isFullyBlocked()) {
+      showToast('You have been blocked from sending messages');
+      return;
+    }
+
     const conv = this.conversations.find(c => c.id === this.activeId);
     if (!conv) return;
 
@@ -196,8 +268,8 @@ const ChatApp = {
 
     this.renderChat(conv);
     this.renderConversations();
+    this._saveToStorage();
     this.scrollToBottom();
-
   },
 
   renderConversations() {
@@ -260,6 +332,9 @@ const ChatApp = {
     const messagesEl = document.getElementById('msg-messages');
     const emptyState = document.getElementById('msg-empty-state');
     const inputArea = document.getElementById('msg-input-area');
+    const user = this._getAuthUser();
+    const isAdmin = user && user.role === 'admin';
+    const isBlocked = this._isBlocked() || this._isFullyBlocked();
 
     if (!conv) {
       if (header) header.innerHTML = '';
@@ -271,7 +346,19 @@ const ChatApp = {
 
     if (messagesEl) messagesEl.classList.remove('hidden');
     if (emptyState) emptyState.classList.add('hidden');
-    if (inputArea) inputArea.classList.remove('hidden');
+    if (inputArea) {
+      if (isBlocked) {
+        inputArea.classList.remove('hidden');
+        document.getElementById('msg-input')?.setAttribute('disabled', 'disabled');
+        document.getElementById('msg-input')?.setAttribute('placeholder', 'You have been blocked from sending messages');
+        document.getElementById('msg-send-btn')?.setAttribute('disabled', 'disabled');
+      } else {
+        inputArea.classList.remove('hidden');
+        document.getElementById('msg-input')?.removeAttribute('disabled');
+        document.getElementById('msg-input')?.setAttribute('placeholder', 'Type a message...');
+        document.getElementById('msg-send-btn')?.removeAttribute('disabled');
+      }
+    }
 
     if (header) {
       header.innerHTML = `
@@ -296,7 +383,7 @@ const ChatApp = {
         const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const showAvatar = !isUser;
         return `
-          <div class="flex ${isUser ? 'justify-end' : 'justify-start'} items-end space-x-2">
+          <div class="flex ${isUser ? 'justify-end' : 'justify-start'} items-end space-x-2 group">
             ${showAvatar
               ? `<div class="w-6 h-6 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden hidden sm:block">
                   ${conv.coach.avatar
@@ -304,9 +391,14 @@ const ChatApp = {
                     : `<div class="w-full h-full flex items-center justify-center text-[8px] font-bold text-blue-400">${conv.coach.name.charAt(0)}</div>`}
                 </div>`
               : '<div class="w-6 flex-shrink-0 hidden sm:block"></div>'}
-            <div class="max-w-[85%] sm:max-w-[70%] ${isUser ? 'bg-blue-600 text-white rounded-2xl rounded-br-md' : 'bg-slate-800 text-slate-200 rounded-2xl rounded-bl-md'} px-4 py-2.5">
+            <div class="max-w-[85%] sm:max-w-[70%] ${isUser ? 'bg-blue-600 text-white rounded-2xl rounded-br-md' : 'bg-slate-800 text-slate-200 rounded-2xl rounded-bl-md'} px-4 py-2.5 relative">
               <p class="text-sm leading-relaxed whitespace-pre-wrap break-words">${this._esc(msg.text)}</p>
               <p class="text-[10px] ${isUser ? 'text-blue-200' : 'text-slate-500'} text-right mt-1 opacity-80">${time}</p>
+              ${isAdmin ? `
+                <button onclick="ChatApp.adminDeleteMessage('${conv.id}', '${msg.id}')" class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-700" title="Delete message">
+                  <i data-lucide="x" class="w-3 h-3"></i>
+                </button>
+              ` : ''}
             </div>
           </div>
         `;
@@ -314,6 +406,17 @@ const ChatApp = {
     }
 
     if (window.lucide) lucide.createIcons();
+  },
+
+  adminDeleteMessage(convId, msgId) {
+    if (!confirm('Delete this message?')) return;
+    const conv = this.conversations.find(c => c.id === convId);
+    if (conv) {
+      conv.messages = conv.messages.filter(m => m.id !== msgId);
+      this._saveToStorage();
+      this.renderChat(conv);
+      showToast('Message deleted by admin');
+    }
   },
 
   scrollToBottom() {
@@ -364,19 +467,6 @@ const ChatApp = {
     this.renderConversations();
     this.renderChat(null);
     this.updateMobileView();
-  },
-
-  _autoReply() {
-    const replies = [
-      "Thanks for your message! I'd be happy to help you with your fitness journey.",
-      "Great question! I have availability this week. Let me know what time works for you.",
-      "I appreciate your interest! Let me send you some more details about my coaching packages.",
-      "Absolutely! I specialize in helping clients achieve their goals. When would you like to start?",
-      "Thanks for reaching out! I have several time slots available. What's your preferred schedule?",
-      "That sounds great! Let me check my calendar and get back to you with available slots.",
-      "Wonderful! I'm excited to work with you. Let me know if you have any questions before we start.",
-    ];
-    return replies[Math.floor(Math.random() * replies.length)];
   },
 
   _formatTime(iso) {

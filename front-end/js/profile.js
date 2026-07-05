@@ -1,64 +1,3 @@
-const PROFILE_DATA = {
-  nickname: 'pseudo',
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  city: '',
-  bio: '',
-  aboutMeImages: [], // Commence vide par défaut
-  avatar: 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  badges: [
-    {
-      id: 'b1', icon: 'flame', title: 'Unparalleled Force',
-      description: 'Completed 20 strength training sessions and achieved a new personal record in deadlifts.',
-      coachId: 'coach-9', coachName: 'Kavir D.', dateEarned: '2026-05-15',
-    },
-    {
-      id: 'b2', icon: 'music', title: 'Rhythm & Elegance',
-      description: 'Mastered advanced Zumba choreography and demonstrated exceptional rhythm across 15 sessions.',
-      coachId: 'coach-1', coachName: 'Priya S.', dateEarned: '2026-04-28',
-    },
-    {
-      id: 'b3', icon: 'zap', title: 'Elite Runner',
-      description: 'Achieved a sub-25 minute 5K run and maintained consistent pacing across all training sessions.',
-      coachId: 'coach-8', coachName: 'Chloe A.', dateEarned: '2026-06-10',
-    },
-    {
-      id: 'b4', icon: 'waves', title: 'Elite Swimmer',
-      description: 'Completed 15 open water swimming sessions and improved lap time by 30%.',
-      coachId: 'coach-7', coachName: 'Jean-Pierre S.', dateEarned: '2026-03-22',
-    },
-    {
-      id: 'b5', icon: 'heart', title: 'Improved Endurance',
-      description: 'Demonstrated remarkable improvement in cardiovascular endurance over 3 months of consistent training.',
-      coachId: 'coach-2', coachName: 'Cedric L.', dateEarned: '2026-06-01',
-    },
-  ],
-  badgesGiven: [
-    {
-      id: 'bg1', icon: 'star', title: 'Most Inspiring Coach',
-      description: 'Your energy and dedication made every session unforgettable.',
-      coachId: 'coach-1', coachName: 'Priya S.', dateGiven: '2026-04-20',
-    },
-    {
-      id: 'bg2', icon: 'heart', title: 'Best Communicator',
-      description: 'Clear instructions and exceptional patience throughout every training session.',
-      coachId: 'coach-2', coachName: 'Cedric L.', dateGiven: '2026-05-10',
-    },
-    {
-      id: 'bg3', icon: 'thumbs-up', title: 'Top Motivator',
-      description: 'Pushed me beyond my limits with unwavering positivity and encouragement.',
-      coachId: 'coach-7', coachName: 'Jean-Pierre S.', dateGiven: '2026-06-05',
-    },
-    {
-      id: 'bg4', icon: 'target', title: 'Precision Coach',
-      description: 'Flawless technique correction and personalized drill planning.',
-      coachId: 'coach-8', coachName: 'Chloe A.', dateGiven: '2026-06-15',
-    },
-  ],
-};
-
 const ProfileApp = {
   data: null,
   editing: false,
@@ -70,72 +9,76 @@ const ProfileApp = {
       return;
     }
 
-    // Récupération dynamique sécurisée des données de session
-    try {
-      const savedUser = localStorage.getItem('mocoach_user');
-      if (savedUser) {
-          this.data = JSON.parse(savedUser);
-      } else {
-          this.data = JSON.parse(JSON.stringify(PROFILE_DATA));
-      }
-    } catch (err) {
-      console.error("Session parse error, resetting data.", err);
-      this.data = JSON.parse(JSON.stringify(PROFILE_DATA));
+    const auth = this._getAuth();
+    if (!auth || auth.role !== 'customer') {
+      return;
     }
 
-    if (!this.data || typeof this.data !== 'object') {
-      this.data = JSON.parse(JSON.stringify(PROFILE_DATA));
-    }
-
-    // Assure la présence du tableau d'images "About Me"
-    if (!this.data.aboutMeImages) {
-      this.data.aboutMeImages = [];
+    const users = JSON.parse(localStorage.getItem('mocoach_users') || '[]');
+    const user = users.find(u => u.username === auth.userId);
+    if (user) {
+      this.data = JSON.parse(JSON.stringify(user));
+    } else {
+      this.data = {
+        username: auth.username || '',
+        email: auth.email || '',
+        avatar: auth.avatar || '',
+        password: '',
+        role: 'customer',
+      };
     }
 
     this.render();
     this.bindEvents();
-    this.generateTwinklingStars(); // Génère les 220 étoiles scintillantes
+    this.generateTwinklingStars();
+  },
+
+  _getAuth() {
+    try { return JSON.parse(sessionStorage.getItem('mocoach_auth')); } catch { return null; }
+  },
+
+  _saveUserData() {
+    const users = JSON.parse(localStorage.getItem('mocoach_users') || '[]');
+    const idx = users.findIndex(u => u.username === this.data.username);
+    if (idx >= 0) {
+      users[idx] = { ...this.data };
+      localStorage.setItem('mocoach_users', JSON.stringify(users));
+    }
+    const session = this._getAuth();
+    if (session) {
+      session.avatar = this.data.avatar;
+      session.email = this.data.email;
+      sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
+    }
   },
 
   render() {
     this.renderHeader();
-    this.renderAboutMe(); // Nouveau rendu pour la galerie de séances
     this.renderPersonalInfo();
     this.renderSecurity();
-    this.renderBadges();
     if (window.lucide) lucide.createIcons();
   },
 
   generateTwinklingStars() {
     const container = document.getElementById('stars-container');
     if (!container) return;
-
-    container.innerHTML = ''; // Nettoyage préalable
-
-    const starCount = 220; // Quantité d'étoiles scintillantes élevée
-    for (let i = 0; i < starCount; i++) {
+    container.innerHTML = '';
+    for (let i = 0; i < 120; i++) {
       const star = document.createElement('div');
       star.className = 'star';
-
-      const size = Math.random() * 2 + 0.8; // Tailles variées
-      star.style.width = `${size}px`;
-      star.style.height = `${size}px`;
-
-      star.style.top = `${Math.random() * 100}%`;
-      star.style.left = `${Math.random() * 100}%`;
-
-      const duration = Math.random() * 3 + 2; 
-      const delay = Math.random() * 5;
-      star.style.animation = `twinkle ${duration}s ease-in-out infinite`;
-      star.style.animationDelay = `${delay}s`;
-
+      const size = Math.random() * 2 + 0.8;
+      star.style.cssText = `
+        position:absolute;width:${size}px;height:${size}px;
+        background:#fff;border-radius:50%;top:${Math.random()*100}%;left:${Math.random()*100}%;
+        animation:twinkle ${Math.random()*3+2}s ease-in-out infinite;
+        animation-delay:${Math.random()*5}s;
+      `;
       container.appendChild(star);
     }
   },
 
   logout() {
-    // Suppression de la session locale et rechargement de l'application
-    localStorage.removeItem('mocoach_user');
+    sessionStorage.removeItem('mocoach_auth');
     window.location.reload();
   },
 
@@ -146,20 +89,24 @@ const ProfileApp = {
 
     el.innerHTML = `
       <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
-        <div class="relative flex-shrink-0">
+        <div class="relative flex-shrink-0 group">
           <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-blue-500/30 shadow-xl">
-            <img src="${this._esc(d.avatar || PROFILE_DATA.avatar)}" alt="User avatar" class="w-full h-full object-cover" loading="lazy">
+            <img src="${this._esc(d.avatar || 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop')}" alt="User avatar" class="w-full h-full object-cover" loading="lazy">
           </div>
           <div class="absolute -bottom-1 -right-1 bg-emerald-500 w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center">
             <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
           </div>
+          <input type="file" id="pf-avatar-input" accept="image/*" class="hidden">
+          <button onclick="document.getElementById('pf-avatar-input').click()" class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+            <i data-lucide="camera" class="w-6 h-6"></i>
+          </button>
         </div>
         <div class="text-center md:text-left flex-1 min-w-0 flex flex-col justify-center">
-          <p class="text-blue-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${this._esc(d.nickname || 'pseudo')}</p>
-          <p class="text-slate-300 text-sm mt-2.5 leading-relaxed italic max-w-xl break-words">${this._esc(d.bio || 'No bio written yet.')}</p>
+          <p class="text-blue-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${this._esc(d.username || 'user')}</p>
+          <p class="text-slate-400 text-sm mt-1">${this._esc(d.email || '')}</p>
         </div>
         <div class="flex-shrink-0 mt-4 md:mt-0 flex items-center space-x-3">
-          <button onclick="ProfileApp.editing ? ProfileApp.cancelEdit() : ProfileApp.startEdit()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
+          <button onclick="ProfileApp.toggleEdit()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
             <span>${this.editing ? 'Cancel' : 'Edit Profile'}</span>
           </button>
@@ -172,113 +119,13 @@ const ProfileApp = {
     `;
   },
 
-  renderAboutMe() {
-    const container = document.getElementById('aboutme-images-container');
-    if (!container) return;
-
-    const images = this.data.aboutMeImages || [];
-
-    if (images.length > 0) {
-      container.innerHTML = `
-        <div class="flex flex-col items-start gap-3">
-          <div class="relative w-48 h-48 rounded-2xl overflow-hidden shadow-lg border border-slate-800/80 group">
-            <img src="${this._esc(images[0])}" class="w-full h-full object-cover" loading="lazy">
-            <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-              <button onclick="ProfileApp.deleteAboutMeImage(0)" class="w-10 h-10 rounded-xl bg-red-600/90 text-white flex items-center justify-center transition hover:bg-red-700 shadow-md">
-                <i data-lucide="trash-2" class="w-5 h-5"></i>
-              </button>
-            </div>
-          </div>
-          <button onclick="document.getElementById('aboutme-file-input').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium px-4 py-2 rounded-xl transition flex items-center space-x-2">
-            <i data-lucide="camera" class="w-4 h-4"></i>
-            <span>Change Photo</span>
-          </button>
-        </div>
-      `;
-    } else {
-      container.innerHTML = `
-        <button onclick="document.getElementById('aboutme-file-input').click()"
-          class="w-48 h-48 rounded-2xl border-2 border-dashed border-slate-800 hover:border-blue-500/50 bg-slate-950/40 flex flex-col items-center justify-center cursor-pointer transition text-slate-500 hover:text-blue-400 group">
-          <i data-lucide="camera" class="w-10 h-10 transition-transform group-hover:scale-110"></i>
-          <span class="text-sm font-semibold mt-2">Upload Photo</span>
-        </button>
-      `;
-    }
-  },
-
-  deleteAboutMeImage(index) {
-    if (!this.data.aboutMeImages) return;
-    this.data.aboutMeImages.splice(index, 1);
-    localStorage.setItem('mocoach_user', JSON.stringify(this.data));
-    this.renderAboutMe();
-    if (window.lucide) lucide.createIcons();
-    this.showToast('Photo removed successfully!', 'success');
-  },
-
-  compressAndAddImage(file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        // Redimensionnement et compression de l'image (pour rester robuste vis-à-vis du localStorage)
-        const canvas = document.createElement('canvas');
-        const max_width = 800; // Résolution optimale pour paysage de carrousel
-        const scale = max_width / img.width;
-        canvas.width = max_width;
-        canvas.height = img.height * scale;
-        
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        
-        // Exportation en JPEG compressé à 70% de qualité
-        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-        
-        if (!this.data.aboutMeImages) this.data.aboutMeImages = [];
-        if (this.data.aboutMeImages.length < 1) {
-          this.data.aboutMeImages.push(compressedBase64);
-          localStorage.setItem('mocoach_user', JSON.stringify(this.data));
-          this.renderAboutMe();
-        }
-      };
-      img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  },
-
-  handleAboutMeUpload(e) {
-    const files = e.target.files;
-    if (!files.length) return;
-
-    const currentCount = (this.data.aboutMeImages || []).length;
-    const availableSlots = 1 - currentCount;
-
-    if (files.length > availableSlots) {
-      alert(`You can only add up to ${availableSlots} more photo(s). (Maximum is 1).`);
-      return;
-    }
-
-    for (let i = 0; i < files.length; i++) {
-      this.compressAndAddImage(files[i]);
-    }
-  },
-
   toggleEdit() {
     this.editing = !this.editing;
-    this.renderPersonalInfo();
     this.renderHeader();
-  },
-
-  startEdit() {
-    this.editing = true;
     this.renderPersonalInfo();
-    this.renderHeader();
-    setTimeout(() => document.getElementById('pf-nickname')?.focus(), 100);
-  },
-
-  cancelEdit() {
-    this.editing = false;
-    this.renderPersonalInfo();
-    this.renderHeader();
+    if (this.editing) {
+      setTimeout(() => document.getElementById('pf-username')?.focus(), 100);
+    }
   },
 
   renderPersonalInfo() {
@@ -287,167 +134,60 @@ const ProfileApp = {
     const d = this.data;
 
     if (!this.editing) {
-      // View mode: show data as labeled text
-      const rows = [
-        { label: 'Pseudo', value: d.nickname },
-        { label: 'First Name', value: d.firstName },
-        { label: 'Last Name', value: d.lastName },
-        { label: 'Email', value: d.email },
-        { label: 'Phone', value: d.phone },
-        { label: 'City', value: d.city },
-        { label: 'Bio', value: d.bio },
-      ];
       el.innerHTML = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          ${rows.map(r => `
-            <div class="${r.label === 'Bio' ? 'md:col-span-2' : ''}">
-              <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">${this._esc(r.label)}</label>
-              <p class="text-base text-white">${r.value ? this._esc(r.value) : '<span class="text-slate-500 italic">Not set</span>'}</p>
-            </div>
-          `).join('')}
-        </div>
-        <div class="mt-6 flex items-center justify-between">
-          <p class="text-sm text-slate-500">Click "Edit Profile" above to update your details</p>
-          <button onclick="ProfileApp.startEdit()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
-            <i data-lucide="edit-3" class="w-4 h-4"></i>
-            <span>Edit</span>
-          </button>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Username</label>
+            <p class="text-base text-white">${this._esc(d.username)}</p>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Email</label>
+            <p class="text-base text-white">${this._esc(d.email)}</p>
+          </div>
         </div>
       `;
       return;
     }
 
-    // Edit mode: show inputs
-    const fields = [
-      { id: 'pf-nickname', label: 'Pseudo', value: d.nickname || '', placeholder: 'ex: pseudo', type: 'text', required: true },
-      { id: 'pf-firstName', label: 'First Name', value: d.firstName || '', placeholder: 'ex: yourname', type: 'text', required: false },
-      { id: 'pf-lastName', label: 'Last Name', value: d.lastName || '', placeholder: 'ex: yourlastname', type: 'text', required: false },
-      { id: 'pf-email', label: 'Email', value: d.email || '', placeholder: 'ex: @example.com', type: 'email', required: true },
-      { id: 'pf-phone', label: 'Phone Number', value: d.phone || '', placeholder: 'ex: +230 5000 0000', type: 'tel', required: false },
-      { id: 'pf-city', label: 'City', value: d.city || '', placeholder: 'ex: Grand Baie', type: 'text', required: false },
-      { id: 'pf-bio', label: 'Bio', value: d.bio || '', placeholder: 'Tell us about yourself...', type: 'textarea', required: false },
-    ];
-
     el.innerHTML = `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        ${fields.map(f => {
-          const inputHtml = f.type === 'textarea'
-            ? `<textarea id="${f.id}" rows="3" placeholder="${this._esc(f.placeholder)}"
-                 class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base resize-none">${this._esc(f.value)}</textarea>`
-            : `<input id="${f.id}" type="${f.type}" value="${this._esc(f.value)}"
-                 placeholder="${this._esc(f.placeholder)}"
-                 ${f.required ? 'required' : ''}
-                 class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">`;
-
-          return `
-            <div>
-              <label for="${f.id}" class="block text-base font-semibold text-slate-200 mb-2">
-                ${this._esc(f.label)} ${f.required ? '<span class="text-red-500">*</span>' : ''}
-              </label>
-              ${inputHtml}
-              <p id="${f.id}-error" class="text-red-500 text-xs mt-1 hidden"></p>
-            </div>
-          `;
-        }).join('')}
-      </div>
-      <div class="mt-6 flex items-center justify-between">
-        <p id="pf-status" class="text-sm text-slate-500"></p>
-        <div class="flex items-center space-x-3">
-          <button onclick="ProfileApp.cancelEdit()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold px-6 py-2.5 rounded-xl transition flex items-center space-x-2">
-            <span>Cancel</span>
-          </button>
-          <button onclick="ProfileApp.savePersonalInfo()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
-            <i data-lucide="save" class="w-4 h-4"></i>
-            <span>Save Changes</span>
-          </button>
+        <div>
+          <label for="pf-username" class="block text-base font-semibold text-slate-200 mb-2">Username *</label>
+          <input id="pf-username" type="text" value="${this._esc(d.username)}" required
+            class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition text-base">
         </div>
+        <div>
+          <label for="pf-email" class="block text-base font-semibold text-slate-200 mb-2">Email *</label>
+          <input id="pf-email" type="email" value="${this._esc(d.email)}" required
+            class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition text-base">
+        </div>
+      </div>
+      <div class="mt-6 flex items-center justify-end space-x-3">
+        <button onclick="ProfileApp.toggleEdit()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold px-6 py-2.5 rounded-xl transition">Cancel</button>
+        <button onclick="ProfileApp.savePersonalInfo()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg flex items-center space-x-2">
+          <i data-lucide="save" class="w-4 h-4"></i>
+          <span>Save Changes</span>
+        </button>
       </div>
     `;
   },
 
   savePersonalInfo() {
-    const fields = ['nickname', 'firstName', 'lastName', 'email', 'phone', 'city', 'bio'];
-    const fieldIds = {
-      nickname: 'pf-nickname', firstName: 'pf-firstName', lastName: 'pf-lastName',
-      email: 'pf-email', phone: 'pf-phone', city: 'pf-city', bio: 'pf-bio'
-    };
-    const validators = {
-      nickname: (v) => {
-        if (!v) return 'Pseudo is required';
-        if (v.length < 3 || v.length > 20) return 'Must be 3–20 characters';
-        if (!/^[a-zA-Z0-9_]+$/.test(v)) return 'Letters, numbers, and underscores only';
-        return '';
-      },
-      firstName: (v) => {
-        if (!v) return '';
-        if (v.length < 2 || v.length > 50) return 'Must be 2–50 characters';
-        if (!/^[a-zA-Z\s'-]+$/.test(v)) return 'Letters only';
-        return '';
-      },
-      lastName: (v) => {
-        if (!v) return '';
-        if (v.length < 2 || v.length > 50) return 'Must be 2–50 characters';
-        if (!/^[a-zA-Z\s'-]+$/.test(v)) return 'Letters only';
-        return '';
-      },
-      email: (v) => {
-        if (!v) return 'Email is required';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Invalid email format';
-        return '';
-      },
-      phone: (v) => {
-        if (!v) return '';
-        if (!/^\+?[\d\s-]{7,15}$/.test(v)) return 'Invalid phone number';
-        return '';
-      },
-      city: (v) => {
-        if (!v) return '';
-        if (v.length < 2 || v.length > 50) return 'Must be 2–50 characters';
-        if (!/^[a-zA-Z\s'-,]+$/.test(v)) return 'Letters, spaces, and commas only';
-        return '';
-      },
-      bio: (v) => {
-        if (v.length > 500) return 'Bio must be under 500 characters';
-        return '';
-      }
-    };
+    const username = document.getElementById('pf-username')?.value.trim();
+    const email = document.getElementById('pf-email')?.value.trim();
 
-    let hasError = false;
-    const values = {};
-    fields.forEach(f => {
-      const input = document.getElementById(fieldIds[f]);
-      const errorEl = document.getElementById(fieldIds[f] + '-error');
-      if (!input) return;
-      const val = input.value.trim();
-      values[f] = val;
-      const err = validators[f](val);
-      if (err) {
-        hasError = true;
-        input.className = input.className.replace('border-slate-800', 'border-red-400') + ' border-red-400';
-        if (errorEl) { errorEl.textContent = err; errorEl.classList.remove('hidden'); }
-      } else {
-        input.className = input.className.replace('border-red-400', 'border-slate-800');
-        if (errorEl) { errorEl.textContent = ''; errorEl.classList.add('hidden'); }
-      }
-    });
-
-    if (hasError) {
-      this.showToast('Please fix the errors before saving', 'error');
+    if (!username || !email) {
+      this.showToast('Username and Email are required', 'error');
       return;
     }
 
-    Object.assign(this.data, values);
-    localStorage.setItem('mocoach_user', JSON.stringify(this.data)); // Enregistre les changements dans la session locale
-    
-    // Met à jour dynamiquement la photo de profil du Header d'accueil après modification
-    if (window.updateHeaderProfilePic) {
-        window.updateHeaderProfilePic();
-    }
-    
+    this.data.username = username;
+    this.data.email = email;
+    this._saveUserData();
     this.editing = false;
     this.showToast('Profile updated successfully!', 'success');
-    this.renderHeader();
-    this.renderPersonalInfo();
+    this.render();
+    if (window.updateHeaderProfilePic) window.updateHeaderProfilePic();
   },
 
   renderSecurity() {
@@ -457,54 +197,41 @@ const ProfileApp = {
     el.innerHTML = `
       <div class="space-y-5">
         <div>
-          <label for="pf-currentPw" class="block text-base font-semibold text-slate-700 mb-2">Current Password</label>
+          <label for="pf-currentPw" class="block text-base font-semibold text-slate-200 mb-2">Current Password</label>
           <div class="relative">
-            <input id="pf-currentPw" type="password" placeholder="Enter current password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
+            <input id="pf-currentPw" type="password" placeholder="Enter current password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition text-base">
             <button onclick="ProfileApp.togglePassword('pf-currentPw', 'pw-toggle-current')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-current" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
         <div>
-          <label for="pf-newPw" class="block text-base font-semibold text-slate-700 mb-2">New Password</label>
+          <label for="pf-newPw" class="block text-base font-semibold text-slate-200 mb-2">New Password</label>
           <div class="relative">
-            <input id="pf-newPw" type="password" placeholder="Enter new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
+            <input id="pf-newPw" type="password" placeholder="Enter new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition text-base">
             <button onclick="ProfileApp.togglePassword('pf-newPw', 'pw-toggle-new')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-new" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
           </div>
-          <div id="pw-strength-bar" class="mt-2 h-1.5 rounded-full bg-slate-850 overflow-hidden">
-            <div id="pw-strength-fill" class="h-full rounded-full transition-all duration-300" style="width:0%"></div>
-          </div>
-          <div id="pw-strength-label" class="text-sm text-slate-300 font-semibold mt-1"></div>
-          <ul id="pw-criteria" class="mt-2 space-y-1">
-            <li id="pw-criteria-length" class="text-sm text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>At least 8 characters</span></li>
-            <li id="pw-criteria-upper" class="text-sm text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>One uppercase letter</span></li>
-            <li id="pw-criteria-number" class="text-sm text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>One number</span></li>
-            <li id="pw-criteria-special" class="text-sm text-slate-400 flex items-center space-x-1.5"><i data-lucide="circle" class="w-2.5 h-2.5"></i><span>One special character</span></li>
-          </ul>
         </div>
         <div>
-          <label for="pf-confirmPw" class="block text-base font-semibold text-slate-700 mb-2">Confirm New Password</label>
+          <label for="pf-confirmPw" class="block text-base font-semibold text-slate-200 mb-2">Confirm New Password</label>
           <div class="relative">
-            <input id="pf-confirmPw" type="password" placeholder="Confirm new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition text-base">
+            <input id="pf-confirmPw" type="password" placeholder="Confirm new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition text-base">
             <button onclick="ProfileApp.togglePassword('pf-confirmPw', 'pw-toggle-confirm')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-confirm" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
           </div>
-          <p id="pf-confirmPw-error" class="text-red-500 text-xs mt-1 hidden"></p>
         </div>
       </div>
-      <div class="mt-6 flex items-center justify-between">
-        <p id="pw-status" class="text-sm text-slate-500"></p>
-        <button onclick="ProfileApp.changePassword()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
+      <div class="mt-6 flex items-center justify-end">
+        <button onclick="ProfileApp.changePassword()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg flex items-center space-x-2">
           <i data-lucide="lock" class="w-4 h-4"></i>
           <span>Change Password</span>
         </button>
       </div>
+      <div id="pw-feedback" class="mt-3 text-sm hidden"></div>
     `;
-
-    document.getElementById('pf-newPw')?.addEventListener('input', (e) => this.checkPasswordStrength(e.target.value));
   },
 
   togglePassword(inputId, iconId) {
@@ -517,147 +244,50 @@ const ProfileApp = {
     if (window.lucide) lucide.createIcons();
   },
 
-  checkPasswordStrength(password) {
-    const hasLength = password.length >= 8;
-    const hasUpper = /[A-Z]/.test(password);
-    const hasNumber = /\d/.test(password);
-    const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+  changePassword() {
+    const currentPw = document.getElementById('pf-currentPw')?.value;
+    const newPw = document.getElementById('pf-newPw')?.value;
+    const confirmPw = document.getElementById('pf-confirmPw')?.value;
+    const feedback = document.getElementById('pw-feedback');
 
-    const criteria = [
-      { id: 'pw-criteria-length', pass: hasLength },
-      { id: 'pw-criteria-upper', pass: hasUpper },
-      { id: 'pw-criteria-number', pass: hasNumber },
-      { id: 'pw-criteria-special', pass: hasSpecial },
-    ];
-
-    criteria.forEach(({ id, pass }) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.className = `text-sm flex items-center space-x-1.5 ${pass ? 'text-emerald-400 font-bold' : 'text-slate-500'}`;
-      const icon = el.querySelector('i');
-      if (icon) {
-        icon.setAttribute('data-lucide', pass ? 'check-circle' : 'circle');
-        icon.className = pass ? 'w-3 h-3' : 'w-3 h-3';
-      }
-    });
-
-    if (window.lucide) lucide.createIcons();
-
-    const score = [hasLength, hasUpper, hasNumber, hasSpecial].filter(Boolean).length;
-    const fill = document.getElementById('pw-strength-fill');
-    const label = document.getElementById('pw-strength-label');
-    if (!fill || !label) return;
-
-    if (password.length === 0) {
-      fill.style.width = '0%';
-      label.textContent = '';
+    if (!currentPw || !newPw || !confirmPw) {
+      this._showPwFeedback('Please fill in all password fields', 'error');
       return;
     }
 
-    if (score <= 1) {
-      fill.style.width = '25%';
-      fill.className = 'h-full rounded-full bg-red-400 transition-all duration-300';
-      label.textContent = 'Weak';
-      label.className = 'text-sm text-red-500 font-bold mt-1';
-    } else if (score === 2) {
-      fill.style.width = '50%';
-      fill.className = 'h-full rounded-full bg-amber-400 transition-all duration-300';
-      label.textContent = 'Fair';
-      label.className = 'text-sm text-amber-500 font-bold mt-1';
-    } else if (score === 3) {
-      fill.style.width = '75%';
-      fill.className = 'h-full rounded-full bg-blue-500 transition-all duration-300';
-      label.textContent = 'Good';
-      label.className = 'text-sm text-blue-500 font-bold mt-1';
-    } else {
-      fill.style.width = '100%';
-      fill.className = 'h-full rounded-full bg-emerald-500 transition-all duration-300';
-      label.textContent = 'Strong';
-      label.className = 'text-sm text-emerald-600 font-bold mt-1';
+    if (this.data.password && currentPw !== this.data.password) {
+      this._showPwFeedback('Current password is incorrect', 'error');
+      return;
     }
+
+    if (newPw !== confirmPw) {
+      this._showPwFeedback('New passwords do not match', 'error');
+      return;
+    }
+
+    if (newPw.length < 6) {
+      this._showPwFeedback('New password must be at least 6 characters', 'error');
+      return;
+    }
+
+    this.data.password = newPw;
+    this._saveUserData();
+    document.getElementById('pf-currentPw').value = '';
+    document.getElementById('pf-newPw').value = '';
+    document.getElementById('pf-confirmPw').value = '';
+    this._showPwFeedback('Password changed successfully!', 'success');
+    this.showToast('Password changed!', 'success');
   },
 
-  renderBadges() {
-    const el = document.getElementById('profile-badges-grid');
+  _showPwFeedback(msg, type) {
+    const el = document.getElementById('pw-feedback');
     if (!el) return;
-    const received = this.data.badges || [];
-    const given = this.data.badgesGiven || [];
-
-    const renderBadgeCell = (b, isReceived) => {
-      const dateKey = isReceived ? 'dateEarned' : 'dateGiven';
-      return `
-        <div class="relative badge-cell group flex items-center justify-center">
-          <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-blue-500/10 to-emerald-500/10 flex items-center justify-center border border-slate-800/80 bg-slate-950/40 group-hover:border-blue-500/50 group-hover:shadow-md group-hover:scale-110 transition-all duration-200 cursor-default">
-            <i data-lucide="${this._esc(b.icon)}" class="w-5 h-5 md:w-6 md:h-6 text-blue-400"></i>
-          </div>
-          <div class="badge-tooltip">
-            <div class="badge-tooltip-inner">
-              <p class="text-xs font-bold text-white whitespace-nowrap">${this._esc(b.title)}</p>
-              <p class="text-[10px] text-blue-200 mt-0.5">
-                <span onclick="window.ChatApp && ChatApp.open('${this._esc(b.coachId)}')" class="cursor-pointer hover:text-white hover:underline">${this._esc(b.coachName)}</span>
-              </p>
-              <p class="text-[10px] text-slate-400 mt-0.5">${this._formatDate(b[dateKey])}</p>
-            </div>
-            <div class="badge-tooltip-arrow"></div>
-          </div>
-        </div>
-      `;
-    };
-
-    if (received.length === 0 && given.length === 0) {
-      el.innerHTML = `
-        <div class="flex flex-col items-center justify-center py-12 text-slate-500">
-          <i data-lucide="award" class="w-12 h-12 mb-3 text-slate-400"></i>
-          <p class="text-sm font-semibold text-slate-500">No badges yet</p>
-          <p class="text-xs text-slate-400 mt-1">Complete sessions with coaches to earn achievements!</p>
-        </div>
-      `;
-      return;
+    el.textContent = msg;
+    el.className = `mt-3 text-sm font-medium ${type === 'success' ? 'text-emerald-400' : 'text-red-400'}`;
+    el.classList.remove('hidden');
+    if (type === 'success') {
+      setTimeout(() => el.classList.add('hidden'), 3000);
     }
-
-    const renderGrid = (items, isReceived) => `
-      <div class="grid grid-cols-5 gap-3 md:gap-4">
-        ${items.map(b => renderBadgeCell(b, isReceived)).join('')}
-      </div>
-    `;
-
-    let html = '';
-
-    if (received.length > 0) {
-      html += `
-        <div class="mb-8 relative z-10">
-          <div class="flex items-center space-x-2 mb-4">
-            <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
-            <h3 class="text-base font-bold text-slate-300">Badges from Coaches</h3>
-            <span class="text-[10px] text-slate-400 font-bold bg-slate-800 px-2 py-0.5 rounded-full">${received.length}</span>
-          </div>
-          ${renderGrid(received, true)}
-        </div>
-      `;
-    }
-
-    if (given.length > 0) {
-      html += `
-        <div class="relative z-10">
-          <div class="flex items-center space-x-2 mb-4">
-            <i data-lucide="upload" class="w-4 h-4 text-blue-600"></i>
-            <h3 class="text-base font-bold text-slate-300">Badges You've Given</h3>
-            <span class="text-[10px] text-slate-400 font-bold bg-slate-800 px-2 py-0.5 rounded-full">${given.length}</span>
-          </div>
-          ${renderGrid(given, false)}
-        </div>
-      `;
-    }
-
-    el.innerHTML = html;
-  },
-
-  scrollToPersonal() {
-    if (!this.editing) this.startEdit();
-    const el = document.getElementById('profile-personal-card');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    const input = document.getElementById('pf-nickname');
-    if (input) setTimeout(() => input.focus(), 500);
   },
 
   showToast(message, type) {
@@ -679,17 +309,24 @@ const ProfileApp = {
   },
 
   bindEvents() {
-    document.getElementById('aboutme-file-input')?.addEventListener('change', (e) => this.handleAboutMeUpload(e));
+    document.getElementById('pf-avatar-input')?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        this.data.avatar = ev.target.result;
+        this._saveUserData();
+        this.renderHeader();
+        if (window.updateHeaderProfilePic) window.updateHeaderProfilePic();
+        this.showToast('Profile photo updated!', 'success');
+      };
+      reader.readAsDataURL(file);
+    });
 
     document.getElementById('profile-back-btn')?.addEventListener('click', (e) => {
       e.preventDefault();
       if (window.showMainView) window.showMainView();
     });
-  },
-
-  _formatDate(iso) {
-    const d = new Date(iso);
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   },
 
   _esc(text) {
@@ -699,7 +336,6 @@ const ProfileApp = {
   },
 };
 
-// BUG FIX : Système de démarrage robuste pour éviter tout conflit asynchrone avec DOMContentLoaded
 const runProfileInit = () => {
   const tryInit = () => {
     if (document.getElementById('profile-header-card')) {
