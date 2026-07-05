@@ -34,8 +34,8 @@
           <div class="flex items-start space-x-3">
             <i data-lucide="info" class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5"></i>
             <div>
-              <p class="text-sm font-semibold text-amber-300">KYC (Know Your Customer) Required</p>
-              <p class="text-sm text-amber-200/80 mt-1">Please send a copy of your National ID or Passport and any relevant qualifications to <span class="font-bold text-amber-200">kyc@mocoach.mu</span> for verification before your profile goes live.</p>
+              <p class="text-sm font-semibold text-amber-300">KYC (Know Your Customer)</p>
+              <p class="text-sm text-amber-200/80 mt-1">Please send a copy of your ID and any relevant qualifications to <span class="font-bold text-amber-200">kyc@mocoach.mu</span></p>
             </div>
           </div>
         </div>
@@ -63,8 +63,10 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">City *</label>
-            <input type="text" id="cr-city" required placeholder="ex: Grand Baie" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Location *</label>
+            <select id="cr-city" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+              <option value="" disabled selected>Select your location</option>
+            </select>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -81,23 +83,22 @@
           <hr class="border-slate-800">
 
           <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Bio <span class="text-slate-500 font-normal">(optional)</span></label>
-            <textarea id="cr-bio" rows="3" placeholder="Tell potential clients about yourself, your experience, and coaching philosophy..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Tags / Specialties * <span class="text-slate-500 font-normal">(min 1, max 3)</span></label>
+            <input type="text" id="cr-tag-search" placeholder="Search tags..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition mb-3">
+            <div id="cr-tag-count" class="text-xs text-slate-500 mb-2">0 of 3 selected</div>
+            <div id="cr-tag-checklist" class="max-h-64 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-1.5"></div>
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Tags / Specialties <span class="text-slate-500 font-normal">(optional, comma separated)</span></label>
-            <input type="text" id="cr-tags" placeholder="ex: Zumba, Dance Fitness, Cardio" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Price per Session (Rs) *</label>
+            <input type="number" id="cr-price" min="0" required placeholder="ex: 500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
           </div>
 
-          <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Price per Session (Rs) <span class="text-slate-500 font-normal">(optional)</span></label>
-            <input type="number" id="cr-price" min="0" placeholder="ex: 500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-          </div>
+          <hr class="border-slate-800">
 
           <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Discipline <span class="text-slate-500 font-normal">(optional)</span></label>
-            <input type="text" id="cr-discipline" placeholder="ex: Yoga, Boxing, Zumba..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <label class="block text-sm font-semibold text-slate-400 mb-1.5">Bio *</label>
+            <textarea id="cr-bio" rows="3" required placeholder="Tell potential clients about yourself, your experience, and coaching philosophy..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
           </div>
 
           <div>
@@ -131,6 +132,54 @@
   </main>
 
   <script>
+    const CITIES = [
+      'Port Louis', 'Beau Bassin', 'Rose Hill', 'Quatre Bornes', 'Vacoas',
+      'Phoenix', 'Curepipe', 'Ebene', 'Moka', 'Trianon', 'Pailles',
+      'Coromandel', 'Albion', 'Flic en Flac', 'Tamarin', 'Black River',
+      'Bambous', 'Cascavelle', 'Rivi\u00e8re Noire', 'Grand Baie',
+      'Pereybere', 'Cap Malheureux', 'Trou aux Biches',
+      'Pointe aux Canonniers', 'Mont Choisy', 'Goodlands', 'Grand Gaube',
+      'Pamplemousses', 'Triolet', 'Terre Rouge', 'Arsenal',
+      'Flacq (Centre de Flacq)', 'Belle Mare', 'Poste de Flacq',
+      "Trou d'Eau Douce", 'Mah\u00e9bourg', 'Blue Bay', "Pointe d'Esny",
+      'Plaine Magnien', 'Souillac', 'Chemin Grenier',
+      'Rivi\u00e8re des Anguilles', 'Bel Ombre', 'Chamarel'
+    ];
+
+    const TAG_GROUPS = {
+      'Sports': [
+        'Football', 'Swimming', 'Hiking', 'Running', 'Yoga', 'Padel', 'Tennis',
+        'Cycling', 'Mountain Biking', 'Trail Running', 'Scuba Diving', 'Snorkeling',
+        'Freediving', 'Surfing', 'Kitesurfing', 'Stand Up Paddle', 'Kayaking',
+        'Sailing', 'Golf', 'Boxing', 'Kickboxing', 'Muay Thai', 'MMA',
+        'Brazilian Jiu-Jitsu', 'Karate', 'Taekwondo', 'Judo', 'Beach Volleyball',
+        'Basketball', 'Volleyball', 'Badminton', 'Table Tennis', 'Cricket', 'Rugby',
+        'Horse Riding', 'Fishing', 'Spearfishing', 'Canyoning', 'Rock Climbing',
+        'Paragliding', 'Open Water Swimming'
+      ],
+      'Fitness & Activities': [
+        'Fitness', 'Gym', 'Personal Training', 'CrossFit', 'Calisthenics',
+        'Pilates', 'Zumba', 'Dance Fitness', 'Outdoor Adventure'
+      ],
+      'Health & Goals': [
+        'Lose Weight', 'Build Muscle', 'Stay Fit', 'Improve Health',
+        'Improve Endurance', 'Get Stronger', 'Improve Flexibility',
+        'Improve Mobility', 'Improve Balance', 'Increase Energy',
+        'Sports Performance', 'Competition Preparation', 'Beginner Friendly',
+        'Learn a New Sport', 'Master a Skill', 'Rehabilitation',
+        'Recover from Injury', 'Stress Relief', 'Mental Wellbeing',
+        'Weight Management', 'Body Transformation', 'Toning',
+        'Cardio Fitness', 'Functional Fitness', 'Core Strength',
+        'Posture Improvement', 'Self Defense'
+      ],
+      'Coaching & Lessons': [
+        'Train for a Marathon', 'Train for a Triathlon', 'Trail Running Preparation',
+        'Swimming Lessons', 'Learn to Dive', 'Learn to Surf', 'Learn Tennis',
+        'Learn Padel', 'Kids Coaching', 'Senior Fitness', 'Prenatal Fitness',
+        'Postnatal Fitness', 'Corporate Wellness'
+      ]
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
       const photoInput = document.getElementById('cr-photo');
       const photoPreview = document.getElementById('cr-photo-preview');
@@ -147,8 +196,145 @@
         reader.readAsDataURL(file);
       });
 
+      const galleryInput = document.getElementById('cr-gallery');
+      const galleryPreviews = document.getElementById('cr-gallery-previews');
+      const galleryLabel = document.querySelector('label[for="cr-gallery"]') || galleryInput.previousElementSibling;
+      let galleryDataUrls = [];
+
+      function renderGallery() {
+        galleryPreviews.innerHTML = '';
+        galleryDataUrls.forEach((url, index) => {
+          const div = document.createElement('div');
+          div.className = 'relative w-full aspect-square rounded-xl overflow-hidden border border-slate-700 group';
+          const img = document.createElement('img');
+          img.src = url;
+          img.className = 'w-full h-full object-cover';
+          div.appendChild(img);
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'absolute top-1 right-1 w-6 h-6 bg-red-600/80 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity';
+          removeBtn.textContent = '\u00d7';
+          removeBtn.addEventListener('click', () => {
+            galleryDataUrls.splice(index, 1);
+            renderGallery();
+          });
+          div.appendChild(removeBtn);
+          galleryPreviews.appendChild(div);
+        });
+      }
+
+      galleryInput.addEventListener('change', (e) => {
+        const newFiles = [...e.target.files];
+        const remaining = 7 - galleryDataUrls.length;
+        if (remaining <= 0) {
+          alert('Maximum 7 photos reached.');
+          e.target.value = '';
+          return;
+        }
+        if (newFiles.length > remaining) {
+          alert(`You can add only ${remaining} more photo(s).`);
+        }
+        const filesToAdd = newFiles.slice(0, remaining);
+        let pending = filesToAdd.length;
+        if (pending === 0) { e.target.value = ''; return; }
+        filesToAdd.forEach(file => {
+          if (!file.type.startsWith('image/')) { pending--; if (pending === 0) renderGallery(); return; }
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            galleryDataUrls.push(ev.target.result);
+            pending--;
+            if (pending === 0) renderGallery();
+          };
+          reader.readAsDataURL(file);
+        });
+        e.target.value = '';
+      });
+
+      const citySelect = document.getElementById('cr-city');
+      CITIES.forEach(city => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = city;
+        citySelect.appendChild(opt);
+      });
+
+      const tagChecklist = document.getElementById('cr-tag-checklist');
+      const tagSearch = document.getElementById('cr-tag-search');
+      const tagCount = document.getElementById('cr-tag-count');
+      const selectedTags = new Set();
+
+      function renderTags(filter = '') {
+        tagChecklist.innerHTML = '';
+        const lower = filter.toLowerCase();
+
+        Object.entries(TAG_GROUPS).forEach(([group, tags]) => {
+          const filtered = tags.filter(t => t.toLowerCase().includes(lower));
+          if (filtered.length === 0) return;
+
+          const block = document.createElement('div');
+          const heading = document.createElement('p');
+          heading.className = 'text-xs font-semibold text-slate-500 uppercase tracking-wider mt-3 first:mt-0 mb-1.5';
+          heading.textContent = group;
+          block.appendChild(heading);
+
+          filtered.forEach(tag => {
+            const label = document.createElement('label');
+            label.className = 'flex items-center space-x-2.5 py-1 px-2 rounded-lg hover:bg-slate-900 cursor-pointer transition';
+
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.value = tag;
+            cb.checked = selectedTags.has(tag);
+            cb.className = 'w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500/50 cursor-pointer';
+
+            cb.addEventListener('change', () => {
+              if (cb.checked) {
+                if (selectedTags.size >= 3) {
+                  cb.checked = false;
+                  alert('You can select a maximum of 3 tags.');
+                  return;
+                }
+                selectedTags.add(tag);
+              } else {
+                selectedTags.delete(tag);
+              }
+              tagCount.textContent = `${selectedTags.size} of 3 selected`;
+            });
+
+            const span = document.createElement('span');
+            span.className = 'text-sm text-slate-300';
+            span.textContent = tag;
+
+            label.appendChild(cb);
+            label.appendChild(span);
+            block.appendChild(label);
+          });
+
+          tagChecklist.appendChild(block);
+        });
+      }
+
+      renderTags();
+
+      tagSearch.addEventListener('input', (e) => {
+        renderTags(e.target.value);
+      });
+
       document.getElementById('coach-register-form').addEventListener('submit', (e) => {
         e.preventDefault();
+
+        if (selectedTags.size < 1 || selectedTags.size > 3) {
+          alert('Please select between 1 and 3 tags / specialties.');
+          return;
+        }
+
+        const bio = document.getElementById('cr-bio').value.trim();
+        if (!bio) {
+          alert('Please write a short bio about yourself.');
+          document.getElementById('cr-bio').focus();
+          return;
+        }
+
         const pass = document.getElementById('cr-password').value;
         const confirmPass = document.getElementById('cr-confirm-password').value;
 
@@ -162,15 +348,14 @@
           lastName: document.getElementById('cr-lastname').value.trim(),
           username: document.getElementById('cr-username').value.trim(),
           email: document.getElementById('cr-email').value.trim(),
-          city: document.getElementById('cr-city').value.trim(),
+          city: citySelect.value,
           password: pass,
-          bio: document.getElementById('cr-bio').value.trim(),
-          tags: document.getElementById('cr-tags').value.trim().split(',').map(t => t.trim()).filter(Boolean),
-          price: document.getElementById('cr-price').value || '',
-          discipline: document.getElementById('cr-discipline').value.trim(),
+          bio: bio,
+          tags: [...selectedTags],
+          price: document.getElementById('cr-price').value,
           role: 'coach',
           avatar: photoImg.src || '',
-          gallery: [],
+          gallery: galleryDataUrls,
         };
 
         const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
@@ -197,8 +382,7 @@
           bio: coachData.bio,
           tags: coachData.tags,
           price: coachData.price,
-          discipline: coachData.discipline,
-          gallery: [],
+          gallery: coachData.gallery,
         }));
         window.location.href = 'index.html';
       });

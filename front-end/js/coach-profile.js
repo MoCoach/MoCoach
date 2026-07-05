@@ -7,6 +7,63 @@ const BADGE_CATEGORIES = [
   { key: 'champion_builder', label: 'Champion Builder', icon: 'trophy', desc: 'Helps clients achieve real results' },
 ];
 
+const TAG_COLORS = [
+  'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  'bg-rose-500/10 text-rose-400 border-rose-500/20',
+  'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+];
+
+const TAG_GROUPS = {
+  'Sports': [
+    'Football', 'Swimming', 'Hiking', 'Running', 'Yoga', 'Padel', 'Tennis',
+    'Cycling', 'Mountain Biking', 'Trail Running', 'Scuba Diving', 'Snorkeling',
+    'Freediving', 'Surfing', 'Kitesurfing', 'Stand Up Paddle', 'Kayaking',
+    'Sailing', 'Golf', 'Boxing', 'Kickboxing', 'Muay Thai', 'MMA',
+    'Brazilian Jiu-Jitsu', 'Karate', 'Taekwondo', 'Judo', 'Beach Volleyball',
+    'Basketball', 'Volleyball', 'Badminton', 'Table Tennis', 'Cricket', 'Rugby',
+    'Horse Riding', 'Fishing', 'Spearfishing', 'Canyoning', 'Rock Climbing',
+    'Paragliding', 'Open Water Swimming'
+  ],
+  'Fitness & Activities': [
+    'Fitness', 'Gym', 'Personal Training', 'CrossFit', 'Calisthenics',
+    'Pilates', 'Zumba', 'Dance Fitness', 'Outdoor Adventure'
+  ],
+  'Health & Goals': [
+    'Lose Weight', 'Build Muscle', 'Stay Fit', 'Improve Health',
+    'Improve Endurance', 'Get Stronger', 'Improve Flexibility',
+    'Improve Mobility', 'Improve Balance', 'Increase Energy',
+    'Sports Performance', 'Competition Preparation', 'Beginner Friendly',
+    'Learn a New Sport', 'Master a Skill', 'Rehabilitation',
+    'Recover from Injury', 'Stress Relief', 'Mental Wellbeing',
+    'Weight Management', 'Body Transformation', 'Toning',
+    'Cardio Fitness', 'Functional Fitness', 'Core Strength',
+    'Posture Improvement', 'Self Defense'
+  ],
+  'Coaching & Lessons': [
+    'Train for a Marathon', 'Train for a Triathlon', 'Trail Running Preparation',
+    'Swimming Lessons', 'Learn to Dive', 'Learn to Surf', 'Learn Tennis',
+    'Learn Padel', 'Kids Coaching', 'Senior Fitness', 'Prenatal Fitness',
+    'Postnatal Fitness', 'Corporate Wellness'
+  ]
+};
+
+const CITIES = [
+  'Port Louis', 'Beau Bassin', 'Rose Hill', 'Quatre Bornes', 'Vacoas',
+  'Phoenix', 'Curepipe', 'Ebene', 'Moka', 'Trianon', 'Pailles',
+  'Coromandel', 'Albion', 'Flic en Flac', 'Tamarin', 'Black River',
+  'Bambous', 'Cascavelle', 'Rivi\u00e8re Noire', 'Grand Baie',
+  'Pereybere', 'Cap Malheureux', 'Trou aux Biches',
+  'Pointe aux Canonniers', 'Mont Choisy', 'Goodlands', 'Grand Gaube',
+  'Pamplemousses', 'Triolet', 'Terre Rouge', 'Arsenal',
+  'Flacq (Centre de Flacq)', 'Belle Mare', 'Poste de Flacq',
+  "Trou d'Eau Douce", 'Mah\u00e9bourg', 'Blue Bay', "Pointe d'Esny",
+  'Plaine Magnien', 'Souillac', 'Chemin Grenier',
+  'Rivi\u00e8re des Anguilles', 'Bel Ombre', 'Chamarel'
+];
+
 const CoachProfileApp = {
   currentId: null,
   currentData: null,
@@ -33,19 +90,32 @@ const CoachProfileApp = {
         id: coachId,
         name: fullName,
         discipline: saved.discipline || '',
+        rawPrice: saved.price || '',
         price: saved.price ? `Rs ${saved.price} per session` : '',
         city: saved.city || '',
         photoUrl: saved.avatar || '',
         avatarUrl: saved.avatar || '',
         description: saved.bio || '',
         tags: saved.tags || [],
-        gallery: saved.gallery || [],
+        gallery: (saved.gallery || []).map(item =>
+          typeof item === 'string' ? { type: 'image', src: item } : item
+        ),
       };
     } else {
       this.currentData = {
-        id: coachId, name: coachId, discipline: '', price: '', city: '',
+        id: coachId, name: coachId, discipline: '', rawPrice: '', price: '', city: '',
         photoUrl: '', avatarUrl: '', description: '', tags: [], gallery: [],
       };
+    }
+
+    const citySelect = document.getElementById('cp-city-edit');
+    if (citySelect && citySelect.options.length === 0) {
+      CITIES.forEach(city => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = city;
+        citySelect.appendChild(opt);
+      });
     }
 
     this.currentId = coachId;
@@ -83,9 +153,52 @@ const CoachProfileApp = {
     }
 
     this._setText('cp-name', d.name);
-    this._setText('cp-discipline', d.discipline);
-    this._setText('cp-price', d.price);
-    this._setText('cp-city', d.city ? `📍 ${d.city}` : '');
+    const discEl = document.getElementById('cp-discipline');
+    if (discEl) {
+      if (d.discipline) {
+        discEl.textContent = d.discipline;
+        discEl.classList.remove('hidden');
+      } else {
+        discEl.classList.add('hidden');
+      }
+    }
+
+    const priceView = document.getElementById('cp-price-view');
+    const priceEdit = document.getElementById('cp-price-edit');
+    if (priceView && priceEdit) {
+      if (this.editing) {
+        priceView.classList.add('hidden');
+        priceEdit.classList.remove('hidden');
+        priceEdit.value = d.rawPrice;
+      } else {
+        priceView.classList.remove('hidden');
+        priceEdit.classList.add('hidden');
+        priceView.textContent = d.price;
+      }
+    }
+
+    const cityView = document.getElementById('cp-city-view');
+    const cityEdit = document.getElementById('cp-city-edit');
+    if (cityView && cityEdit) {
+      if (this.editing) {
+        cityView.classList.add('hidden');
+        cityEdit.classList.remove('hidden');
+        cityEdit.value = d.city;
+      } else {
+        cityView.classList.remove('hidden');
+        cityEdit.classList.add('hidden');
+        cityView.textContent = d.city ? `📍 ${d.city}` : '';
+      }
+    }
+
+    const avatarEdit = document.getElementById('cp-avatar-edit');
+    if (avatarEdit) {
+      if (this.editing) {
+        avatarEdit.classList.remove('hidden');
+      } else {
+        avatarEdit.classList.add('hidden');
+      }
+    }
 
     const contactBtn = document.getElementById('cp-contact-btn');
     if (contactBtn) {
@@ -130,12 +243,12 @@ const CoachProfileApp = {
     const subtitle = document.getElementById('cp-gallery-subtitle');
 
     if (this.editing) {
-      upload.classList.remove('hidden');
+      if (upload) upload.classList.remove('hidden');
       if (subtitle) subtitle.textContent = `Photos & videos (${gallery.length} / ${this.MAX_GALLERY})`;
       const count = document.getElementById('cp-gallery-count');
       if (count) count.textContent = `${gallery.length} / ${this.MAX_GALLERY}`;
     } else {
-      upload.classList.add('hidden');
+      if (upload) upload.classList.add('hidden');
       if (subtitle) subtitle.textContent = 'Photos & videos';
     }
 
@@ -144,7 +257,7 @@ const CoachProfileApp = {
       return;
     }
 
-    grid.innerHTML = '';
+    grid.innerHTML = gallery.length === 0 ? '<p class="text-slate-500 text-sm col-span-full text-center py-4">No gallery items yet. Add photos below.</p>' : '';
 
     gallery.forEach((item, i) => {
       const div = document.createElement('div');
@@ -244,6 +357,34 @@ const CoachProfileApp = {
     this.showToast('Media removed', 'success');
   },
 
+  handleAvatarUpload(e) {
+    try {
+      const file = e.target.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const gallery = this.currentData.gallery || [];
+          gallery.unshift({ type: 'image', src: ev.target.result });
+          if (gallery.length > this.MAX_GALLERY) gallery.pop();
+          this.currentData.gallery = gallery;
+          this._syncAndRender();
+          const avatarEl = document.getElementById('cp-avatar');
+          if (avatarEl) {
+            avatarEl.style.backgroundImage = `url(${this._esc(ev.target.result)})`;
+          }
+          this.showToast('Profile photo updated!', 'success');
+        } catch (err) {
+          this.showToast('Failed to update profile photo', 'error');
+        }
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    } catch (err) {
+      this.showToast('Failed to read file', 'error');
+    }
+  },
+
   _syncAndRender() {
     const user = this._getAuthUser();
     if (user && user.role === 'coach') {
@@ -254,6 +395,8 @@ const CoachProfileApp = {
         coaches[idx].avatar = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : coaches[idx].avatar;
         coaches[idx].bio = this.currentData.description;
         coaches[idx].tags = this.currentData.tags;
+        coaches[idx].price = this.currentData.rawPrice;
+        coaches[idx].city = this.currentData.city;
         localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
 
         const session = JSON.parse(sessionStorage.getItem('mocoach_auth') || '{}');
@@ -261,6 +404,8 @@ const CoachProfileApp = {
         session.avatar = coaches[idx].avatar;
         session.bio = coaches[idx].bio;
         session.tags = coaches[idx].tags;
+        session.price = coaches[idx].price;
+        session.city = coaches[idx].city;
         sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
       }
     }
@@ -275,23 +420,93 @@ const CoachProfileApp = {
     const view = document.getElementById('cp-description-view');
     const edit = document.getElementById('cp-description-edit');
     const tagsEl = document.getElementById('cp-tags');
+    const tagsEdit = document.getElementById('cp-tags-edit');
 
     if (this.editing) {
       view.classList.add('hidden');
       edit.classList.remove('hidden');
       edit.value = d.description || '';
+      if (tagsEl) tagsEl.classList.add('hidden');
+      if (tagsEdit) tagsEdit.classList.remove('hidden');
+      this.renderTagCheckboxes();
     } else {
       view.classList.remove('hidden');
       edit.classList.add('hidden');
       view.innerHTML = d.description
         ? d.description.replace(/\n/g, '<br>')
         : '<span class="text-slate-500 italic">No description available.</span>';
+      if (tagsEl) tagsEl.classList.remove('hidden');
+      if (tagsEdit) tagsEdit.classList.add('hidden');
+      if (tagsEl) {
+        const tags = d.tags || [];
+        if (tags.length === 0) {
+          tagsEl.innerHTML = '<span class="text-slate-500 italic text-sm">No specialties listed.</span>';
+        } else {
+          tagsEl.innerHTML = tags.map((t, i) =>
+            `<span class="inline-flex items-center px-3 py-1 rounded-full ${TAG_COLORS[i % TAG_COLORS.length]} border text-xs font-semibold">${this._esc(t)}</span>`
+          ).join('');
+        }
+      }
+    }
+  },
+
+  renderTagCheckboxes() {
+    const checklist = document.getElementById('cp-tag-checklist');
+    const search = document.getElementById('cp-tag-search');
+    const count = document.getElementById('cp-tag-count');
+    if (!checklist) return;
+
+    const selected = new Set(this.currentData.tags || []);
+
+    function render(filter) {
+      checklist.innerHTML = '';
+      const lower = (filter || '').toLowerCase();
+      Object.entries(TAG_GROUPS).forEach(([group, tags]) => {
+        const filtered = tags.filter(t => t.toLowerCase().includes(lower));
+        if (filtered.length === 0) return;
+        const block = document.createElement('div');
+        const heading = document.createElement('p');
+        heading.className = 'text-xs font-semibold text-slate-500 uppercase tracking-wider mt-3 first:mt-0 mb-1.5';
+        heading.textContent = group;
+        block.appendChild(heading);
+        filtered.forEach(tag => {
+          const label = document.createElement('label');
+          label.className = 'flex items-center space-x-2.5 py-1 px-2 rounded-lg hover:bg-slate-900 cursor-pointer transition';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.value = tag;
+          cb.checked = selected.has(tag);
+          cb.className = 'w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500/50 cursor-pointer';
+          cb.addEventListener('change', () => {
+            if (cb.checked) {
+              if (selected.size >= 3) {
+                cb.checked = false;
+                alert('You can select a maximum of 3 tags.');
+                return;
+              }
+              selected.add(tag);
+            } else {
+              selected.delete(tag);
+            }
+            if (count) count.textContent = `${selected.size} of 3 selected`;
+          });
+          const span = document.createElement('span');
+          span.className = 'text-sm text-slate-300';
+          span.textContent = tag;
+          label.appendChild(cb);
+          label.appendChild(span);
+          block.appendChild(label);
+        });
+        checklist.appendChild(block);
+      });
     }
 
-    if (tagsEl) {
-      tagsEl.innerHTML = (d.tags || []).map(t =>
-        `<span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-600/10 text-blue-400 border border-blue-500/20 text-xs font-semibold">${this._esc(t)}</span>`
-      ).join('');
+    render('');
+    if (count) count.textContent = `${selected.size} of 3 selected`;
+
+    if (search) {
+      search.value = '';
+      search.oninput = (e) => render(e.target.value);
     }
   },
 
@@ -302,8 +517,15 @@ const CoachProfileApp = {
     const badgeVotes = this._getBadgeVotes();
     const coachVotes = badgeVotes[this.currentId] || {};
 
+    const totalBadges = Object.values(coachVotes).reduce((sum, v) => typeof v === 'number' ? sum + v : sum, 0);
+
     const user = this._getAuthUser();
     const viewerIsCustomer = user && user.role === 'customer';
+
+    if (totalBadges === 0 && !viewerIsCustomer) {
+      grid.innerHTML = '<p class="text-slate-500 text-sm col-span-full text-center py-8">No badges awarded yet.</p>';
+      return;
+    }
 
     grid.innerHTML = BADGE_CATEGORIES.map(cat => {
       const count = coachVotes[cat.key] || 0;
@@ -438,6 +660,13 @@ const CoachProfileApp = {
 
   startEdit() {
     this.editing = true;
+    const d = this.currentData;
+    const descEdit = document.getElementById('cp-description-edit');
+    if (descEdit) descEdit.value = d.description || '';
+    const priceEdit = document.getElementById('cp-price-edit');
+    if (priceEdit) priceEdit.value = d.rawPrice;
+    const cityEdit = document.getElementById('cp-city-edit');
+    if (cityEdit) cityEdit.value = d.city;
     this.render();
   },
 
@@ -455,7 +684,20 @@ const CoachProfileApp = {
       this.currentData.description = descEdit.value.trim();
     }
 
-    this.currentData.tags = this.currentData.tags;
+    const priceEdit = document.getElementById('cp-price-edit');
+    if (priceEdit) {
+      this.currentData.rawPrice = priceEdit.value;
+      this.currentData.price = priceEdit.value ? `Rs ${priceEdit.value} per session` : '';
+    }
+
+    const cityEdit = document.getElementById('cp-city-edit');
+    if (cityEdit) {
+      this.currentData.city = cityEdit.value;
+    }
+
+    const checkedTags = [...document.querySelectorAll('#cp-tag-checklist input[type="checkbox"]:checked')].map(cb => cb.value);
+    this.currentData.tags = checkedTags;
+
     this.currentData.gallery = this.currentData.gallery;
     this.currentData.avatarUrl = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : this.currentData.avatarUrl;
 
@@ -466,6 +708,8 @@ const CoachProfileApp = {
       coaches[idx].tags = this.currentData.tags;
       coaches[idx].gallery = this.currentData.gallery;
       coaches[idx].avatar = this.currentData.avatarUrl;
+      coaches[idx].price = this.currentData.rawPrice;
+      coaches[idx].city = this.currentData.city;
       localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
 
       const session = JSON.parse(sessionStorage.getItem('mocoach_auth') || '{}');
@@ -473,6 +717,8 @@ const CoachProfileApp = {
       session.tags = coaches[idx].tags;
       session.gallery = coaches[idx].gallery;
       session.avatar = coaches[idx].avatar;
+      session.price = coaches[idx].price;
+      session.city = coaches[idx].city;
       sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
     }
 
@@ -564,6 +810,7 @@ const CoachProfileApp = {
     document.getElementById('cp-cancel-btn')?.addEventListener('click', () => this.cancelEdit());
 
     document.getElementById('cp-gallery-input')?.addEventListener('change', (e) => this.handleGalleryUpload(e));
+    document.getElementById('cp-avatar-input')?.addEventListener('change', (e) => this.handleAvatarUpload(e));
   },
 
   showToast(message, type) {
