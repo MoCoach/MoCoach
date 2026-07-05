@@ -1,62 +1,6 @@
-const MOCK_COACHES = [
-  { id: 'coach-1', name: 'Priya S.', discipline: 'Zumba', avatar: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=150&q=80' },
-  { id: 'coach-2', name: 'Cedric L.', discipline: 'Boxing', avatar: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=150&q=80' },
-  { id: 'coach-3', name: 'Leana Marou', discipline: 'Yoga', avatar: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=150&q=80' },
-  { id: 'coach-4', name: 'Sarah B.', discipline: 'Tennis', avatar: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=150&q=80' },
-  { id: 'coach-7', name: 'Jean-Pierre S.', discipline: 'Water Sports', avatar: 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&w=150&q=80' },
-];
-
 const ChatApp = {
   currentUser: { id: 'user', name: 'You' },
-  conversations: [
-    {
-      id: 'conv-coach-1',
-      coach: MOCK_COACHES[0],
-      messages: [
-        { id: 'm1', senderId: 'coach-1', text: "Hey there! I saw you're interested in Zumba. I have morning classes at 7 AM and evening sessions at 5:30 PM. Would either work for you?", timestamp: '2026-06-24T09:15:00' },
-        { id: 'm2', senderId: 'user', text: 'Hi Priya! The evening session at 5:30 PM would be perfect. Do you have availability on weekdays?', timestamp: '2026-06-24T09:20:00' },
-        { id: 'm3', senderId: 'coach-1', text: 'Great choice! I have Monday, Wednesday, and Friday open at 5:30 PM this week. Would you like to start with a trial session?', timestamp: '2026-06-24T09:25:00' },
-        { id: 'm4', senderId: 'user', text: "Monday works for me! Let's do the trial session. What do I need to bring?", timestamp: '2026-06-24T09:30:00' },
-        { id: 'm5', senderId: 'coach-1', text: "Perfect! Just bring comfortable clothes, a water bottle, and a towel. I'll have the music ready! See you Monday at 5:30 PM at the Grand Baie community center.", timestamp: '2026-06-24T09:35:00' },
-      ],
-      unread: 0,
-      lastActivity: '2026-06-24T09:35:00',
-    },
-    {
-      id: 'conv-coach-2',
-      coach: MOCK_COACHES[1],
-      messages: [
-        { id: 'm6', senderId: 'coach-2', text: "Yo! Ready to train? My boxing sessions are intense but rewarding. What's your experience level?", timestamp: '2026-06-23T14:00:00' },
-        { id: 'm7', senderId: 'user', text: "Hi Cedric! I'm a complete beginner but I've always wanted to learn boxing for fitness.", timestamp: '2026-06-23T14:10:00' },
-        { id: 'm8', senderId: 'coach-2', text: "No worries at all! I love training beginners. We'll start with the basics — stance, footwork, and technique. Safety first, always. I have a slot this Saturday at 10 AM. Interested?", timestamp: '2026-06-23T14:15:00' },
-      ],
-      unread: 2,
-      lastActivity: '2026-06-23T14:15:00',
-    },
-    {
-      id: 'conv-coach-3',
-      coach: MOCK_COACHES[2],
-      messages: [
-        { id: 'm9', senderId: 'coach-3', text: 'Namaste! Welcome to my yoga page. I specialize in Vinyasa flow and beachside sessions. How can I support your practice?', timestamp: '2026-06-22T08:00:00' },
-        { id: 'm10', senderId: 'user', text: 'Hi Leana! I\'m looking to improve my flexibility and reduce stress. Do you offer beginner-friendly sessions?', timestamp: '2026-06-22T08:30:00' },
-        { id: 'm11', senderId: 'coach-3', text: 'Absolutely! My classes are designed for all levels. We focus on breath work, gentle flow, and relaxation. I offer sessions at the beach in Pereybere or online via Zoom. Which do you prefer?', timestamp: '2026-06-22T08:45:00' },
-      ],
-      unread: 1,
-      lastActivity: '2026-06-22T08:45:00',
-    },
-    {
-      id: 'conv-coach-4',
-      coach: MOCK_COACHES[3],
-      messages: [
-        { id: 'm12', senderId: 'coach-4', text: "Hi there! Ready to improve your tennis game? I offer coaching for all skill levels on the beautiful courts at Belle Mare.", timestamp: '2026-06-20T16:00:00' },
-        { id: 'm13', senderId: 'user', text: "Hi Sarah! I'd love to book a session. What's your rate and availability for this weekend?", timestamp: '2026-06-20T16:30:00' },
-        { id: 'm14', senderId: 'coach-4', text: "I charge 750 Rs per hour and have openings Saturday at 8 AM and Sunday at 4 PM. I provide rackets if you don't have your own!", timestamp: '2026-06-20T17:00:00' },
-        { id: 'm15', senderId: 'user', text: 'Sunday at 4 PM works perfectly! See you there.', timestamp: '2026-06-20T17:15:00' },
-      ],
-      unread: 0,
-      lastActivity: '2026-06-20T17:15:00',
-    },
-  ],
+  conversations: [],
 
   activeId: null,
   isOpen: false,
@@ -66,12 +10,24 @@ const ChatApp = {
       setTimeout(() => this.init(), 50);
       return;
     }
+    this._syncCurrentUser();
     this._syncFromStorage();
     this.bindEvents();
     this.renderConversations();
     this.renderChat(null);
     this.updateMobileView();
     window.addEventListener('resize', () => this.updateMobileView());
+  },
+
+  _syncCurrentUser() {
+    const auth = this._getAuthUser();
+    if (auth) {
+      this.currentUser = {
+        id: auth.userId,
+        name: auth.username,
+        avatar: auth.avatar || '',
+      };
+    }
   },
 
   _syncFromStorage() {
@@ -169,6 +125,7 @@ const ChatApp = {
         return;
       }
       if (coachId && coachId === user.userId) {
+        this._syncCurrentUser();
         this.isOpen = true;
         const overlay = document.getElementById('messaging-overlay');
         overlay.classList.remove('hidden');
@@ -184,6 +141,7 @@ const ChatApp = {
       return;
     }
 
+    this._syncCurrentUser();
     this.isOpen = true;
     const overlay = document.getElementById('messaging-overlay');
     overlay.classList.remove('hidden');
@@ -194,16 +152,16 @@ const ChatApp = {
     if (coachId) {
       let conv = this.conversations.find(c => c.coach.id === coachId);
       if (!conv) {
-        const card = document.querySelector(`[data-coach-id="${coachId}"]`);
-        if (card) {
-          const img = card.querySelector('img');
+        const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
+        const coachData = coaches.find(c => c.username === coachId);
+        if (coachData) {
           conv = {
             id: 'conv-' + coachId,
             coach: {
               id: coachId,
-              name: card.getAttribute('data-name'),
-              discipline: card.getAttribute('data-discipline'),
-              avatar: img ? img.src : '',
+              name: `${coachData.firstName || ''} ${coachData.lastName || ''}`.trim() || coachData.username,
+              discipline: coachData.discipline || '',
+              avatar: coachData.avatar || '',
             },
             messages: [],
             unread: 0,

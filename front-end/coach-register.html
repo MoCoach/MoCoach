@@ -185,7 +185,21 @@
 
         coaches.push(coachData);
         localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
-        alert('Registration successful! Please log in with your username and password.');
+        sessionStorage.setItem('mocoach_auth', JSON.stringify({
+          role: 'coach',
+          username: coachData.username,
+          userId: coachData.username,
+          firstName: coachData.firstName,
+          lastName: coachData.lastName,
+          email: coachData.email,
+          city: coachData.city,
+          avatar: coachData.avatar,
+          bio: coachData.bio,
+          tags: coachData.tags,
+          price: coachData.price,
+          discipline: coachData.discipline,
+          gallery: [],
+        }));
         window.location.href = 'index.html';
       });
     });

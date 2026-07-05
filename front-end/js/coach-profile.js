@@ -1,167 +1,4 @@
-const COACH_PROFILES = {
-  'coach-1': {
-    id: 'coach-1', name: 'Priya S.', discipline: 'Zumba',
-    price: '450 Rs/h', priceValue: 450, city: 'Grand Baie',
-    photoUrl: 'assets/img/Certified_coaches/zumba.jpg',
-    avatarUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=300&q=80',
-    description: 'With over 8 years of experience in dance and fitness, Priya brings the energy of sega rhythms to every Zumba session. Her classes blend high-energy cardio with island-inspired moves, making fitness feel like a celebration.',
-    tags: ['Zumba', 'Dance Fitness', 'Sega Rhythms', 'Cardio'],
-    gallery: [],
-  },
-  'coach-2': {
-    id: 'coach-2', name: 'Cedric L.', discipline: 'Boxing',
-    price: '600 Rs/h', priceValue: 600, city: 'Port Louis',
-    photoUrl: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=300&q=80',
-    description: 'Cedric is a former national boxing champion with 10 years of coaching experience.',
-    tags: ['Boxing', 'Kickboxing', 'Conditioning', 'Self-Defense'],
-    gallery: [],
-  },
-  'coach-3': {
-    id: 'coach-3', name: 'Leana Marou', discipline: 'Yoga',
-    price: '550 Rs/h', priceValue: 550, city: 'Pereybere',
-    photoUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80',
-    description: 'Leana is a 500-RYT certified yoga instructor who blends Vinyasa flow with breathwork and meditation.',
-    tags: ['Yoga', 'Vinyasa', 'Meditation', 'Beach Yoga'],
-    gallery: [],
-  },
-  'coach-4': {
-    id: 'coach-4', name: 'Sarah B.', discipline: 'Tennis',
-    price: '750 Rs/h', priceValue: 750, city: 'Belle Mare',
-    photoUrl: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=300&q=80',
-    description: 'Sarah is a certified tennis professional with experience coaching players from beginners to tournament level.',
-    tags: ['Tennis', 'Serve & Volley', 'Footwork', 'Match Strategy'],
-    gallery: [],
-  },
-  'coach-5': {
-    id: 'coach-5', name: 'Mathieu R.', discipline: 'Football',
-    price: '400 Rs/h', priceValue: 400, city: 'Curepipe',
-    photoUrl: 'https://images.unsplash.com/photo-1517747614396-d21a78b850e8?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1517747614396-d21a78b850e8?auto=format&fit=crop&w=300&q=80',
-    description: 'Mathieu played semi-professional football in Europe before returning to Mauritius to coach.',
-    tags: ['Football', 'Dribbling', 'Tactical Training', 'Agility'],
-    gallery: [],
-  },
-  'coach-6': {
-    id: 'coach-6', name: 'Amisha K.', discipline: 'Gymnastics',
-    price: '650 Rs/h', priceValue: 650, city: 'Quatre Bornes',
-    photoUrl: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=300&q=80',
-    description: 'Amisha is a former national gymnast with over 12 years of coaching experience.',
-    tags: ['Gymnastics', 'Flexibility', 'Core Strength', 'Floor Routine'],
-    gallery: [],
-  },
-  'coach-7': {
-    id: 'coach-7', name: 'Jean-Pierre S.', discipline: 'Water Sports',
-    price: '700 Rs/h', priceValue: 700, city: 'Flic en Flac',
-    photoUrl: 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&w=300&q=80',
-    description: 'Jean-Pierre is a certified open-water swim coach and paddleboarding instructor.',
-    tags: ['Open Water Swimming', 'Paddleboarding', 'Water Safety', 'Endurance'],
-    gallery: [],
-  },
-  'coach-8': {
-    id: 'coach-8', name: 'Chloe A.', discipline: 'Jogging/Running',
-    price: '350 Rs/h', priceValue: 350, city: 'Tamarin',
-    photoUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=300&q=80',
-    description: 'Chloe is a marathon runner and certified running coach who helps clients of all levels.',
-    tags: ['Running', 'Endurance', 'Pacing', '5K / 10K Prep'],
-    gallery: [],
-  },
-  'coach-9': {
-    id: 'coach-9', name: 'Kavir D.', discipline: 'Strength Training',
-    price: '500 Rs/h', priceValue: 500, city: 'Moka',
-    photoUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=300&q=80',
-    description: 'Kavir is a certified strength and conditioning specialist with a background in sports science.',
-    tags: ['Strength Training', 'Hypertrophy', 'Posture', 'Progressive Overload'],
-    gallery: [],
-  },
-  'coach-10': {
-    id: 'coach-10', name: 'Arnaud G.', discipline: 'Hiking',
-    price: '650 Rs/h', priceValue: 650, city: 'Black River',
-    photoUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=300&q=80',
-    description: 'Arnaud is an experienced mountain guide who knows every trail in Mauritius.',
-    tags: ['Hiking', 'Trail Navigation', 'Mountain Guide', 'Nature'],
-    gallery: [],
-  },
-  'coach-11': {
-    id: 'coach-11', name: 'Gael B.', discipline: 'Combat Sports',
-    price: '550 Rs/h', priceValue: 550, city: 'Port Louis',
-    photoUrl: 'https://images.unsplash.com/photo-1517438476312-10d79c01926d?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1517438476312-10d79c01926d?auto=format&fit=crop&w=300&q=80',
-    description: 'Gael has trained in martial arts for over 15 years, holding black belts in multiple disciplines.',
-    tags: ['Kickboxing', 'Self-Defense', 'Muay Thai', 'MMA Conditioning'],
-    gallery: [],
-  },
-  'coach-12': {
-    id: 'coach-12', name: 'Ryan M.', discipline: 'Dance',
-    price: '450 Rs/h', priceValue: 450, city: 'Grand Baie',
-    photoUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=300&q=80',
-    description: 'Ryan is a professional dancer and choreographer with experience in contemporary, hip-hop, and sega.',
-    tags: ['Hip-Hop', 'Contemporary', 'Sega', 'Choreography'],
-    gallery: [],
-  },
-  'coach-13': {
-    id: 'coach-13', name: 'Nicholas W.', discipline: 'Badminton',
-    price: '480 Rs/h', priceValue: 480, city: 'Rose Hill',
-    photoUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=300&q=80',
-    description: 'Nicholas is a national-level badminton player with a passion for teaching.',
-    tags: ['Badminton', 'Footwork', 'Smash Technique', 'Court Coverage'],
-    gallery: [],
-  },
-  'coach-14': {
-    id: 'coach-14', name: 'Dev M.', discipline: 'Rugby',
-    price: '500 Rs/h', priceValue: 500, city: 'Curepipe',
-    photoUrl: 'https://images.unsplash.com/photo-1533560904424-a0c61dc306fc?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1533560904424-a0c61dc306fc?auto=format&fit=crop&w=300&q=80',
-    description: 'Dev played rugby for the Mauritius national team and now coaches the next generation.',
-    tags: ['Rugby', 'Tackling', 'Passing', 'Team Tactics'],
-    gallery: [],
-  },
-  'coach-15': {
-    id: 'coach-15', name: 'Robert T.', discipline: 'Golf',
-    price: '800 Rs/h', priceValue: 800, city: 'Belle Mare',
-    photoUrl: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=300&q=80',
-    description: 'Robert is a PGA-accredited golf instructor with years of experience teaching at premier Mauritian golf courses.',
-    tags: ['Golf', 'Swing Mechanics', 'Putting', 'Course Strategy'],
-    gallery: [],
-  },
-  'coach-16': {
-    id: 'coach-16', name: 'David L.', discipline: 'Basketball',
-    price: '550 Rs/h', priceValue: 550, city: 'Port Louis',
-    photoUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=300&q=80',
-    description: 'David played college basketball internationally and brings modern training methods to Mauritius.',
-    tags: ['Basketball', 'Dribbling', 'Shooting', 'Vertical Jump'],
-    gallery: [],
-  },
-  'coach-17': {
-    id: 'coach-17', name: 'Melissa P.', discipline: 'Handball',
-    price: '450 Rs/h', priceValue: 450, city: 'Quatre Bornes',
-    photoUrl: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=300&q=80',
-    description: 'Melissa is a former national handball player who now coaches youth and adult players.',
-    tags: ['Handball', 'Team Play', 'Defense', 'Agility'],
-    gallery: [],
-  },
-  'coach-18': {
-    id: 'coach-18', name: 'Alan Y.', discipline: 'Table Tennis',
-    price: '400 Rs/h', priceValue: 400, city: 'Rose Hill',
-    photoUrl: 'https://images.unsplash.com/photo-1534067783941-51c9c23eccfd?auto=format&fit=crop&w=600&q=80',
-    avatarUrl: 'https://images.unsplash.com/photo-1534067783941-51c9c23eccfd?auto=format&fit=crop&w=300&q=80',
-    description: 'Alan is a table tennis specialist with multiple island championship titles.',
-    tags: ['Table Tennis', 'Spin Control', 'Reflexes', 'Placement'],
-    gallery: [],
-  },
-};
+// COACH_PROFILES removed — data now loads from localStorage mocoach_coaches
 
 const BADGE_CATEGORIES = [
   { key: 'technical_coach', label: 'Technical Coach', icon: 'book-open', desc: 'Deep expertise in their discipline' },
@@ -189,38 +26,26 @@ const CoachProfileApp = {
     const user = this._getAuthUser();
     this.isOwnProfile = user && user.role === 'coach' && user.userId === coachId;
 
-    const profile = COACH_PROFILES[coachId];
-    if (profile) {
-      this.currentData = { ...profile };
-      const saved = this._getSavedCoach(coachId);
-      if (saved) {
-        this.currentData.description = saved.description || profile.description;
-        this.currentData.tags = saved.tags || profile.tags;
-        this.currentData.gallery = saved.gallery || profile.gallery || [];
-        this.currentData.price = saved.price || profile.price;
-        this.currentData.avatarUrl = saved.avatar || profile.avatarUrl;
-        this.currentData.city = saved.city || profile.city;
-      } else {
-        this.currentData.gallery = profile.gallery || [];
-      }
+    const saved = this._getSavedCoach(coachId);
+    if (saved) {
+      const fullName = `${saved.firstName || ''} ${saved.lastName || ''}`.trim() || saved.username;
+      this.currentData = {
+        id: coachId,
+        name: fullName,
+        discipline: saved.discipline || '',
+        price: saved.price ? `Rs ${saved.price} per session` : '',
+        city: saved.city || '',
+        photoUrl: saved.avatar || '',
+        avatarUrl: saved.avatar || '',
+        description: saved.bio || '',
+        tags: saved.tags || [],
+        gallery: saved.gallery || [],
+      };
     } else {
       this.currentData = {
         id: coachId, name: coachId, discipline: '', price: '', city: '',
         photoUrl: '', avatarUrl: '', description: '', tags: [], gallery: [],
       };
-    }
-
-    if (this.isOwnProfile) {
-      Object.assign(this.currentData, {
-        name: user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.username,
-        discipline: user.discipline || this.currentData.discipline,
-        price: user.price ? `Rs ${user.price} per session` : this.currentData.price,
-        city: user.city || this.currentData.city,
-        description: user.bio || this.currentData.description,
-        tags: user.tags || this.currentData.tags,
-        gallery: user.gallery || this.currentData.gallery || [],
-        avatarUrl: user.avatar || this.currentData.avatarUrl,
-      });
     }
 
     this.currentId = coachId;
@@ -789,4 +614,3 @@ if (document.readyState === 'loading') {
 }
 
 window.CoachProfileApp = CoachProfileApp;
-window.COACH_PROFILES = COACH_PROFILES;
