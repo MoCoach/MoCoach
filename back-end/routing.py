@@ -276,6 +276,29 @@ def delete_own_profile():
 
 
 # ------------------------------------------------------------------
+# Ratings
+# ------------------------------------------------------------------
+
+@app.post("/coach/<int:coach_id>/rate")
+@jwt_required()
+def rate_coach(coach_id):
+    """Set a thumbs-up (1), thumbs-down (0), or remove (null) rating."""
+    data = request.get_json()
+    if not data or "rating" not in data:
+        return jsonify({"msg": "rating is required (true, false, or null)"}), 400
+
+    rating = data["rating"]
+    if rating is not None and not isinstance(rating, bool):
+        return jsonify({"msg": "rating must be a boolean or null"}), 400
+
+    try:
+        result = db.rate_coach(get_jwt_identity(), coach_id, rating)
+        return jsonify(result), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+# ------------------------------------------------------------------
 # Coach queries (public)
 # ------------------------------------------------------------------
 

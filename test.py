@@ -17,7 +17,7 @@ from sqlalchemy import create_engine, text
 BASE = "http://localhost:5678"
 DB_URL = "mysql+mysqldb://emilien:1234@localhost/moCoach"
 
-TABLES = ["users", "coaches", "tags", "coach_tags", "chats", "messages", "badges", "user_badges", "cities"]
+TABLES = ["users", "coaches", "tags", "coach_tags", "chats", "messages", "badges", "user_badges", "cities", "coach_ratings"]
 
 ADMIN_USERNAME = "__admin__"
 ADMIN_EMAIL = "__admin__@mo coach.local"
@@ -952,6 +952,116 @@ def test_validation():
 
 
 # ===================================================================
+# Ratings
+# ===================================================================
+def test_ratings():
+    print("\n=== Ratings ===")
+
+    # Register a second customer for multi-voter tests
+    r = requests.post(f"{BASE}/register", json={
+        "username": "charlie", "email": "charlie@x.com", "password": "charliepass",
+        "first_name": "Charlie",
+    })
+    if r.status_code != 201:
+        report("Setup charlie customer", False)
+        return
+    charlie_id = r.json()["id"]
+    r = requests.post(f"{BASE}/login", json={"login": "charlie", "password": "charliepass"})
+    if r.status_code != 200:
+        report("Login charlie", False)
+        return
+    TOKENS["charlie"] = r.json()["access_token"]
+
+    h_alice = {"Authorization": f"Bearer {TOKENS['alice']}"}
+    h_charlie = {"Authorization": f"Bearer {TOKENS['charlie']}"}
+    h_bob = {"Authorization": f"Bearer {TOKENS['bob']}"}
+    bob_coach_id = DATA["bob_coach_id"]
+
+    # Customer gives thumbs up
+    r = requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": True}, headers=h_alice)
+    print(r.json())
+    report("POST /coach/<id>/rate (thumbs up)", r.status_code == 200)
+
+    r = requests.get(f"{BASE}/coach/{bob_coach_id}")
+    print(r.json())
+    report("GET /coach/<id> (thumbs_up=1 after up)",
+        r.status_code == 200 and r.json().get("thumbs_up") == 1 and r.json().get("thumbs_down") == 0)
+
+    # Customer switches to thumbs down
+    r = requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": False}, headers=h_alice)
+    print(r.json())
+    report("POST /coach/<id>/rate (switch to down)", r.status_code == 200)
+
+    r = requests.get(f"{BASE}/coach/{bob_coach_id}")
+    print(r.json())
+    report("GET /coach/<id> (thumbs_down=1 after switch)",
+        r.status_code == 200 and r.json().get("thumbs_up") == 0 and r.json().get("thumbs_down") == 1)
+
+    # Customer removes rating
+    r = requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": None}, headers=h_alice)
+    print(r.json())
+    report("POST /coach/<id>/rate (remove rating)", r.status_code == 200)
+
+    r = requests.get(f"{BASE}/coach/{bob_coach_id}")
+    print(r.json())
+    report("GET /coach/<id> (both 0 after remove)",
+        r.status_code == 200 and r.json().get("thumbs_up") == 0 and r.json().get("thumbs_down") == 0)
+
+    # Two customers vote: alice up, charlie down
+    requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": True}, headers=h_alice)
+
+    r = requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": False}, headers=h_charlie)
+    print(r.json())
+    report("POST /coach/<id>/rate (charlie thumbs down)", r.status_code == 200)
+
+    r = requests.get(f"{BASE}/coach/{bob_coach_id}")
+    print(r.json())
+    report("GET /coach/<id> (up=1, down=1)",
+        r.status_code == 200 and r.json().get("thumbs_up") == 1 and r.json().get("thumbs_down") == 1)
+
+    # Coach cannot rate
+    r = requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": True}, headers=h_bob)
+    print(r.json())
+    report("POST /coach/<id>/rate (coach cannot rate)", r.status_code == 403)
+
+    # Unauthenticated
+    r = requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": True})
+    print(r.json())
+    report("POST /coach/<id>/rate (no auth)", r.status_code == 401)
+
+    # Missing rating field
+    r = requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={}, headers=h_alice)
+    print(r.json())
+    report("POST /coach/<id>/rate (missing rating)", r.status_code == 400)
+
+    # Non-boolean rating
+    r = requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": "up"}, headers=h_alice)
+    print(r.json())
+    report("POST /coach/<id>/rate (string rating)", r.status_code == 400)
+
+    # Non-existent coach
+    r = requests.post(f"{BASE}/coach/9999/rate",
+        json={"rating": True}, headers=h_alice)
+    print(r.json())
+    report("POST /coach/9999/rate (not found)", r.status_code == 404)
+
+    # Cleanup: remove votes
+    requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": None}, headers=h_alice)
+    requests.post(f"{BASE}/coach/{bob_coach_id}/rate",
+        json={"rating": None}, headers=h_charlie)
+
+
+# ===================================================================
 # Main
 # ===================================================================
 if __name__ == "__main__":
@@ -970,6 +1080,7 @@ if __name__ == "__main__":
     test_admin_tag()
     test_profile()
     test_messages()
+    test_ratings()
     test_admin()
     test_delete_own()
     test_validation()

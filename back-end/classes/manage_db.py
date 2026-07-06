@@ -19,6 +19,7 @@ from classes.chat import Chat
 from classes.message import Message
 from classes.badge import Badge
 from classes.user_badge import UserBadge
+from classes.coach_rating import CoachRating
 
 
 DEFAULT_PIC = "back-end/static/uploads/profile_pics/default/profile.jpg"
@@ -361,6 +362,18 @@ class Db_Management:
     def _coach_to_dict(self, coach):
         """Serialize a coach record to a public-facing dictionary."""
         pic_url = Db_Management.get_profile_pic_path(coach.id)
+        thumbs_up = 0
+        thumbs_down = 0
+        session = self._session()
+        try:
+            ratings = session.query(CoachRating).filter_by(coach_id=coach.id).all()
+            for r in ratings:
+                if r.rating is True:
+                    thumbs_up += 1
+                elif r.rating is False:
+                    thumbs_down += 1
+        finally:
+            session.close()
         d = {
             "id": coach.id,
             "username": coach.user.username,
@@ -374,6 +387,8 @@ class Db_Management:
                      for t in coach.tags],
             "profile_pic": pic_url or DEFAULT_PIC,
             "pictures": Db_Management.get_coach_picture_paths(coach.id),
+            "thumbs_up": thumbs_up,
+            "thumbs_down": thumbs_down,
         }
         return d
 
@@ -408,6 +423,52 @@ class Db_Management:
                 Coach.tags.contains(tag)
             ).all()
             return [self._coach_to_dict(c) for c in coaches]
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Ratings (thumbs up / down)
+    # ------------------------------------------------------------------
+
+    def rate_coach(self, customer_id, coach_id, rating):
+        """Set or remove a customer's rating for a coach.
+
+        *rating* can be:
+          - ``True``  → thumbs up
+          - ``False`` → thumbs down
+          - ``None``  → remove any existing rating
+        """
+        session = self._session()
+        try:
+            customer = session.query(User).filter_by(id=customer_id).first()
+            if not customer or customer.is_coach:
+                raise DbError("Only customers can rate coaches", 403)
+
+            coach = session.query(Coach).filter_by(id=coach_id).first()
+            if not coach:
+                raise DbError("Coach not found", 404)
+
+            if rating is not None and not isinstance(rating, bool):
+                raise DbError("rating must be a boolean or null", 400)
+
+            existing = session.query(CoachRating).filter_by(
+                coach_id=coach_id, customer_id=customer_id,
+            ).first()
+
+            if existing:
+                if rating is None:
+                    session.delete(existing)
+                else:
+                    existing.rating = rating
+            elif rating is not None:
+                cr = CoachRating(coach_id=coach_id, customer_id=customer_id, rating=rating)
+                session.add(cr)
+
+            session.commit()
+            return {"msg": "Rating updated"}
+        except DbError:
+            session.rollback()
+            raise
         finally:
             session.close()
 
