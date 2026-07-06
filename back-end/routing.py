@@ -137,7 +137,7 @@ def edit_profile():
 
 @app.get("/profile/picture/<int:user_id>")
 def serve_profile_picture(user_id):
-    """Serve a user's profile picture, returning 204 if absent."""
+    """Serve a user's profile picture, falling back to the default."""
     pic_path = db.get_profile_pic_path(user_id)
     if pic_path:
         full_dir = os.path.join(
@@ -145,6 +145,29 @@ def serve_profile_picture(user_id):
             str(user_id)
         )
         return send_from_directory(full_dir, "profile.jpg")
+
+    default_path = os.path.join(
+        os.path.dirname(__file__), "static", "uploads", "profile_pics",
+        "default", "profile.jpg"
+    )
+    if os.path.isfile(default_path):
+        return send_from_directory(
+            os.path.join(os.path.dirname(__file__), "static", "uploads", "profile_pics", "default"),
+            "profile.jpg"
+        )
+    return "", 204
+
+
+@app.get("/coach/picture/<int:user_id>/<int:numero>")
+def serve_coach_picture(user_id, numero):
+    """Serve one of a coach's pictures (numero 1‑7), or 204 if absent."""
+    pic_path = db.get_coach_picture_paths(user_id)
+    if f"static/uploads/coach_pics/{user_id}/{numero}.jpg" in pic_path:
+        full_dir = os.path.join(
+            os.path.dirname(__file__), "static", "uploads", "coach_pics",
+            str(user_id)
+        )
+        return send_from_directory(full_dir, f"{numero}.jpg")
     return "", 204
 
 
@@ -173,6 +196,32 @@ def upload_profile_picture():
     try:
         pic_path = db.save_profile_picture(get_jwt_identity(), file.read())
         return jsonify({"profile_pic": pic_path}), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+@app.post("/coach/picture/<int:numero>")
+@jwt_required()
+def upload_coach_picture(numero):
+    """Upload or replace one of a coach's up‑to‑7 pictures (numero 1‑7).
+
+    Expects a multipart form‑data field named ``file`` containing the
+    image.  Valid extensions: png, jpg, jpeg, gif, webp.
+    """
+    if "file" not in request.files:
+        return jsonify({"msg": "No file provided"}), 400
+
+    file = request.files["file"]
+    if not file.filename:
+        return jsonify({"msg": "No file selected"}), 400
+
+    ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else ""
+    if ext not in ALLOWED_EXTENSIONS:
+        return jsonify({"msg": f"File type '.{ext}' is not allowed"}), 400
+
+    try:
+        pic_path = db.save_coach_picture(get_jwt_identity(), numero, file.read())
+        return jsonify({"picture": pic_path}), 200
     except DbError as e:
         return jsonify({"msg": e.message}), e.status_code
 

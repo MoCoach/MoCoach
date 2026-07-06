@@ -129,6 +129,66 @@ class Db_Management:
         full = os.path.join(Db_Management.UPLOAD_BASE, str(user_id), "profile.jpg")
         return candidate if os.path.isfile(full) else None
 
+    COACH_PICS_BASE = os.path.join(
+        os.path.dirname(__file__), '..', 'static', 'uploads', 'coach_pics'
+    )
+
+    @staticmethod
+    def _save_image(image_bytes, dest_dir, filename):
+        """Validate, resize (max 400×400, keep aspect ratio) and save a JPEG.
+
+        :raises DbError: if the bytes do not represent a valid image
+        :return: the relative URL path
+        """
+        try:
+            img = Image.open(io.BytesIO(image_bytes))
+        except Exception:
+            raise DbError("Invalid or unreadable image file", 400)
+
+        img = img.convert("RGB")
+        img.thumbnail((400, 400), Image.LANCZOS)
+
+        os.makedirs(dest_dir, exist_ok=True)
+        dest_path = os.path.join(dest_dir, filename)
+        img.save(dest_path, "JPEG", quality=85)
+        return f"static/uploads/coach_pics/{os.path.basename(dest_dir)}/{filename}"
+
+    @staticmethod
+    def save_coach_picture(user_id, numero, image_bytes):
+        """Save (or replace) one of a coach's up‑to‑7 pictures.
+
+        *numero* must be between 1 and 7 (inclusive).
+        """
+        if not 1 <= numero <= 7:
+            raise DbError("Picture number must be between 1 and 7", 400)
+        dest_dir = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id))
+        return Db_Management._save_image(image_bytes, dest_dir, f"{numero}.jpg")
+
+    @staticmethod
+    def remove_coach_picture(user_id, numero):
+        """Remove a single coach picture (1‑7)."""
+        path = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id), f"{numero}.jpg")
+        if os.path.isfile(path):
+            os.remove(path)
+
+    @staticmethod
+    def remove_all_coach_pictures(user_id):
+        """Remove the entire coach pictures directory for *user_id*."""
+        dest_dir = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id))
+        if os.path.isdir(dest_dir):
+            import shutil
+            shutil.rmtree(dest_dir)
+
+    @staticmethod
+    def get_coach_picture_paths(user_id):
+        """Return a list of up to 7 relative URLs, one per existing picture."""
+        paths = []
+        for i in range(1, 8):
+            full = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id), f"{i}.jpg")
+            if os.path.isfile(full):
+                paths.append(f"static/uploads/coach_pics/{user_id}/{i}.jpg")
+        return paths
+
     # ------------------------------------------------------------------
     # Availability checks
     # ------------------------------------------------------------------
@@ -313,6 +373,7 @@ class Db_Management:
             "tags": [{"name": t.name, "description": t.description}
                      for t in coach.tags],
             "profile_pic": pic_url or DEFAULT_PIC,
+            "pictures": Db_Management.get_coach_picture_paths(coach.id),
         }
         return d
 
@@ -989,6 +1050,7 @@ class Db_Management:
                 session.delete(chat)
 
             self.remove_profile_picture(user_id)
+            self.remove_all_coach_pictures(user_id)
             session.delete(target)
             session.commit()
             return {"msg": "User deleted"}
@@ -1021,6 +1083,7 @@ class Db_Management:
                 session.delete(chat)
 
             self.remove_profile_picture(user_id)
+            self.remove_all_coach_pictures(user_id)
             session.delete(user)
             session.commit()
             return {"msg": "Profile deleted"}
