@@ -4,8 +4,14 @@ Usage:
     python test.py
 """
 
+import io
+import os
+import subprocess
 import sys
+import time
+
 import requests
+from PIL import Image
 from sqlalchemy import create_engine, text
 
 BASE = "http://localhost:5678"
@@ -71,9 +77,36 @@ def seed_admin_user():
     engine.dispose()
 
 
+SERVER_PROC = None
+
+
+def start_server():
+    global SERVER_PROC
+    if SERVER_PROC is not None:
+        SERVER_PROC.kill()
+        SERVER_PROC.wait()
+    log = open("/tmp/flask-test.log", "w")
+    route_py = os.path.join(os.path.dirname(__file__) or ".", "back-end", "routing.py")
+    SERVER_PROC = subprocess.Popen(
+        [sys.executable, "-u", route_py],
+        stdout=log, stderr=subprocess.STDOUT,
+    )
+    for _ in range(20):
+        try:
+            r = requests.get("http://localhost:5678/check-username/startupcheck", timeout=2)
+            if r.status_code == 200:
+                return
+        except requests.ConnectionError:
+            pass
+        time.sleep(0.5)
+    print("Failed to start server")
+    sys.exit(1)
+
+
 def check_db_state():
     if tables_are_empty():
         seed_admin_user()
+        start_server()
         return
 
     invalid_count = 0
@@ -83,6 +116,7 @@ def check_db_state():
             clear_tables()
             seed_admin_user()
             print("Tables cleared, admin seeded.")
+            start_server()
             return
         elif ans in ("n", "no", ""):
             print("Test cancelled.")
@@ -689,6 +723,156 @@ def test_messages():
 
 
 # ===================================================================
+# Picture management
+# ===================================================================
+def test_pictures():
+    print("\n=== Picture management ===")
+
+
+
+    alice = TOKENS["alice"]
+    bob = TOKENS["bob"]
+    h_alice = {"Authorization": f"Bearer {alice}"}
+    h_bob = {"Authorization": f"Bearer {bob}"}
+    bob_id = DATA["bob_id"]
+
+    # Helper to create a test image
+    def make_image(w, h, fmt="JPEG"):
+        img = Image.new("RGB", (w, h), color=(255, 0, 0))
+        buf = io.BytesIO()
+        img.save(buf, fmt)
+        buf.seek(0)
+        return buf
+
+    # ------------------------------------------------------------------
+    # Profile picture (customer)
+    # ------------------------------------------------------------------
+
+    # Profile picture not present yet
+    r = requests.get(f"{BASE}/profile/picture/{DATA['alice_id']}")
+    print(f"GET /profile/picture/<alice> (absent) -> {r.status_code}")
+    report("GET /profile/picture/<alice> (absent serves default)", r.status_code == 200)
+
+    # Non-existent user — default picture is served
+    r = requests.get(f"{BASE}/profile/picture/99999")
+    print(f"GET /profile/picture/99999 -> {r.status_code}")
+    report("GET /profile/picture/99999 (non-existent uses default)", r.status_code == 200)
+
+    # Upload profile picture
+    buf = make_image(800, 600, "PNG")
+    r = requests.post(f"{BASE}/profile/picture", files={"file": ("avatar.png", buf)}, headers=h_alice)
+    print(r.json())
+    report("POST /profile/picture (upload)", r.status_code == 200 and "profile_pic" in r.json())
+    DATA["alice_pic_path"] = r.json()["profile_pic"]
+
+    # Profile picture served
+    r = requests.get(f"{BASE}/profile/picture/{DATA['alice_id']}")
+    report("GET /profile/picture/<alice> (serves uploaded)", r.status_code == 200)
+
+    # Replace profile picture
+    buf2 = make_image(100, 400)
+    r = requests.post(f"{BASE}/profile/picture", files={"file": ("new.png", buf2)}, headers=h_alice)
+    print(r.json())
+    report("POST /profile/picture (replace)", r.status_code == 200 and r.json().get("profile_pic") == DATA["alice_pic_path"])
+
+    # Without auth
+    r = requests.post(f"{BASE}/profile/picture", files={"file": ("x.jpg", make_image(10, 10))})
+    report("POST /profile/picture (no auth)", r.status_code == 401)
+
+    # Bad extension
+    r = requests.post(f"{BASE}/profile/picture",
+        files={"file": ("bad.txt", io.BytesIO(b"not-an-image"))}, headers=h_alice)
+    print(r.json())
+    report("POST /profile/picture (bad extension)", r.status_code == 400)
+
+    # Missing file
+    r = requests.post(f"{BASE}/profile/picture", data={}, headers=h_alice)
+    print(r.json())
+    report("POST /profile/picture (no file)", r.status_code == 400)
+
+    # ------------------------------------------------------------------
+    # Coach pictures
+    # ------------------------------------------------------------------
+
+    # Upload coach picture 1
+    buf3 = make_image(800, 600, "PNG")
+    r = requests.post(f"{BASE}/coach/picture/1", files={"file": ("pic1.png", buf3)}, headers=h_bob)
+    print(r.json())
+    report("POST /coach/picture/1 (upload)", r.status_code == 200 and "picture" in r.json())
+    pic1_path = r.json()["picture"]
+
+    # Upload coach picture 3 (skip 2)
+    buf4 = make_image(200, 400)
+    r = requests.post(f"{BASE}/coach/picture/3", files={"file": ("pic3.jpg", buf4)}, headers=h_bob)
+    print(r.json())
+    report("POST /coach/picture/3 (upload)", r.status_code == 200)
+    pic3_path = r.json()["picture"]
+
+    # Replace coach picture 1
+    buf5 = make_image(300, 300)
+    r = requests.post(f"{BASE}/coach/picture/1", files={"file": ("new1.jpg", buf5)}, headers=h_bob)
+    print(r.json())
+    report("POST /coach/picture/1 (replace)", r.status_code == 200 and r.json()["picture"] == pic1_path)
+
+    # Serve coach picture 1
+    r = requests.get(f"{BASE}/coach/picture/{bob_id}/1")
+    report(f"GET /coach/picture/{bob_id}/1 -> {r.status_code}", r.status_code == 200)
+
+    # Serve coach picture 2 (not uploaded)
+    r = requests.get(f"{BASE}/coach/picture/{bob_id}/2")
+    report(f"GET /coach/picture/{bob_id}/2 (absent) -> {r.status_code}", r.status_code == 204)
+
+    # Serve coach picture 3
+    r = requests.get(f"{BASE}/coach/picture/{bob_id}/3")
+    report(f"GET /coach/picture/{bob_id}/3 -> {r.status_code}", r.status_code == 200)
+
+    # Coach's public profile includes pictures list
+    r = requests.get(f"{BASE}/coach/{DATA['bob_coach_id']}")
+    print(r.json().get("pictures"))
+    pics = r.json().get("pictures", [])
+    report("GET /coach/<bob> includes pictures",
+        r.status_code == 200
+        and pic1_path in pics
+        and pic3_path in pics
+        and len(pics) == 2)
+
+    # Invalid numero (0)
+    r = requests.post(f"{BASE}/coach/picture/0",
+        files={"file": ("x.jpg", make_image(10, 10))}, headers=h_bob)
+    print(r.json())
+    report("POST /coach/picture/0 (invalid numero)", r.status_code == 400)
+
+    # Invalid numero (8)
+    r = requests.post(f"{BASE}/coach/picture/8",
+        files={"file": ("x.jpg", make_image(10, 10))}, headers=h_bob)
+    print(r.json())
+    report("POST /coach/picture/8 (invalid numero)", r.status_code == 400)
+
+    # Without auth
+    r = requests.post(f"{BASE}/coach/picture/1",
+        files={"file": ("x.jpg", make_image(10, 10))})
+    report("POST /coach/picture/1 (no auth)", r.status_code == 401)
+
+    # Bad extension
+    r = requests.post(f"{BASE}/coach/picture/2",
+        files={"file": ("bad.txt", io.BytesIO(b"not-an-image"))}, headers=h_bob)
+    print(r.json())
+    report("POST /coach/picture/2 (bad extension)", r.status_code == 400)
+
+    # Missing file
+    r = requests.post(f"{BASE}/coach/picture/1", data={}, headers=h_bob)
+    print(r.json())
+    report("POST /coach/picture/1 (no file)", r.status_code == 400)
+
+    # Not a coach can still upload (any authenticated user can use the endpoint)
+    # but pictures only show in coach profile
+    r = requests.post(f"{BASE}/coach/picture/1",
+        files={"file": ("x.jpg", make_image(10, 10))}, headers=h_alice)
+    print(r.json())
+    report("POST /coach/picture/1 (non-coach can upload)", r.status_code == 200)
+
+
+# ===================================================================
 # Admin operations
 # ===================================================================
 def test_admin():
@@ -781,6 +965,7 @@ if __name__ == "__main__":
     test_login()
     test_tags()
     test_coaches()
+    test_pictures()
     test_badges()
     test_admin_tag()
     test_profile()
@@ -789,4 +974,7 @@ if __name__ == "__main__":
     test_delete_own()
     test_validation()
 
+    if SERVER_PROC:
+        SERVER_PROC.kill()
+        SERVER_PROC.wait()
     print("Done.")
