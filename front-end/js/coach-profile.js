@@ -154,7 +154,7 @@ const CoachProfileApp = {
 
     const avatarEl = document.getElementById('cp-avatar');
     if (avatarEl) {
-      avatarEl.style.backgroundImage = `url(${this._esc(d.gallery && d.gallery.length > 0 ? d.gallery[0].src : (d.avatarUrl || d.photoUrl))})`;
+      avatarEl.style.backgroundImage = `url(${this._esc(d.avatarUrl || (d.gallery && d.gallery.length > 0 ? d.gallery[0].src : ''))})`;
     }
 
     this._setText('cp-name', d.name);
