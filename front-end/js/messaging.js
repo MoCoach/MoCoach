@@ -121,7 +121,11 @@ const ChatApp = {
 
     if (user.role === 'coach') {
       if (coachId && coachId !== user.userId) {
-        showToast('Coaches cannot contact other coaches or customers directly');
+        showToast("As a coach, you can't message other coaches. This feature is for customers looking for a coach.");
+        return;
+      }
+      if (!coachId) {
+        showToast("As a coach, you can't message other coaches. This feature is for customers looking for a coach.");
         return;
       }
       if (coachId && coachId === user.userId) {
@@ -168,7 +172,6 @@ const ChatApp = {
             lastActivity: new Date().toISOString(),
           };
           this.conversations.unshift(conv);
-          this._saveToStorage();
         }
       }
       if (conv) {
@@ -177,6 +180,7 @@ const ChatApp = {
     }
 
     this.renderConversations();
+    this._saveToStorage();
   },
 
   close() {

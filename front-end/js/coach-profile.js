@@ -866,8 +866,9 @@ const CoachProfileApp = {
 
     document.getElementById('cp-contact-btn')?.addEventListener('click', () => {
       if (this.currentId && window.ChatApp) {
+        const coachId = this.currentId;
         this.close();
-        ChatApp.open(this.currentId);
+        ChatApp.open(coachId);
       }
     });
 

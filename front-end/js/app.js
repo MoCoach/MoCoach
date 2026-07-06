@@ -271,6 +271,8 @@ function switchModalTab(tab) {
 
     if (!registerForm || !loginForm) return;
 
+    hideRegError();
+
     if (tab === 'register') {
         registerForm.classList.remove('hidden');
         loginForm.classList.add('hidden');
@@ -290,6 +292,36 @@ function switchModalTab(tab) {
         if (modalTitle) modalTitle.textContent = 'Login';
         if (modalSubtitle) modalSubtitle.textContent = 'Welcome back — log in to connect with your coaches';
     }
+}
+
+function showRegError(msg) {
+    var el = document.getElementById('reg-error-feedback');
+    if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+}
+function hideRegError() {
+    var el = document.getElementById('reg-error-feedback');
+    if (el) { el.classList.add('hidden'); el.textContent = ''; }
+}
+
+function compressImage(file, maxDimension, quality, callback) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            var w = img.width, h = img.height;
+            if (w > maxDimension || h > maxDimension) {
+                var ratio = Math.min(maxDimension / w, maxDimension / h);
+                w *= ratio; h *= ratio;
+            }
+            canvas.width = w; canvas.height = h;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            callback(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 
 const runAppInit = () => {
@@ -338,41 +370,65 @@ const runAppInit = () => {
     document.addEventListener('submit', (e) => {
         if (e.target.id === 'register-form') {
             e.preventDefault();
-            const pass = document.getElementById('reg-password').value;
-            const confirmPass = document.getElementById('reg-confirm-password').value;
+            hideRegError();
+
+            var pass = document.getElementById('reg-password').value;
+            var confirmPass = document.getElementById('reg-confirm-password').value;
 
             if (pass !== confirmPass) {
-                alert("Error: Passwords do not match! Please try again.");
+                showRegError('Passwords do not match.');
                 return;
             }
 
-            const previewImg = document.querySelector('#modal-previews-container img');
-            const avatarSrc = previewImg ? previewImg.src : '';
+            var nickname = document.getElementById('reg-nickname').value.trim();
+            var email = document.getElementById('reg-email').value.trim();
 
-            const newUser = {
-                username: document.getElementById('reg-nickname').value.trim(),
-                email: document.getElementById('reg-email').value.trim(),
+            if (!nickname) { showRegError('Username is required.'); return; }
+            if (!email) { showRegError('Email is required.'); return; }
+            if (!pass) { showRegError('Password is required.'); return; }
+
+            var previewImg = document.querySelector('#modal-previews-container img');
+            var avatarSrc = previewImg ? previewImg.src : '';
+
+            var newUser = {
+                username: nickname,
+                email: email,
                 password: pass,
                 avatar: avatarSrc,
                 role: 'customer',
             };
 
-            const result = AuthService.register(newUser);
-            if (!result.success) {
-                alert(result.error || 'Registration failed');
+            try {
+                var result = AuthService.register(newUser);
+                if (!result || !result.success) {
+                    showRegError((result && result.error) || 'Registration failed');
+                    return;
+                }
+            } catch (err) {
+                if (err && (err.name === 'QuotaExceededError' || err.name === 'NS_ERROR_DOM_QUOTA_REACHED' || err.code === 22)) {
+                    showRegError('Storage full. Try a smaller profile photo or clear browser storage.');
+                } else {
+                    showRegError('Registration error. Please try again.');
+                }
+                console.error('Customer registration error:', err);
                 return;
             }
 
             document.getElementById('coach-modal').classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
             e.target.reset();
-            document.getElementById('modal-previews-container').innerHTML = '';
+            var pc = document.getElementById('modal-previews-container');
+            if (pc) pc.innerHTML = '';
 
-            const loginResult = AuthService.login(newUser.username, pass);
-            if (loginResult.success) {
-                updateHeaderProfilePic();
-                if (window.ProfileApp) window.ProfileApp.init();
-                showProfileView();
+            try {
+                var loginResult = AuthService.login(newUser.username, pass);
+                if (loginResult && loginResult.success) {
+                    updateHeaderProfilePic();
+                    if (window.ProfileApp) window.ProfileApp.init();
+                    showProfileView();
+                }
+            } catch (err) {
+                console.error('Auto-login after registration error:', err);
             }
         }
     });

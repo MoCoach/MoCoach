@@ -95,7 +95,7 @@
       </div>
 
       <!-- Registration Form -->
-      <form id="register-form" class="flex flex-col gap-5 text-left">
+      <form id="register-form" novalidate class="flex flex-col gap-5 text-left">
 
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username (Pseudo) *</label>
@@ -118,11 +118,6 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-slate-400 mb-1.5">City</label>
-          <input type="text" id="reg-city" placeholder="ex: Grand Baie" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
-        </div>
-
-        <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
           <input type="password" id="reg-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
         </div>
@@ -139,6 +134,7 @@
           <div id="modal-previews-container" class="mt-3 flex"></div>
         </div>
 
+        <div id="reg-error-feedback" class="hidden bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-300 font-medium"></div>
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg mt-2">
           Join the Community
         </button>
@@ -195,15 +191,13 @@
           previewsContainer.innerHTML = '';
           const file = e.target.files[0];
           if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (event) => {
+          compressImage(file, 800, 0.7, function(dataUrl) {
             const div = document.createElement('div');
             div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border-2 border-blue-500 shadow-lg';
             div.innerHTML = '<span class="absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>' +
-              '<img src="' + event.target.result + '" class="w-full h-full object-cover">';
+              '<img src="' + dataUrl + '" class="w-full h-full object-cover">';
             previewsContainer.appendChild(div);
-          };
-          reader.readAsDataURL(file);
+          });
         });
       }
     });

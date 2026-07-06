@@ -148,21 +148,6 @@
       'Rivi\u00e8re des Anguilles', 'Bel Ombre', 'Chamarel'
     ];
 
-    function compressImage(dataUrl, callback) {
-      var img = new Image();
-      img.onload = function () {
-        var canvas = document.createElement('canvas');
-        var maxWidth = 800;
-        var scale = maxWidth / img.width;
-        canvas.width = maxWidth;
-        canvas.height = img.height * scale;
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        callback(canvas.toDataURL('image/jpeg', 0.7));
-      };
-      img.src = dataUrl;
-    }
-
     const TAG_GROUPS = {
       'Sports': [
         'Football', 'Swimming', 'Hiking', 'Running', 'Yoga', 'Padel', 'Tennis',
@@ -205,14 +190,10 @@
       photoInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file || !file.type.startsWith('image/')) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          compressImage(ev.target.result, function (compressed) {
-            photoImg.src = compressed;
-            photoPreview.classList.remove('hidden');
-          });
-        };
-        reader.readAsDataURL(file);
+        compressImage(file, 800, 0.7, function (compressed) {
+          photoImg.src = compressed;
+          photoPreview.classList.remove('hidden');
+        });
       });
 
       const galleryInput = document.getElementById('cr-gallery');
@@ -258,15 +239,11 @@
         if (pending === 0) { e.target.value = ''; return; }
         filesToAdd.forEach(file => {
           if (!file.type.startsWith('image/')) { pending--; if (pending === 0) renderGallery(); return; }
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-            compressImage(ev.target.result, function (compressed) {
-              galleryDataUrls.push(compressed);
-              pending--;
-              if (pending === 0) renderGallery();
-            });
-          };
-          reader.readAsDataURL(file);
+          compressImage(file, 800, 0.7, function (compressed) {
+            galleryDataUrls.push(compressed);
+            pending--;
+            if (pending === 0) renderGallery();
+          });
         });
         e.target.value = '';
       });

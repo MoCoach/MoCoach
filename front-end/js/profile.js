@@ -312,15 +312,13 @@ const ProfileApp = {
     document.getElementById('pf-avatar-input')?.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        this.data.avatar = ev.target.result;
+      compressImage(file, 800, 0.7, (dataUrl) => {
+        this.data.avatar = dataUrl;
         this._saveUserData();
         this.renderHeader();
         if (window.updateHeaderProfilePic) window.updateHeaderProfilePic();
         this.showToast('Profile photo updated!', 'success');
-      };
-      reader.readAsDataURL(file);
+      });
     });
 
     document.getElementById('profile-back-btn')?.addEventListener('click', (e) => {
