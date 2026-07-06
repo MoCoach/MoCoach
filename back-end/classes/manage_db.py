@@ -1,7 +1,11 @@
 """Database management layer providing CRUD operations and business logic."""
 
+import base64
+import io
+import os
 import re
 
+from PIL import Image
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
@@ -15,6 +19,9 @@ from classes.chat import Chat
 from classes.message import Message
 from classes.badge import Badge
 from classes.user_badge import UserBadge
+
+
+DEFAULT_PIC = "back-end/static/uploads/profile_pics/default/profile.jpg"
 
 
 class DbError(Exception):
@@ -72,6 +79,55 @@ class Db_Management:
             return {"is_admin": user.is_admin, "is_coach": user.is_coach}
         finally:
             session.close()
+
+    UPLOAD_BASE = os.path.join(
+        os.path.dirname(__file__), '..', 'static', 'uploads', 'profile_pics'
+    )
+
+    @staticmethod
+    def save_profile_picture(user_id, image_bytes):
+        """Validate, resize and save a profile picture.
+
+        Verifies the bytes represent a valid image, resizes to a maximum
+        of 400×400 pixels while preserving the original aspect ratio,
+        converts to JPEG, and writes the result to
+        ``static/uploads/profile_pics/<user_id>/profile.jpg``.
+
+        :param user_id: user identifier
+        :param image_bytes: raw file bytes of the uploaded image
+        :return: the relative URL path to the saved file
+        :raises DbError: if the bytes do not represent a valid image
+        """
+        try:
+            img = Image.open(io.BytesIO(image_bytes))
+        except Exception:
+            raise DbError("Invalid or unreadable image file", 400)
+
+        img = img.convert("RGB")
+        img.thumbnail((400, 400), Image.LANCZOS)
+
+        dest_dir = os.path.join(Db_Management.UPLOAD_BASE, str(user_id))
+        os.makedirs(dest_dir, exist_ok=True)
+
+        dest_path = os.path.join(dest_dir, "profile.jpg")
+        img.save(dest_path, "JPEG", quality=85)
+
+        return f"static/uploads/profile_pics/{user_id}/profile.jpg"
+
+    @staticmethod
+    def remove_profile_picture(user_id):
+        """Delete the profile picture directory for *user_id*."""
+        dest_dir = os.path.join(Db_Management.UPLOAD_BASE, str(user_id))
+        if os.path.isdir(dest_dir):
+            import shutil
+            shutil.rmtree(dest_dir)
+
+    @staticmethod
+    def get_profile_pic_path(user_id):
+        """Return the relative URL to the user's profile picture, or ``None``."""
+        candidate = f"static/uploads/profile_pics/{user_id}/profile.jpg"
+        full = os.path.join(Db_Management.UPLOAD_BASE, str(user_id), "profile.jpg")
+        return candidate if os.path.isfile(full) else None
 
     # ------------------------------------------------------------------
     # Availability checks
@@ -244,7 +300,8 @@ class Db_Management:
 
     def _coach_to_dict(self, coach):
         """Serialize a coach record to a public-facing dictionary."""
-        return {
+        pic_url = Db_Management.get_profile_pic_path(coach.id)
+        d = {
             "id": coach.id,
             "username": coach.user.username,
             "first_name": coach.user.first_name,
@@ -255,7 +312,9 @@ class Db_Management:
             "phone": coach.user.phone,
             "tags": [{"name": t.name, "description": t.description}
                      for t in coach.tags],
+            "profile_pic": pic_url or DEFAULT_PIC,
         }
+        return d
 
     def get_coach(self, coach_id):
         """Return public coach details by coach id."""
@@ -929,6 +988,7 @@ class Db_Management:
             for chat in chats:
                 session.delete(chat)
 
+            self.remove_profile_picture(user_id)
             session.delete(target)
             session.commit()
             return {"msg": "User deleted"}
@@ -960,6 +1020,7 @@ class Db_Management:
             for chat in chats:
                 session.delete(chat)
 
+            self.remove_profile_picture(user_id)
             session.delete(user)
             session.commit()
             return {"msg": "Profile deleted"}

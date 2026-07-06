@@ -1,6 +1,8 @@
 """Flask API entry point defining all REST endpoints."""
 
-from flask import Flask, jsonify, request
+import os
+
+from flask import Flask, jsonify, request, send_from_directory
 from flask_httpauth import HTTPBasicAuth
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity,
@@ -66,6 +68,7 @@ def register():
             city_id     = data.get("city_id"),
             price       = data.get("price"),
         )
+        result["profile_pic"] = db.get_profile_pic_path(result["id"])
         return jsonify(result), 201
     except DbError as e:
         return jsonify({"msg": e.message}), e.status_code
@@ -103,9 +106,11 @@ def edit_profile():
     if not data:
         return jsonify({"msg": "Missing JSON body"}), 400
 
+    user_id = get_jwt_identity()
+
     try:
         kwargs = dict(
-            user_id     = get_jwt_identity(),
+            user_id     = user_id,
             description = data.get("description"),
             tags_data   = data.get("tags"),
         )
@@ -124,7 +129,50 @@ def edit_profile():
         if "price" in data:
             kwargs["price"] = data["price"]
         result = db.update_profile(**kwargs)
+        result["profile_pic"] = db.get_profile_pic_path(user_id)
         return jsonify(result), 200
+    except DbError as e:
+        return jsonify({"msg": e.message}), e.status_code
+
+
+@app.get("/profile/picture/<int:user_id>")
+def serve_profile_picture(user_id):
+    """Serve a user's profile picture, returning 204 if absent."""
+    pic_path = db.get_profile_pic_path(user_id)
+    if pic_path:
+        full_dir = os.path.join(
+            os.path.dirname(__file__), "static", "uploads", "profile_pics",
+            str(user_id)
+        )
+        return send_from_directory(full_dir, "profile.jpg")
+    return "", 204
+
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+
+
+@app.post("/profile/picture")
+@jwt_required()
+def upload_profile_picture():
+    """Upload or replace the authenticated user's profile picture.
+
+    Expects a multipart form‑data field named ``file`` containing the
+    image.  Valid extensions: png, jpg, jpeg, gif, webp.
+    """
+    if "file" not in request.files:
+        return jsonify({"msg": "No file provided"}), 400
+
+    file = request.files["file"]
+    if not file.filename:
+        return jsonify({"msg": "No file selected"}), 400
+
+    ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else ""
+    if ext not in ALLOWED_EXTENSIONS:
+        return jsonify({"msg": f"File type '.{ext}' is not allowed"}), 400
+
+    try:
+        pic_path = db.save_profile_picture(get_jwt_identity(), file.read())
+        return jsonify({"profile_pic": pic_path}), 200
     except DbError as e:
         return jsonify({"msg": e.message}), e.status_code
 

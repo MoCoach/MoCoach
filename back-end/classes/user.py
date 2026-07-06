@@ -192,6 +192,17 @@ class User(Base):
                     raise TypeError("price must be an integer")
                 self.coach.price = price
 
+    def _profile_pic_path(self):
+        """Return the relative URL to the profile picture, or ``None``."""
+        import os
+        path = os.path.join(
+            os.path.dirname(__file__), '..', 'static', 'uploads',
+            'profile_pics', str(self.id), 'profile.jpg'
+        )
+        if os.path.isfile(path):
+            return f"static/uploads/profile_pics/{self.id}/profile.jpg"
+        return None
+
     def to_dict(self):
         """Serialize user data to a dictionary."""
         d = {
@@ -206,6 +217,9 @@ class User(Base):
         }
         if self.coach:
             d["coach"] = self.coach.to_dict()
+        pic = self._profile_pic_path()
+        if pic:
+            d["profile_pic"] = pic
         return d
 
     def __repr__(self):
