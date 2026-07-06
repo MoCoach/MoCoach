@@ -11,9 +11,26 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
   <!-- External CSS stylesheet link -->
   <link class="rounded-full" rel="stylesheet" href="css/style.css">
   <style>
+    @keyframes sweep {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    .animate-sweep {
+      background: linear-gradient(
+        120deg,
+        #facc15 0%, #facc15 40%,
+        #a3e635 65%, #a3e635 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: sweep 4s ease-in-out infinite;
+    }
     .coach-card { cursor: pointer; }
     .coach-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(59,130,246,0.15); }
     .coach-card-sm { transform: scale(0.9); transform-origin: top center; }
@@ -51,21 +68,46 @@
       <div class="max-w-[1600px] mx-auto px-8 relative z-30 w-full flex-1 flex flex-col justify-between">
         
         <div class="text-center max-w-5xl mx-auto my-auto pt-4 pb-8">
-          <h1 class="animate-title-punch text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight text-white tracking-tight mb-8">
-            Find & Book <br>
-            Verified Coaches <br>
-            in <span class="animate-mauritius-flag">Mauritius</span>
+          <h1 class="animate-title-punch text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight text-white tracking-tight mb-8 font-['Poppins']">
+            Find. Book. Train. <br>
+            Across <span class="animate-sweep">Mauritius</span>
           </h1>
           
           <div class="animate-fade-delayed-1 flex flex-col sm:flex-row items-center justify-center gap-5">
-            <a href="#explore" class="w-full sm:w-auto bg-[#2f55f6] hover:bg-[#1e44e2] text-white px-10 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(47,85,246,0.35)] hover:scale-[1.02] flex items-center justify-center space-x-3 text-base border border-blue-400/20 whitespace-nowrap">
-              <i data-lucide="search" class="w-5.5 h-5.5 text-white"></i>
-              <span>Find a Coach Now</span>
-            </a>
-            <a href="#" id="become-coach-btn" class="w-full sm:w-auto bg-[#030712]/50 hover:bg-[#030712]/95 backdrop-blur-md text-slate-100 px-10 py-4 rounded-full font-bold transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:scale-[1.02] flex items-center justify-center space-x-3 text-base shadow-sm whitespace-nowrap">
-              <i data-lucide="award" class="w-5.5 h-5.5 text-emerald-400"></i>
-              <span>Register as a Coach</span>
-            </a>
+            <div class="role-group relative w-full sm:w-auto">
+              <button class="role-toggle-btn w-full sm:w-auto bg-[#2f55f6] hover:bg-[#1e44e2] text-white px-10 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(47,85,246,0.35)] hover:scale-[1.02] flex items-center justify-center space-x-3 text-base border border-blue-400/20" data-role="client">
+                <i data-lucide="user" class="w-5.5 h-5.5"></i>
+                <span>I am a client</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
+              </button>
+              <div class="role-submenu hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl z-40" data-role="client">
+                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="explore">
+                  <i data-lucide="search" class="w-4 h-4 text-blue-400"></i>
+                  <span>Find a Coach Now</span>
+                </button>
+                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="register">
+                  <i data-lucide="log-in" class="w-4 h-4 text-blue-400"></i>
+                  <span>Sign Up / Login</span>
+                </button>
+              </div>
+            </div>
+            <div class="role-group relative w-full sm:w-auto">
+              <button class="role-toggle-btn w-full sm:w-auto bg-[#030712]/50 hover:bg-[#030712]/95 backdrop-blur-md text-slate-100 px-10 py-4 rounded-full font-bold transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:scale-[1.02] flex items-center justify-center space-x-3 text-base shadow-sm" data-role="coach">
+                <i data-lucide="award" class="w-5.5 h-5.5 text-emerald-400"></i>
+                <span>I am a coach</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
+              </button>
+              <div class="role-submenu hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl z-40" data-role="coach">
+                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="how-it-works">
+                  <i data-lucide="info" class="w-4 h-4 text-emerald-400"></i>
+                  <span>How It Works</span>
+                </button>
+                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="coach-register">
+                  <i data-lucide="user-plus" class="w-4 h-4 text-emerald-400"></i>
+                  <span>Sign Up as a Coach</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -199,6 +241,18 @@
               <span class="text-amber-400 text-sm"></span>
             </div>
           </div>
+        </div>
+
+        <div class="mt-16 text-center bg-gradient-to-r from-slate-900/50 via-blue-950/30 to-slate-900/50 border border-slate-800/50 rounded-3xl p-10 max-w-3xl mx-auto">
+          <i data-lucide="award" class="w-10 h-10 text-emerald-400 mx-auto mb-4"></i>
+          <h3 class="text-2xl font-extrabold text-white mb-2">Are You a Coach?</h3>
+          <p class="text-slate-300 text-sm mb-6 max-w-xl mx-auto">
+            Grow your client base in Mauritius. Create your professional profile, set your schedule, and connect with clients looking for your expertise.
+          </p>
+          <a href="coach-landing.html" class="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-full transition-all duration-300 shadow-lg hover:scale-[1.02]">
+            <i data-lucide="user-plus" class="w-5 h-5"></i>
+            <span>Register as a Coach</span>
+          </a>
         </div>
       </div>
     </section>

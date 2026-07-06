@@ -157,6 +157,15 @@ function showLoginModal() {
     }
 }
 
+function showRegisterModal() {
+    const modal = document.getElementById('coach-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        if (window.switchModalTab) switchModalTab('register');
+    }
+}
+
 function showCoachProfileView(coachId) {
     currentView = 'coach-profile';
     const main = document.querySelector('main');
@@ -205,12 +214,15 @@ function showToast(msg) {
 }
 
 function handleHomeNavigation() {
-    if (window.location.pathname.includes('all-coaches.html')) {
-        window.location.href = 'index.html';
-    } else if (currentView === 'profile' || currentView === 'coach-profile') {
-        showMainView();
+    var path = window.location.pathname.split('/').pop();
+    if (path === '' || path === 'index.html') {
+        if (currentView === 'profile' || currentView === 'coach-profile') {
+            showMainView();
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.location.href = 'index.html';
     }
 }
 
@@ -477,6 +489,68 @@ const runAppInit = () => {
         if (btn) {
             e.preventDefault();
             window.location.href = 'coach-register.html';
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        const toggle = e.target.closest('.role-toggle-btn');
+        if (toggle) {
+            e.preventDefault();
+            var group = toggle.closest('.role-group');
+            var menu = group.querySelector('.role-submenu');
+            var chevron = toggle.querySelector('[data-lucide="chevron-down"]');
+            var isOpen = !menu.classList.contains('hidden');
+
+            document.querySelectorAll('.role-submenu').forEach(function(m) {
+                if (m !== menu) m.classList.add('hidden');
+            });
+            document.querySelectorAll('.role-toggle-btn').forEach(function(b) {
+                var c = b.querySelector('[data-lucide="chevron-down"]');
+                if (c && c !== chevron) c.style.transform = '';
+            });
+
+            if (isOpen) {
+                menu.classList.add('hidden');
+                if (chevron) chevron.style.transform = '';
+            } else {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            }
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        var option = e.target.closest('.sub-option');
+        if (!option) return;
+        e.preventDefault();
+
+        var action = option.getAttribute('data-action');
+
+        document.querySelectorAll('.role-submenu').forEach(function(m) { m.classList.add('hidden'); });
+        document.querySelectorAll('.role-toggle-btn').forEach(function(b) {
+            var c = b.querySelector('[data-lucide="chevron-down"]');
+            if (c) c.style.transform = '';
+        });
+
+        if (action === 'explore') {
+            var el = document.getElementById('explore');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        } else if (action === 'register') {
+            showRegisterModal();
+        } else if (action === 'how-it-works') {
+            window.location.href = 'coach-landing.html';
+        } else if (action === 'coach-register') {
+            window.location.href = 'coach-register.html';
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.role-group')) {
+            document.querySelectorAll('.role-submenu').forEach(function(m) { m.classList.add('hidden'); });
+            document.querySelectorAll('.role-toggle-btn').forEach(function(b) {
+                var c = b.querySelector('[data-lucide="chevron-down"]');
+                if (c) c.style.transform = '';
+            });
         }
     });
 
