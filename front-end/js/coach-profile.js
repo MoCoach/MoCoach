@@ -89,6 +89,10 @@ const CoachProfileApp = {
       this.currentData = {
         id: coachId,
         name: fullName,
+        firstName: saved.firstName || '',
+        lastName: saved.lastName || '',
+        username: saved.username || coachId,
+        email: saved.email || '',
         discipline: saved.discipline || '',
         rawPrice: saved.price || '',
         price: saved.price ? `Rs ${saved.price} per session` : '',
@@ -103,7 +107,8 @@ const CoachProfileApp = {
       };
     } else {
       this.currentData = {
-        id: coachId, name: coachId, discipline: '', rawPrice: '', price: '', city: '',
+        id: coachId, name: coachId, firstName: '', lastName: '', username: coachId, email: '',
+        discipline: '', rawPrice: '', price: '', city: '',
         photoUrl: '', avatarUrl: '', description: '', tags: [], gallery: [],
       };
     }
@@ -165,29 +170,35 @@ const CoachProfileApp = {
 
     const priceView = document.getElementById('cp-price-view');
     const priceEdit = document.getElementById('cp-price-edit');
-    if (priceView && priceEdit) {
+    const priceWrapper = document.getElementById('cp-price-edit-wrapper');
+    if (priceView && priceEdit && priceWrapper) {
       if (this.editing) {
         priceView.classList.add('hidden');
-        priceEdit.classList.remove('hidden');
+        priceWrapper.classList.remove('hidden');
         priceEdit.value = d.rawPrice;
       } else {
         priceView.classList.remove('hidden');
-        priceEdit.classList.add('hidden');
+        priceWrapper.classList.add('hidden');
         priceView.textContent = d.price;
       }
     }
 
     const cityView = document.getElementById('cp-city-view');
     const cityEdit = document.getElementById('cp-city-edit');
+    const basicEdit = document.getElementById('cp-basic-edit');
     if (cityView && cityEdit) {
       if (this.editing) {
         cityView.classList.add('hidden');
-        cityEdit.classList.remove('hidden');
+        if (basicEdit) basicEdit.classList.remove('hidden');
+        if (document.getElementById('cp-firstname-edit')) document.getElementById('cp-firstname-edit').value = d.firstName || '';
+        if (document.getElementById('cp-lastname-edit')) document.getElementById('cp-lastname-edit').value = d.lastName || '';
+        if (document.getElementById('cp-username-edit')) document.getElementById('cp-username-edit').value = d.username || '';
+        if (document.getElementById('cp-email-edit')) document.getElementById('cp-email-edit').value = d.email || '';
         cityEdit.value = d.city;
       } else {
         cityView.classList.remove('hidden');
-        cityEdit.classList.add('hidden');
         cityView.textContent = d.city ? `📍 ${d.city}` : '';
+        if (basicEdit) basicEdit.classList.add('hidden');
       }
     }
 
@@ -260,9 +271,10 @@ const CoachProfileApp = {
     grid.innerHTML = gallery.length === 0 ? '<p class="text-slate-500 text-sm col-span-full text-center py-4">No gallery items yet. Add photos below.</p>' : '';
 
     gallery.forEach((item, i) => {
+      const itemObj = typeof item === 'string' ? { type: 'image', src: item } : item;
       const div = document.createElement('div');
       div.className = 'relative group rounded-2xl overflow-hidden aspect-[4/3] border border-slate-800/80';
-      const isVideo = item.type === 'video';
+      const isVideo = itemObj.type === 'video';
 
       if (i === 0) {
         const badge = document.createElement('span');
@@ -273,7 +285,7 @@ const CoachProfileApp = {
 
       if (isVideo) {
         const vid = document.createElement('video');
-        vid.src = item.src;
+        vid.src = itemObj.src;
         vid.className = 'w-full h-full object-cover';
         vid.muted = true;
         vid.loop = true;
@@ -285,7 +297,7 @@ const CoachProfileApp = {
         div.appendChild(playIcon);
       } else {
         const img = document.createElement('img');
-        img.src = item.src;
+        img.src = itemObj.src;
         img.className = 'w-full h-full object-cover';
         img.loading = 'lazy';
         div.appendChild(img);
@@ -294,7 +306,7 @@ const CoachProfileApp = {
       if (this.editing) {
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
-        delBtn.className = 'absolute top-2 right-2 w-7 h-7 rounded-full bg-red-600/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-md hover:bg-red-700 z-10';
+        delBtn.className = 'absolute top-2 right-2 w-7 h-7 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-md hover:bg-red-700 z-10';
         delBtn.innerHTML = '<i data-lucide="trash-2" class="w-3.5 h-3.5"></i>';
         delBtn.addEventListener('click', (e) => { e.stopPropagation(); this.deleteMedia(i); });
         div.appendChild(delBtn);
@@ -308,7 +320,8 @@ const CoachProfileApp = {
 
   handleGalleryUpload(e) {
     const files = Array.from(e.target.files);
-    const gallery = this.currentData.gallery || [];
+    if (!Array.isArray(this.currentData.gallery)) this.currentData.gallery = [];
+    const gallery = this.currentData.gallery;
     const available = this.MAX_GALLERY - gallery.length;
 
     if (files.length > available) {
@@ -364,15 +377,18 @@ const CoachProfileApp = {
       const reader = new FileReader();
       reader.onload = (ev) => {
         try {
-          const gallery = this.currentData.gallery || [];
+          if (!Array.isArray(this.currentData.gallery)) this.currentData.gallery = [];
+          const gallery = this.currentData.gallery;
           gallery.unshift({ type: 'image', src: ev.target.result });
           if (gallery.length > this.MAX_GALLERY) gallery.pop();
           this.currentData.gallery = gallery;
+          this.currentData.avatarUrl = ev.target.result;
           this._syncAndRender();
           const avatarEl = document.getElementById('cp-avatar');
           if (avatarEl) {
             avatarEl.style.backgroundImage = `url(${this._esc(ev.target.result)})`;
           }
+          if (window.updateHeaderProfilePic) window.updateHeaderProfilePic();
           this.showToast('Profile photo updated!', 'success');
         } catch (err) {
           this.showToast('Failed to update profile photo', 'error');
@@ -391,8 +407,14 @@ const CoachProfileApp = {
       const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
       const idx = coaches.findIndex(c => c.username === user.userId);
       if (idx >= 0) {
-        coaches[idx].gallery = this.currentData.gallery;
-        coaches[idx].avatar = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : coaches[idx].avatar;
+        coaches[idx].firstName = this.currentData.firstName;
+        coaches[idx].lastName = this.currentData.lastName;
+        coaches[idx].username = this.currentData.username;
+        coaches[idx].email = this.currentData.email;
+        coaches[idx].gallery = (this.currentData.gallery || []).map(item =>
+          typeof item === 'string' ? { type: 'image', src: item } : item
+        );
+        coaches[idx].avatar = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : this.currentData.avatarUrl || coaches[idx].avatar;
         coaches[idx].bio = this.currentData.description;
         coaches[idx].tags = this.currentData.tags;
         coaches[idx].price = this.currentData.rawPrice;
@@ -400,6 +422,10 @@ const CoachProfileApp = {
         localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
 
         const session = JSON.parse(sessionStorage.getItem('mocoach_auth') || '{}');
+        session.firstName = coaches[idx].firstName;
+        session.lastName = coaches[idx].lastName;
+        session.username = coaches[idx].username;
+        session.email = coaches[idx].email;
         session.gallery = coaches[idx].gallery;
         session.avatar = coaches[idx].avatar;
         session.bio = coaches[idx].bio;
@@ -419,11 +445,13 @@ const CoachProfileApp = {
 
     const view = document.getElementById('cp-description-view');
     const edit = document.getElementById('cp-description-edit');
+    const bioWrapper = document.getElementById('cp-bio-edit-wrapper');
     const tagsEl = document.getElementById('cp-tags');
     const tagsEdit = document.getElementById('cp-tags-edit');
 
     if (this.editing) {
       view.classList.add('hidden');
+      if (bioWrapper) bioWrapper.classList.remove('hidden');
       edit.classList.remove('hidden');
       edit.value = d.description || '';
       if (tagsEl) tagsEl.classList.add('hidden');
@@ -431,7 +459,7 @@ const CoachProfileApp = {
       this.renderTagCheckboxes();
     } else {
       view.classList.remove('hidden');
-      edit.classList.add('hidden');
+      if (bioWrapper) bioWrapper.classList.add('hidden');
       view.innerHTML = d.description
         ? d.description.replace(/\n/g, '<br>')
         : '<span class="text-slate-500 italic">No description available.</span>';
@@ -667,6 +695,10 @@ const CoachProfileApp = {
     if (priceEdit) priceEdit.value = d.rawPrice;
     const cityEdit = document.getElementById('cp-city-edit');
     if (cityEdit) cityEdit.value = d.city;
+    const pw = document.getElementById('cp-password-edit');
+    if (pw) pw.value = '';
+    const cpw = document.getElementById('cp-confirm-password-edit');
+    if (cpw) cpw.value = '';
     this.render();
   },
 
@@ -679,40 +711,80 @@ const CoachProfileApp = {
     const user = this._getAuthUser();
     if (!user || user.role !== 'coach') return;
 
-    const descEdit = document.getElementById('cp-description-edit');
-    if (descEdit) {
-      this.currentData.description = descEdit.value.trim();
+    var errors = [];
+    var firstNameVal = (document.getElementById('cp-firstname-edit')?.value || '').trim();
+    var lastNameVal = (document.getElementById('cp-lastname-edit')?.value || '').trim();
+    var usernameVal = (document.getElementById('cp-username-edit')?.value || '').trim();
+    var emailVal = (document.getElementById('cp-email-edit')?.value || '').trim();
+    var cityVal = document.getElementById('cp-city-edit')?.value || '';
+    var priceVal = document.getElementById('cp-price-edit')?.value || '';
+    var bioVal = (document.getElementById('cp-description-edit')?.value || '').trim();
+    var password = document.getElementById('cp-password-edit')?.value || '';
+    var confirmPassword = document.getElementById('cp-confirm-password-edit')?.value || '';
+
+    if (!firstNameVal) errors.push('First Name is required');
+    if (!lastNameVal) errors.push('Last Name is required');
+    if (!usernameVal) errors.push('Username is required');
+    if (!emailVal) errors.push('Email is required');
+    if (!cityVal) errors.push('Location is required');
+    if (!priceVal) errors.push('Price per session is required');
+    if (!bioVal) errors.push('Bio is required');
+    if (password && password !== confirmPassword) errors.push('Passwords do not match');
+
+    var checkedTags = document.querySelectorAll('#cp-tag-checklist input[type="checkbox"]:checked');
+    if (checkedTags.length < 1) errors.push('Select at least 1 tag / specialty');
+    if (checkedTags.length > 3) errors.push('Maximum 3 tags allowed');
+
+    if (errors.length > 0) {
+      this.showToast(errors[0], 'error');
+      return;
     }
 
-    const priceEdit = document.getElementById('cp-price-edit');
-    if (priceEdit) {
-      this.currentData.rawPrice = priceEdit.value;
-      this.currentData.price = priceEdit.value ? `Rs ${priceEdit.value} per session` : '';
+    this.currentData.firstName = firstNameVal;
+    this.currentData.lastName = lastNameVal;
+    this.currentData.username = usernameVal;
+    this.currentData.email = emailVal;
+    this.currentData.city = cityVal;
+    this.currentData.rawPrice = priceVal;
+    this.currentData.price = priceVal ? `Rs ${priceVal} per session` : '';
+    this.currentData.description = bioVal;
+
+    if (password) {
+      this.currentData.password = password;
     }
 
-    const cityEdit = document.getElementById('cp-city-edit');
-    if (cityEdit) {
-      this.currentData.city = cityEdit.value;
-    }
+    const checkedTagValues = [...checkedTags].map(cb => cb.value);
+    this.currentData.tags = checkedTagValues;
 
-    const checkedTags = [...document.querySelectorAll('#cp-tag-checklist input[type="checkbox"]:checked')].map(cb => cb.value);
-    this.currentData.tags = checkedTags;
-
-    this.currentData.gallery = this.currentData.gallery;
+    this.currentData.gallery = (this.currentData.gallery || []).map(item =>
+      typeof item === 'string' ? { type: 'image', src: item } : item
+    );
     this.currentData.avatarUrl = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : this.currentData.avatarUrl;
+
+    var fullName = (firstNameVal + ' ' + lastNameVal).trim() || usernameVal;
+    this.currentData.name = fullName;
 
     const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
     const idx = coaches.findIndex(c => c.username === user.userId);
     if (idx >= 0) {
+      coaches[idx].firstName = this.currentData.firstName;
+      coaches[idx].lastName = this.currentData.lastName;
+      coaches[idx].username = this.currentData.username;
+      coaches[idx].email = this.currentData.email;
       coaches[idx].bio = this.currentData.description;
       coaches[idx].tags = this.currentData.tags;
       coaches[idx].gallery = this.currentData.gallery;
       coaches[idx].avatar = this.currentData.avatarUrl;
       coaches[idx].price = this.currentData.rawPrice;
       coaches[idx].city = this.currentData.city;
+      if (this.currentData.password) coaches[idx].password = this.currentData.password;
       localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
 
       const session = JSON.parse(sessionStorage.getItem('mocoach_auth') || '{}');
+      session.firstName = coaches[idx].firstName;
+      session.lastName = coaches[idx].lastName;
+      session.username = coaches[idx].username;
+      session.email = coaches[idx].email;
       session.bio = coaches[idx].bio;
       session.tags = coaches[idx].tags;
       session.gallery = coaches[idx].gallery;
@@ -811,6 +883,9 @@ const CoachProfileApp = {
 
     document.getElementById('cp-gallery-input')?.addEventListener('change', (e) => this.handleGalleryUpload(e));
     document.getElementById('cp-avatar-input')?.addEventListener('change', (e) => this.handleAvatarUpload(e));
+    document.getElementById('cp-avatar-edit')?.addEventListener('click', (e) => {
+      document.getElementById('cp-avatar-input')?.click();
+    });
   },
 
   showToast(message, type) {

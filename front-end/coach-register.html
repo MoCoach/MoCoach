@@ -40,7 +40,7 @@
           </div>
         </div>
 
-        <form id="coach-register-form" class="flex flex-col gap-5">
+        <form id="coach-register-form" novalidate class="flex flex-col gap-5">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name *</label>
@@ -117,6 +117,8 @@
             <div id="cr-gallery-previews" class="mt-3 grid grid-cols-4 gap-2"></div>
           </div>
 
+          <div id="cr-error-feedback" class="hidden bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-300 font-medium"></div>
+
           <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg mt-2">
             <i data-lucide="user-plus" class="w-5 h-5 inline mr-2"></i>
             Register as Coach
@@ -145,6 +147,21 @@
       'Plaine Magnien', 'Souillac', 'Chemin Grenier',
       'Rivi\u00e8re des Anguilles', 'Bel Ombre', 'Chamarel'
     ];
+
+    function compressImage(dataUrl, callback) {
+      var img = new Image();
+      img.onload = function () {
+        var canvas = document.createElement('canvas');
+        var maxWidth = 800;
+        var scale = maxWidth / img.width;
+        canvas.width = maxWidth;
+        canvas.height = img.height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        callback(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = dataUrl;
+    }
 
     const TAG_GROUPS = {
       'Sports': [
@@ -187,11 +204,13 @@
 
       photoInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
-        if (!file) return;
+        if (!file || !file.type.startsWith('image/')) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
-          photoImg.src = ev.target.result;
-          photoPreview.classList.remove('hidden');
+          compressImage(ev.target.result, function (compressed) {
+            photoImg.src = compressed;
+            photoPreview.classList.remove('hidden');
+          });
         };
         reader.readAsDataURL(file);
       });
@@ -241,9 +260,11 @@
           if (!file.type.startsWith('image/')) { pending--; if (pending === 0) renderGallery(); return; }
           const reader = new FileReader();
           reader.onload = (ev) => {
-            galleryDataUrls.push(ev.target.result);
-            pending--;
-            if (pending === 0) renderGallery();
+            compressImage(ev.target.result, function (compressed) {
+              galleryDataUrls.push(compressed);
+              pending--;
+              if (pending === 0) renderGallery();
+            });
           };
           reader.readAsDataURL(file);
         });
@@ -320,71 +341,96 @@
         renderTags(e.target.value);
       });
 
+      function showError(msg) {
+        const el = document.getElementById('cr-error-feedback');
+        if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+      }
+      function hideError() {
+        const el = document.getElementById('cr-error-feedback');
+        if (el) { el.classList.add('hidden'); el.textContent = ''; }
+      }
+
       document.getElementById('coach-register-form').addEventListener('submit', (e) => {
         e.preventDefault();
+        hideError();
 
-        if (selectedTags.size < 1 || selectedTags.size > 3) {
-          alert('Please select between 1 and 3 tags / specialties.');
-          return;
-        }
+        var errors = [];
+        var firstNameVal = document.getElementById('cr-firstname').value.trim();
+        var lastNameVal = document.getElementById('cr-lastname').value.trim();
+        var usernameVal = document.getElementById('cr-username').value.trim();
+        var emailVal = document.getElementById('cr-email').value.trim();
+        var cityVal = citySelect.value;
+        var pass = document.getElementById('cr-password').value;
+        var confirmPass = document.getElementById('cr-confirm-password').value;
+        var bioVal = document.getElementById('cr-bio').value.trim();
+        var priceVal = document.getElementById('cr-price').value;
 
-        const bio = document.getElementById('cr-bio').value.trim();
-        if (!bio) {
-          alert('Please write a short bio about yourself.');
-          document.getElementById('cr-bio').focus();
-          return;
-        }
+        if (!firstNameVal) errors.push('First name is required.');
+        if (!lastNameVal) errors.push('Last name is required.');
+        if (!usernameVal) errors.push('Username is required.');
+        if (!emailVal) errors.push('Email is required.');
+        if (!cityVal) errors.push('Please select your location.');
+        if (!pass) errors.push('Password is required.');
+        if (pass !== confirmPass) errors.push('Passwords do not match.');
+        if (!priceVal) errors.push('Price per session is required.');
+        if (!bioVal) errors.push('Please write a short bio.');
+        if (selectedTags.size < 1 || selectedTags.size > 3) errors.push('Select between 1 and 3 tags / specialties.');
 
-        const pass = document.getElementById('cr-password').value;
-        const confirmPass = document.getElementById('cr-confirm-password').value;
-
-        if (pass !== confirmPass) {
-          alert('Error: Passwords do not match!');
+        if (errors.length > 0) {
+          showError(errors[0]);
           return;
         }
 
         const coachData = {
-          firstName: document.getElementById('cr-firstname').value.trim(),
-          lastName: document.getElementById('cr-lastname').value.trim(),
-          username: document.getElementById('cr-username').value.trim(),
-          email: document.getElementById('cr-email').value.trim(),
-          city: citySelect.value,
+          firstName: firstNameVal,
+          lastName: lastNameVal,
+          username: usernameVal,
+          email: emailVal,
+          city: cityVal,
           password: pass,
-          bio: bio,
+          bio: bioVal,
           tags: [...selectedTags],
-          price: document.getElementById('cr-price').value,
+          price: priceVal,
           role: 'coach',
           avatar: photoImg.src || '',
           gallery: galleryDataUrls,
         };
 
-        const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
+        var coaches = [];
+        try { coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]'); }
+        catch { coaches = []; }
+
         if (coaches.some(c => c.username === coachData.username)) {
-          alert('Username already taken. Please choose another.');
+          showError('Username already taken. Please choose another.');
           return;
         }
         if (coaches.some(c => c.email === coachData.email)) {
-          alert('Email already registered. Please use another.');
+          showError('Email already registered. Please use another.');
           return;
         }
 
         coaches.push(coachData);
-        localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
-        sessionStorage.setItem('mocoach_auth', JSON.stringify({
-          role: 'coach',
-          username: coachData.username,
-          userId: coachData.username,
-          firstName: coachData.firstName,
-          lastName: coachData.lastName,
-          email: coachData.email,
-          city: coachData.city,
-          avatar: coachData.avatar,
-          bio: coachData.bio,
-          tags: coachData.tags,
-          price: coachData.price,
-          gallery: coachData.gallery,
-        }));
-        window.location.href = 'index.html';
+        try {
+          localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
+          sessionStorage.setItem('mocoach_auth', JSON.stringify({
+            role: 'coach',
+            username: coachData.username,
+            userId: coachData.username,
+            firstName: coachData.firstName,
+            lastName: coachData.lastName,
+            email: coachData.email,
+            city: coachData.city,
+            avatar: coachData.avatar,
+            bio: coachData.bio,
+            tags: coachData.tags,
+            price: coachData.price,
+            gallery: coachData.gallery,
+          }));
+          window.location.href = 'index.html';
+        } catch (storageErr) {
+          showError('Could not save data. Please check your browser storage settings.');
+          console.error('Coach registration storage error:', storageErr);
+        }
       });
     });
   </script>
