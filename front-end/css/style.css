@@ -32,7 +32,7 @@ body {
 }
 
 .animate-mauritius-flag {
-  background: linear-gradient(to right, #ffd100 0%, #10b981 50%, #ffd100 100%);
+  background: linear-gradient(to right, #F59E0B 0%, #0EA5A0 50%, #F59E0B 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -121,7 +121,7 @@ body {
 
 #profile-view input:focus,
 #profile-view textarea:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
 }
 
 #profile-view .group:hover .group-hover\:opacity-100 {

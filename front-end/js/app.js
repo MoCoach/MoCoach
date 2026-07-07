@@ -276,18 +276,18 @@ function switchModalTab(tab) {
     if (tab === 'register') {
         registerForm.classList.remove('hidden');
         loginForm.classList.add('hidden');
-        regTabBtn.classList.add('border-blue-500', 'text-white');
+        regTabBtn.classList.add('border-teal-500', 'text-white');
         regTabBtn.classList.remove('border-transparent', 'text-slate-400');
-        loginTabBtn.classList.remove('border-blue-500', 'text-white');
+        loginTabBtn.classList.remove('border-teal-500', 'text-white');
         loginTabBtn.classList.add('border-transparent', 'text-slate-400');
         if (modalTitle) modalTitle.innerHTML = '<span class="flex items-center gap-2"><span class="text-amber-400">✨</span> Join the Community</span>';
         if (modalSubtitle) modalSubtitle.textContent = 'Create your account and start connecting with coaches';
     } else {
         loginForm.classList.remove('hidden');
         registerForm.classList.add('hidden');
-        loginTabBtn.classList.add('border-blue-500', 'text-white');
+        loginTabBtn.classList.add('border-teal-500', 'text-white');
         loginTabBtn.classList.remove('border-transparent', 'text-slate-400');
-        regTabBtn.classList.remove('border-blue-500', 'text-white');
+        regTabBtn.classList.remove('border-teal-500', 'text-white');
         regTabBtn.classList.add('border-transparent', 'text-slate-400');
         if (modalTitle) modalTitle.textContent = 'Login';
         if (modalSubtitle) modalSubtitle.textContent = 'Welcome back — log in to connect with your coaches';

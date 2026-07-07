@@ -12,7 +12,7 @@
 
     <!-- Header -->
     <div id="cp-header-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
-      <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-44 h-44 text-blue-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+      <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-44 h-44 text-teal-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <path d="M 15 25 L 25 35 M 25 25 L 15 35" />
         <path d="M 45 15 L 55 25 M 55 15 L 45 25" />
         <path d="M 20 38 Q 40 50 50 30" stroke-dasharray="2,2" />
@@ -27,7 +27,7 @@
       <div id="cp-header-content" class="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
         <!-- Avatar -->
         <div class="relative flex-shrink-0">
-          <div id="cp-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-blue-500/30 shadow-xl bg-slate-800 bg-cover bg-center"></div>
+          <div id="cp-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-teal-500/30 shadow-xl bg-slate-800 bg-cover bg-center"></div>
           <div id="cp-avatar-edit" class="hidden absolute inset-0 rounded-full bg-black/60 flex items-center justify-center cursor-pointer">
             <label class="w-full h-full flex items-center justify-center cursor-pointer">
               <i data-lucide="camera" class="w-6 h-6 text-white"></i>
@@ -42,46 +42,46 @@
           <span id="cp-price-view" class="text-xl font-black text-white mt-1 block"></span>
           <div id="cp-price-edit-wrapper" class="hidden mt-1">
             <label class="block text-xs font-semibold text-slate-400 mb-1">Price per session (Rs) <span class="text-red-400">*</span></label>
-            <input type="number" id="cp-price-edit" min="0" required placeholder="Price per session" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <input type="number" id="cp-price-edit" min="0" required placeholder="Price per session" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
           </div>
           <span id="cp-city-view" class="text-slate-400 text-sm mt-1 block"></span>
           <div id="cp-basic-edit" class="hidden w-full space-y-3 mt-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs font-semibold text-slate-400 mb-1">First Name <span class="text-red-400">*</span></label>
-                <input type="text" id="cp-firstname-edit" required placeholder="First Name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+                <input type="text" id="cp-firstname-edit" required placeholder="First Name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
               </div>
               <div>
                 <label class="block text-xs font-semibold text-slate-400 mb-1">Last Name <span class="text-red-400">*</span></label>
-                <input type="text" id="cp-lastname-edit" required placeholder="Last Name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+                <input type="text" id="cp-lastname-edit" required placeholder="Last Name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
               </div>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Username <span class="text-red-400">*</span></label>
-              <input type="text" id="cp-username-edit" required placeholder="Username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+              <input type="text" id="cp-username-edit" required placeholder="Username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Email Address <span class="text-red-400">*</span></label>
-              <input type="email" id="cp-email-edit" required placeholder="Email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+              <input type="email" id="cp-email-edit" required placeholder="Email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Location <span class="text-red-400">*</span></label>
-              <select id="cp-city-edit" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition"></select>
+              <select id="cp-city-edit" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-teal-500 transition"></select>
             </div>
             <hr class="border-slate-800">
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">New Password</label>
-              <input type="password" id="cp-password-edit" placeholder="Leave blank to keep current" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+              <input type="password" id="cp-password-edit" placeholder="Leave blank to keep current" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Confirm New Password</label>
-              <input type="password" id="cp-confirm-password-edit" placeholder="Confirm new password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+              <input type="password" id="cp-confirm-password-edit" placeholder="Confirm new password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
           </div>
         </div>
         <!-- Actions -->
         <div id="cp-actions" class="flex-shrink-0 flex flex-col gap-3">
-          <button id="cp-contact-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25">
+          <button id="cp-contact-btn" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-teal-600/25">
             <i data-lucide="message-circle" class="w-4 h-4 inline mr-1.5"></i>Contact
           </button>
           <button id="cp-chat-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold px-6 py-2.5 rounded-xl transition hidden">
@@ -117,7 +117,7 @@
       </svg>
 
       <div class="flex items-center space-x-3 mb-6 relative z-10">
-        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center">
           <i data-lucide="file-text" class="w-5 h-5"></i>
         </div>
         <div>
@@ -130,12 +130,12 @@
         <div id="cp-description-view" class="text-slate-300 leading-relaxed"></div>
         <div id="cp-bio-edit-wrapper" class="hidden">
           <label class="block text-xs font-semibold text-slate-400 mb-1">Bio <span class="text-red-400">*</span></label>
-          <textarea id="cp-description-edit" rows="4" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+          <textarea id="cp-description-edit" rows="4" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition resize-none"></textarea>
         </div>
         <div id="cp-tags" class="flex flex-wrap gap-2"></div>
         <div id="cp-tags-edit" class="hidden">
           <p class="text-sm font-semibold text-slate-400 mb-2">Tags / Specialties <span class="text-red-400">*</span></p>
-          <input type="text" id="cp-tag-search" placeholder="Search specialties..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition mb-3">
+          <input type="text" id="cp-tag-search" placeholder="Search specialties..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition mb-3">
           <div id="cp-tag-count" class="text-xs text-slate-500 mb-2">0 of 3 selected</div>
           <div id="cp-tag-checklist" class="max-h-64 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-1.5"></div>
         </div>
@@ -144,7 +144,7 @@
 
     <!-- Gallery -->
     <div id="cp-gallery-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
-      <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-36 h-36 text-blue-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+      <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-36 h-36 text-teal-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <line x1="10" y1="10" x2="90" y2="10" stroke-dasharray="2,2" />
         <line x1="10" y1="50" x2="90" y2="50" />
         <line x1="10" y1="90" x2="90" y2="90" stroke-dasharray="2,2" />
@@ -153,7 +153,7 @@
       </svg>
 
       <div class="flex items-center space-x-3 mb-6 relative z-10">
-        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center">
           <i data-lucide="image" class="w-5 h-5"></i>
         </div>
         <div>
@@ -164,7 +164,7 @@
 
       <div id="cp-gallery-upload" class="hidden relative z-10 mb-4">
         <div class="flex items-center gap-3">
-          <input type="file" id="cp-gallery-input" accept="image/*,video/*" multiple class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer max-w-xs">
+          <input type="file" id="cp-gallery-input" accept="image/*,video/*" multiple class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-teal-600 file:text-white hover:file:bg-teal-700 transition cursor-pointer max-w-xs">
           <span id="cp-gallery-count" class="text-xs text-slate-500 font-medium"></span>
         </div>
       </div>

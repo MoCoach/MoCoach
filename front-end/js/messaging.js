@@ -264,11 +264,11 @@ const ChatApp = {
 
       return `
         <button onclick="ChatApp.selectConversation('${conv.id}')"
-          class="w-full text-left px-4 py-3 flex items-center space-x-3 hover:bg-slate-900/60 transition ${isActive ? 'bg-slate-900/80 border-l-2 border-blue-500' : 'border-l-2 border-transparent'}">
+          class="w-full text-left px-4 py-3 flex items-center space-x-3 hover:bg-slate-900/60 transition ${isActive ? 'bg-slate-900/80 border-l-2 border-teal-500' : 'border-l-2 border-transparent'}">
           <div class="w-10 h-10 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden">
             ${conv.coach.avatar
               ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" loading="lazy">`
-              : `<div class="w-full h-full flex items-center justify-center text-sm font-bold text-blue-400">${conv.coach.name.charAt(0)}</div>`}
+              : `<div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${conv.coach.name.charAt(0)}</div>`}
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
@@ -278,7 +278,7 @@ const ChatApp = {
             <div class="flex items-center justify-between mt-0.5">
               <span class="text-xs text-slate-500 truncate">${this._esc(preview)}</span>
               ${conv.unread > 0
-                ? `<span class="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0 ml-2 min-w-[18px] text-center">${conv.unread}</span>`
+                ? `<span class="bg-teal-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0 ml-2 min-w-[18px] text-center">${conv.unread}</span>`
                 : ''}
             </div>
           </div>
@@ -330,7 +330,7 @@ const ChatApp = {
         <div class="w-9 h-9 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden">
           ${conv.coach.avatar
             ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" loading="lazy">`
-            : `<div class="w-full h-full flex items-center justify-center text-sm font-bold text-blue-400">${conv.coach.name.charAt(0)}</div>`}
+            : `<div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${conv.coach.name.charAt(0)}</div>`}
         </div>
         <div class="min-w-0">
           <p class="text-sm font-semibold text-white truncate">${this._esc(conv.coach.name)}</p>
@@ -350,12 +350,12 @@ const ChatApp = {
               ? `<div class="w-6 h-6 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden hidden sm:block">
                   ${conv.coach.avatar
                     ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover">`
-                    : `<div class="w-full h-full flex items-center justify-center text-[8px] font-bold text-blue-400">${conv.coach.name.charAt(0)}</div>`}
+                    : `<div class="w-full h-full flex items-center justify-center text-[8px] font-bold text-teal-400">${conv.coach.name.charAt(0)}</div>`}
                 </div>`
               : '<div class="w-6 flex-shrink-0 hidden sm:block"></div>'}
-            <div class="max-w-[85%] sm:max-w-[70%] ${isUser ? 'bg-blue-600 text-white rounded-2xl rounded-br-md' : 'bg-slate-800 text-slate-200 rounded-2xl rounded-bl-md'} px-4 py-2.5 relative">
+            <div class="max-w-[85%] sm:max-w-[70%] ${isUser ? 'bg-teal-600 text-white rounded-2xl rounded-br-md' : 'bg-slate-800 text-slate-200 rounded-2xl rounded-bl-md'} px-4 py-2.5 relative">
               <p class="text-sm leading-relaxed whitespace-pre-wrap break-words">${this._esc(msg.text)}</p>
-              <p class="text-[10px] ${isUser ? 'text-blue-200' : 'text-slate-500'} text-right mt-1 opacity-80">${time}</p>
+              <p class="text-[10px] ${isUser ? 'text-teal-200' : 'text-slate-500'} text-right mt-1 opacity-80">${time}</p>
               ${isAdmin ? `
                 <button onclick="ChatApp.adminDeleteMessage('${conv.id}', '${msg.id}')" class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-700" title="Delete message">
                   <i data-lucide="x" class="w-3 h-3"></i>

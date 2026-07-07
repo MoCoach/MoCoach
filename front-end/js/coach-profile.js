@@ -8,7 +8,7 @@ const BADGE_CATEGORIES = [
 ];
 
 const TAG_COLORS = [
-  'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  'bg-teal-500/10 text-teal-400 border-teal-500/20',
   'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   'bg-purple-500/10 text-purple-400 border-purple-500/20',
   'bg-amber-500/10 text-amber-400 border-amber-500/20',
@@ -588,7 +588,7 @@ const CoachProfileApp = {
 
     container.innerHTML = `
       <div class="flex items-center space-x-3 mb-4">
-        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center">
           <i data-lucide="thumbs-up" class="w-5 h-5"></i>
         </div>
         <div>

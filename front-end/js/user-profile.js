@@ -61,7 +61,7 @@ const UserProfileApp = {
 
       <div class="relative">
 
-        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500/30">
+        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-teal-500/30">
 
           <img 
           src="${d.avatar || 'assets/img/default-user.png'}"
@@ -76,7 +76,7 @@ const UserProfileApp = {
 
       <div>
 
-        <p class="text-blue-400 text-xl font-bold">
+        <p class="text-teal-400 text-xl font-bold">
         @${d.username || 'username'}
         </p>
 
@@ -94,7 +94,7 @@ const UserProfileApp = {
 
       <button 
       onclick="UserProfileApp.scrollToEdit()"
-      class="bg-blue-600 px-5 py-2 rounded-xl">
+      class="bg-teal-600 px-5 py-2 rounded-xl">
 
       Edit Profile
 
@@ -218,7 +218,7 @@ const UserProfileApp = {
 
     <button
     onclick="UserProfileApp.saveProfile()"
-    class="mt-6 bg-blue-600 px-8 py-3 rounded-xl">
+    class="mt-6 bg-teal-600 px-8 py-3 rounded-xl">
 
     Save Changes
 

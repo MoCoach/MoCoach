@@ -10,10 +10,10 @@
   <link rel="stylesheet" href="css/style.css">
   <style>
     .admin-tab { cursor: pointer; }
-    .admin-tab.active { border-bottom-color: #3b82f6; color: #fff; }
+    .admin-tab.active { border-bottom-color: #0D9488; color: #fff; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-teal-600 selection:text-white">
   <div class="max-w-7xl mx-auto px-6 py-8">
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center space-x-4">
@@ -31,7 +31,7 @@
 
     <!-- Tabs -->
     <div class="flex border-b border-slate-800 mb-6">
-      <button class="admin-tab active text-white font-bold px-6 py-3 border-b-2 border-blue-500" data-tab="coaches">Coaches</button>
+      <button class="admin-tab active text-white font-bold px-6 py-3 border-b-2 border-teal-500" data-tab="coaches">Coaches</button>
       <button class="admin-tab text-slate-400 font-bold px-6 py-3 border-b-2 border-transparent hover:text-white" data-tab="customers">Customers</button>
       <button class="admin-tab text-slate-400 font-bold px-6 py-3 border-b-2 border-transparent hover:text-white" data-tab="messages">Messages</button>
     </div>
@@ -125,7 +125,7 @@
             });
             btn.classList.add('active');
             btn.classList.remove('text-slate-400');
-            btn.style.borderBottomColor = '#3b82f6';
+            btn.style.borderBottomColor = '#0D9488';
 
             document.querySelectorAll('.admin-tab-content').forEach(t => t.classList.add('hidden'));
             const tab = document.getElementById(`admin-${btn.dataset.tab}-tab`);
@@ -179,7 +179,7 @@
               <td class="py-3 px-2 text-slate-300">${this._esc(c.email)}</td>
               <td class="py-3 px-2 text-slate-300">${this._esc(c.city)}</td>
               <td class="py-3 px-2 text-center">
-                <input type="checkbox" ${isVetted ? 'checked' : ''} onchange="AdminApp.toggleCoachFlag('${c.username}', 'is_vetted', this.checked)" class="w-4 h-4 rounded accent-blue-600">
+                <input type="checkbox" ${isVetted ? 'checked' : ''} onchange="AdminApp.toggleCoachFlag('${c.username}', 'is_vetted', this.checked)" class="w-4 h-4 rounded accent-teal-600">
               </td>
               <td class="py-3 px-2 text-center">
                 <input type="checkbox" ${isCertified ? 'checked' : ''} onchange="AdminApp.toggleCoachFlag('${c.username}', 'is_certified', this.checked)" class="w-4 h-4 rounded accent-emerald-600">
@@ -291,7 +291,7 @@
               <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden">
                 <button onclick="AdminApp.toggleConv('${conv.id}')" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-800/30 transition">
                   <div class="flex items-center space-x-3">
-                    <i data-lucide="message-circle" class="w-5 h-5 text-blue-400"></i>
+                    <i data-lucide="message-circle" class="w-5 h-5 text-teal-400"></i>
                     <span class="font-semibold text-white">${this._esc(coachName)}</span>
                     <span class="text-xs text-slate-500">(${msgCount} messages)</span>
                   </div>

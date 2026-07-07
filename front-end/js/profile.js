@@ -90,7 +90,7 @@ const ProfileApp = {
     el.innerHTML = `
       <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
         <div class="relative flex-shrink-0 group">
-          <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-blue-500/30 shadow-xl">
+          <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-teal-500/30 shadow-xl">
             <img src="${this._esc(d.avatar || 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop')}" alt="User avatar" class="w-full h-full object-cover" loading="lazy">
           </div>
           <div class="absolute -bottom-1 -right-1 bg-emerald-500 w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center">
@@ -102,11 +102,11 @@ const ProfileApp = {
           </button>
         </div>
         <div class="text-center md:text-left flex-1 min-w-0 flex flex-col justify-center">
-          <p class="text-blue-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${this._esc(d.username || 'user')}</p>
+          <p class="text-teal-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${this._esc(d.username || 'user')}</p>
           <p class="text-slate-400 text-sm mt-1">${this._esc(d.email || '')}</p>
         </div>
         <div class="flex-shrink-0 mt-4 md:mt-0 flex items-center space-x-3">
-          <button onclick="ProfileApp.toggleEdit()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-blue-600/25 flex items-center space-x-2">
+          <button onclick="ProfileApp.toggleEdit()" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-teal-600/25 flex items-center space-x-2">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
             <span>${this.editing ? 'Cancel' : 'Edit Profile'}</span>
           </button>
@@ -154,17 +154,17 @@ const ProfileApp = {
         <div>
           <label for="pf-username" class="block text-base font-semibold text-slate-200 mb-2">Username *</label>
           <input id="pf-username" type="text" value="${this._esc(d.username)}" required
-            class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition text-base">
+            class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-teal-500 transition text-base">
         </div>
         <div>
           <label for="pf-email" class="block text-base font-semibold text-slate-200 mb-2">Email *</label>
           <input id="pf-email" type="email" value="${this._esc(d.email)}" required
-            class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition text-base">
+            class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-teal-500 transition text-base">
         </div>
       </div>
       <div class="mt-6 flex items-center justify-end space-x-3">
         <button onclick="ProfileApp.toggleEdit()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold px-6 py-2.5 rounded-xl transition">Cancel</button>
-        <button onclick="ProfileApp.savePersonalInfo()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg flex items-center space-x-2">
+        <button onclick="ProfileApp.savePersonalInfo()" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg flex items-center space-x-2">
           <i data-lucide="save" class="w-4 h-4"></i>
           <span>Save Changes</span>
         </button>
@@ -199,7 +199,7 @@ const ProfileApp = {
         <div>
           <label for="pf-currentPw" class="block text-base font-semibold text-slate-200 mb-2">Current Password</label>
           <div class="relative">
-            <input id="pf-currentPw" type="password" placeholder="Enter current password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition text-base">
+            <input id="pf-currentPw" type="password" placeholder="Enter current password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-teal-500 transition text-base">
             <button onclick="ProfileApp.togglePassword('pf-currentPw', 'pw-toggle-current')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-current" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
@@ -208,7 +208,7 @@ const ProfileApp = {
         <div>
           <label for="pf-newPw" class="block text-base font-semibold text-slate-200 mb-2">New Password</label>
           <div class="relative">
-            <input id="pf-newPw" type="password" placeholder="Enter new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition text-base">
+            <input id="pf-newPw" type="password" placeholder="Enter new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-teal-500 transition text-base">
             <button onclick="ProfileApp.togglePassword('pf-newPw', 'pw-toggle-new')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-new" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
@@ -217,7 +217,7 @@ const ProfileApp = {
         <div>
           <label for="pf-confirmPw" class="block text-base font-semibold text-slate-200 mb-2">Confirm New Password</label>
           <div class="relative">
-            <input id="pf-confirmPw" type="password" placeholder="Confirm new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition text-base">
+            <input id="pf-confirmPw" type="password" placeholder="Confirm new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-teal-500 transition text-base">
             <button onclick="ProfileApp.togglePassword('pf-confirmPw', 'pw-toggle-confirm')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-confirm" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
@@ -225,7 +225,7 @@ const ProfileApp = {
         </div>
       </div>
       <div class="mt-6 flex items-center justify-end">
-        <button onclick="ProfileApp.changePassword()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg flex items-center space-x-2">
+        <button onclick="ProfileApp.changePassword()" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-8 py-2.5 rounded-xl transition shadow-lg flex items-center space-x-2">
           <i data-lucide="lock" class="w-4 h-4"></i>
           <span>Change Password</span>
         </button>

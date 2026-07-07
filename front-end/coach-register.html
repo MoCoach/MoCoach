@@ -9,7 +9,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-teal-600 selection:text-white">
   <div id="header-placeholder" class="sticky top-0 z-50"></div>
 
   <main class="py-16">
@@ -44,27 +44,27 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name *</label>
-              <input type="text" id="cr-firstname" required placeholder="ex: Jean" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+              <input type="text" id="cr-firstname" required placeholder="ex: Jean" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
             <div>
               <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name *</label>
-              <input type="text" id="cr-lastname" required placeholder="ex: Dupont" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+              <input type="text" id="cr-lastname" required placeholder="ex: Dupont" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
           </div>
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username *</label>
-            <input type="text" id="cr-username" required placeholder="ex: jeandupont" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <input type="text" id="cr-username" required placeholder="ex: jeandupont" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
           </div>
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Email Address *</label>
-            <input type="email" id="cr-email" required placeholder="ex: jean@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <input type="email" id="cr-email" required placeholder="ex: jean@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
           </div>
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Location *</label>
-            <select id="cr-city" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+            <select id="cr-city" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-teal-500 transition">
               <option value="" disabled selected>Select your location</option>
             </select>
           </div>
@@ -72,11 +72,11 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
-              <input type="password" id="cr-password" required placeholder="••••••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+              <input type="password" id="cr-password" required placeholder="••••••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
             <div>
               <label class="block text-sm font-semibold text-slate-400 mb-1.5">Confirm Password *</label>
-              <input type="password" id="cr-confirm-password" required placeholder="••••••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+              <input type="password" id="cr-confirm-password" required placeholder="••••••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
           </div>
 
@@ -84,28 +84,28 @@
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Tags / Specialties * <span class="text-slate-500 font-normal">(min 1, max 3)</span></label>
-            <input type="text" id="cr-tag-search" placeholder="Search tags..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition mb-3">
+            <input type="text" id="cr-tag-search" placeholder="Search tags..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition mb-3">
             <div id="cr-tag-count" class="text-xs text-slate-500 mb-2">0 of 3 selected</div>
             <div id="cr-tag-checklist" class="max-h-64 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-1.5"></div>
           </div>
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Price per Session (Rs) *</label>
-            <input type="number" id="cr-price" min="0" required placeholder="ex: 500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+            <input type="number" id="cr-price" min="0" required placeholder="ex: 500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
           </div>
 
           <hr class="border-slate-800">
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Bio *</label>
-            <textarea id="cr-bio" rows="3" required placeholder="Tell potential clients about yourself, your experience, and coaching philosophy..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+            <textarea id="cr-bio" rows="3" required placeholder="Tell potential clients about yourself, your experience, and coaching philosophy..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition resize-none"></textarea>
           </div>
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Profile Photo <span class="text-slate-500 font-normal">(optional)</span></label>
-            <input type="file" id="cr-photo" accept="image/*" class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer">
+            <input type="file" id="cr-photo" accept="image/*" class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-teal-600 file:text-white hover:file:bg-teal-700 transition cursor-pointer">
             <div id="cr-photo-preview" class="mt-3 hidden">
-              <div class="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-blue-500 shadow-lg">
+              <div class="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-teal-500 shadow-lg">
                 <img id="cr-photo-img" class="w-full h-full object-cover">
               </div>
             </div>
@@ -113,7 +113,7 @@
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Gallery Photos <span class="text-slate-500 font-normal">(optional, up to 7)</span></label>
-            <input type="file" id="cr-gallery" accept="image/*" multiple class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer">
+            <input type="file" id="cr-gallery" accept="image/*" multiple class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-teal-600 file:text-white hover:file:bg-teal-700 transition cursor-pointer">
             <div id="cr-gallery-previews" class="mt-3 grid grid-cols-4 gap-2"></div>
           </div>
 
@@ -127,7 +127,7 @@
 
         <p class="text-center text-sm text-slate-500 mt-4">
           Already have an account?
-          <a href="index.html" class="text-blue-400 hover:text-blue-300 font-semibold">Log in</a>
+          <a href="index.html" class="text-teal-400 hover:text-teal-300 font-semibold">Log in</a>
         </p>
       </div>
     </div>

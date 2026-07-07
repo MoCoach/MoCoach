@@ -15,12 +15,12 @@
   <link class="rounded-full" rel="stylesheet" href="css/style.css">
   <style>
     .coach-card { cursor: pointer; }
-    .coach-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(59,130,246,0.15); }
+    .coach-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(13,148,136,0.2); }
     .coach-card-sm { transform: scale(0.9); transform-origin: top center; }
     .coach-card-sm:hover { transform: scale(0.9) translateY(-2px); }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-teal-600 selection:text-white">
 
   <!-- External Header will be injected here by JS -->
   <div id="header-placeholder" class="sticky top-0 z-50"></div>
@@ -31,7 +31,7 @@
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-12 gap-4">
           <div>
-            <span class="text-blue-500 text-xs font-bold uppercase tracking-widest">All Coaches</span>
+            <span class="text-teal-500 text-xs font-bold uppercase tracking-widest">All Coaches</span>
             <h2 class="text-3xl font-extrabold text-white mt-2">Browse All Certified Coaches</h2>
             <p class="text-slate-400 text-sm mt-2">Every coach undergoes credential checks to ensure safety and professionalism.</p>
           </div>
@@ -44,10 +44,10 @@
                 id="search-input"
                 type="text" 
                 placeholder="Search coach, discipline..." 
-                class="w-full rounded-xl border border-slate-800 bg-slate-900 py-3 pl-11 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-colors"
+                class="w-full rounded-xl border border-slate-800 bg-slate-900 py-3 pl-11 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:border-teal-500 focus:outline-none transition-colors"
               >
             </div>
-            <button onclick="window.location.href='index.html'" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap">
+            <button onclick="window.location.href='index.html'" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap">
               Back to Explore
             </button>
           </div>
@@ -60,7 +60,7 @@
 
         <div id="all-coaches-pagination" class="flex justify-center items-center gap-3 mt-8">
           <span class="text-slate-400 text-sm font-medium">Page</span>
-          <button data-page="1" class="w-9 h-9 rounded-lg bg-blue-600 text-white text-sm font-bold transition">1</button>
+          <button data-page="1" class="w-9 h-9 rounded-lg bg-teal-600 text-white text-sm font-bold transition">1</button>
         </div>
 
       </div>
@@ -90,7 +90,7 @@
 
       <!-- Navigation Tabs -->
       <div class="flex border-b border-slate-800 mb-6">
-        <button id="tab-register-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-blue-500 text-white transition focus:outline-none">Register</button>
+        <button id="tab-register-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-teal-500 text-white transition focus:outline-none">Register</button>
         <button id="tab-login-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-transparent text-slate-400 hover:text-white transition focus:outline-none">Login</button>
       </div>
 
@@ -99,43 +99,43 @@
 
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username (Pseudo) *</label>
-          <input type="text" id="reg-nickname" placeholder="ex: pseudo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <input type="text" id="reg-nickname" placeholder="ex: pseudo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name</label>
-          <input type="text" id="reg-firstname" placeholder="ex: yourname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <input type="text" id="reg-firstname" placeholder="ex: yourname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name</label>
-          <input type="text" id="reg-lastname" placeholder="ex: yourlastname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <input type="text" id="reg-lastname" placeholder="ex: yourlastname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Email Address *</label>
-          <input type="email" id="reg-email" placeholder="ex: @example.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <input type="email" id="reg-email" placeholder="ex: @example.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
-          <input type="password" id="reg-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <input type="password" id="reg-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Confirm Password *</label>
-          <input type="password" id="reg-confirm-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <input type="password" id="reg-confirm-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <!-- Profile Picture (optional, single) -->
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Profile Picture <span class="text-slate-500 font-normal">(optional)</span></label>
-          <input type="file" id="modal-file-input" accept="image/*" class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer">
+          <input type="file" id="modal-file-input" accept="image/*" class="block w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-teal-600 file:text-white hover:file:bg-teal-700 transition cursor-pointer">
           <div id="modal-previews-container" class="mt-3 flex"></div>
         </div>
 
         <div id="reg-error-feedback" class="hidden bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-300 font-medium"></div>
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg mt-2">
+        <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg mt-2">
           Join the Community
         </button>
       </form>
@@ -144,15 +144,15 @@
       <form id="login-form" class="hidden flex flex-col gap-5 text-left">
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username or Email *</label>
-          <input type="text" id="login-identity" placeholder="ex: pseudo or yourname@email.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <input type="text" id="login-identity" placeholder="ex: pseudo or yourname@email.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
-          <input type="password" id="login-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition">
+          <input type="password" id="login-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div id="login-error-feedback" class="hidden text-red-400 text-sm font-medium"></div>
         <div class="mt-2">
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg">
+          <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl transition duration-300 text-center shadow-lg">
             Login
           </button>
         </div>
@@ -193,8 +193,8 @@
           if (!file) return;
           compressImage(file, 800, 0.7, function(dataUrl) {
             const div = document.createElement('div');
-            div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border-2 border-blue-500 shadow-lg';
-            div.innerHTML = '<span class="absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>' +
+            div.className = 'relative w-20 h-24 rounded-xl overflow-hidden border-2 border-teal-500 shadow-lg';
+            div.innerHTML = '<span class="absolute top-1 left-1 bg-teal-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">PROFILE</span>' +
               '<img src="' + dataUrl + '" class="w-full h-full object-cover">';
             previewsContainer.appendChild(div);
           });
@@ -219,7 +219,7 @@
         if (coaches.length === 0) {
           var isGrid = container.id === 'all-coaches-grid';
           var cols = isGrid ? '' : 'col-span-full';
-          container.innerHTML = '<div class="' + cols + ' flex flex-col items-center justify-center py-20 text-slate-600"><i data-lucide="users" class="w-16 h-16 mb-4"></i><p class="text-lg font-semibold text-slate-500">No coaches registered yet</p><p class="text-sm text-slate-600 mt-2">Be the first to <a href="coach-register.html" class="text-blue-400 hover:underline">register as a coach</a></p></div>';
+          container.innerHTML = '<div class="' + cols + ' flex flex-col items-center justify-center py-20 text-slate-600"><i data-lucide="users" class="w-16 h-16 mb-4"></i><p class="text-lg font-semibold text-slate-500">No coaches registered yet</p><p class="text-sm text-slate-600 mt-2">Be the first to <a href="coach-register.html" class="text-teal-400 hover:underline">register as a coach</a></p></div>';
           if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
           return;
         }
@@ -232,7 +232,7 @@
           var price = c.price || '—';
           var avatar = c.avatar || 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80';
           var tags = (c.tags || []).join(' ');
-          return '<div data-coach-id="' + c.username + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.bio||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-64 object-cover" loading="lazy"><span class="absolute top-3 right-3 bg-blue-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow"><i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span></span></div><div class="p-8 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><h3 class="text-xl font-bold text-white">' + name + '</h3><span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span></div></div><p class="text-sm text-emerald-400 font-semibold mb-3">' + disc + '</p><p class="text-sm text-slate-400 leading-relaxed mb-4">' + bio + '</p></div></div><div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40"><span class="text-xl font-black text-white">Rs ' + price + '<span class="text-sm text-white font-normal"> per session</span></span><button onclick="ChatApp.open(\'' + c.username + '\')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button></div></div>';
+          return '<div data-coach-id="' + c.username + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.bio||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-64 object-cover" loading="lazy"><span class="absolute top-3 right-3 bg-teal-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow"><i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span></span></div><div class="p-8 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><h3 class="text-xl font-bold text-white">' + name + '</h3><span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span></div></div><p class="text-sm text-emerald-400 font-semibold mb-3">' + disc + '</p><p class="text-sm text-slate-400 leading-relaxed mb-4">' + bio + '</p></div></div><div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40"><span class="text-xl font-black text-white">Rs ' + price + '<span class="text-sm text-white font-normal"> per session</span></span><button onclick="ChatApp.open(\'' + c.username + '\')" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button></div></div>';
         }).join('');
         if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
       });
