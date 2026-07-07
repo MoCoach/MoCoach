@@ -86,6 +86,14 @@ const CoachProfileApp = {
     const saved = this._getSavedCoach(coachId);
     if (saved) {
       const fullName = `${saved.firstName || ''} ${saved.lastName || ''}`.trim() || saved.username;
+      var galleryItems = (saved.gallery || []).map(item =>
+        typeof item === 'string' ? { type: 'image', src: item } : item
+      );
+      var avatarSrc = saved.avatar || '';
+      if (!avatarSrc && galleryItems.length > 0) {
+        avatarSrc = galleryItems[0].src;
+        galleryItems.shift();
+      }
       this.currentData = {
         id: coachId,
         name: fullName,
@@ -97,13 +105,11 @@ const CoachProfileApp = {
         rawPrice: saved.price || '',
         price: saved.price ? `Rs ${saved.price} per session` : '',
         city: saved.city || '',
-        photoUrl: saved.avatar || '',
-        avatarUrl: saved.avatar || '',
+        photoUrl: avatarSrc,
+        avatarUrl: avatarSrc,
         description: saved.bio || '',
         tags: saved.tags || [],
-        gallery: (saved.gallery || []).map(item =>
-          typeof item === 'string' ? { type: 'image', src: item } : item
-        ),
+        gallery: galleryItems,
       };
     } else {
       this.currentData = {
@@ -276,13 +282,6 @@ const CoachProfileApp = {
       div.className = 'relative group rounded-2xl overflow-hidden aspect-[4/3] border border-slate-800/80';
       const isVideo = itemObj.type === 'video';
 
-      if (i === 0) {
-        const badge = document.createElement('span');
-        badge.className = 'absolute top-2 left-2 bg-blue-600 text-white text-[9px] font-bold px-2 py-0.5 rounded z-10';
-        badge.textContent = 'PROFILE';
-        div.appendChild(badge);
-      }
-
       if (isVideo) {
         const vid = document.createElement('video');
         vid.src = itemObj.src;
@@ -377,11 +376,6 @@ const CoachProfileApp = {
       const reader = new FileReader();
       reader.onload = (ev) => {
         try {
-          if (!Array.isArray(this.currentData.gallery)) this.currentData.gallery = [];
-          const gallery = this.currentData.gallery;
-          gallery.unshift({ type: 'image', src: ev.target.result });
-          if (gallery.length > this.MAX_GALLERY) gallery.pop();
-          this.currentData.gallery = gallery;
           this.currentData.avatarUrl = ev.target.result;
           this._syncAndRender();
           const avatarEl = document.getElementById('cp-avatar');
@@ -414,7 +408,7 @@ const CoachProfileApp = {
         coaches[idx].gallery = (this.currentData.gallery || []).map(item =>
           typeof item === 'string' ? { type: 'image', src: item } : item
         );
-        coaches[idx].avatar = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : this.currentData.avatarUrl || coaches[idx].avatar;
+        coaches[idx].avatar = this.currentData.avatarUrl || coaches[idx].avatar;
         coaches[idx].bio = this.currentData.description;
         coaches[idx].tags = this.currentData.tags;
         coaches[idx].price = this.currentData.rawPrice;
@@ -759,7 +753,6 @@ const CoachProfileApp = {
     this.currentData.gallery = (this.currentData.gallery || []).map(item =>
       typeof item === 'string' ? { type: 'image', src: item } : item
     );
-    this.currentData.avatarUrl = this.currentData.gallery.length > 0 ? this.currentData.gallery[0].src : this.currentData.avatarUrl;
 
     var fullName = (firstNameVal + ' ' + lastNameVal).trim() || usernameVal;
     this.currentData.name = fullName;
@@ -874,7 +867,8 @@ const CoachProfileApp = {
 
     document.getElementById('cp-chat-btn')?.addEventListener('click', () => {
       if (window.ChatApp) {
-        ChatApp.open();
+        const user = this._getAuthUser();
+        ChatApp.open(user ? user.userId : null);
       }
     });
 
