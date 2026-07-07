@@ -1,3 +1,4 @@
+"use strict";
 const ProfileApp = {
   data: null,
   editing: false,
@@ -63,7 +64,8 @@ const ProfileApp = {
     const container = document.getElementById('stars-container');
     if (!container) return;
     container.innerHTML = '';
-    for (let i = 0; i < 120; i++) {
+    const starCount = window.matchMedia('(max-width: 768px)').matches ? 15 : 30;
+    for (let i = 0; i < starCount; i++) {
       const star = document.createElement('div');
       star.className = 'star';
       const size = Math.random() * 2 + 0.8;
@@ -93,11 +95,11 @@ const ProfileApp = {
           <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-teal-500/30 shadow-xl">
             <img src="${this._esc(d.avatar || 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop')}" alt="User avatar" class="w-full h-full object-cover" loading="lazy">
           </div>
-          <div class="absolute -bottom-1 -right-1 bg-emerald-500 w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center">
+          <div class="absolute -bottom-1 -right-1 bg-amber-500 w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center">
             <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
           </div>
           <input type="file" id="pf-avatar-input" accept="image/*" class="hidden">
-          <button onclick="document.getElementById('pf-avatar-input').click()" class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+          <button onclick="document.getElementById('pf-avatar-input').click()" class="absolute inset-0 rounded-full bg-black/40 opacity-100 sm:opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
             <i data-lucide="camera" class="w-6 h-6"></i>
           </button>
         </div>
@@ -283,7 +285,7 @@ const ProfileApp = {
     const el = document.getElementById('pw-feedback');
     if (!el) return;
     el.textContent = msg;
-    el.className = `mt-3 text-sm font-medium ${type === 'success' ? 'text-emerald-400' : 'text-red-400'}`;
+    el.className = `mt-3 text-sm font-medium ${type === 'success' ? 'text-amber-400' : 'text-red-400'}`;
     el.classList.remove('hidden');
     if (type === 'success') {
       setTimeout(() => el.classList.add('hidden'), 3000);
@@ -293,7 +295,7 @@ const ProfileApp = {
   showToast(message, type) {
     const container = document.getElementById('profile-toast-container');
     if (!container) return;
-    const bg = type === 'success' ? 'bg-emerald-500' : 'bg-red-500';
+    const bg = type === 'success' ? 'bg-amber-500' : 'bg-red-500';
     const icon = type === 'success' ? 'check-circle' : 'alert-circle';
     const toast = document.createElement('div');
     toast.className = `${bg} text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg flex items-center space-x-2 animate-toast-in`;

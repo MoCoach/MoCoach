@@ -1,4 +1,4 @@
-<header class="sticky top-0 z-50 bg-slate-950/40 backdrop-blur-sm border-b border-slate-900/20 hover:bg-slate-950/95 hover:backdrop-blur-md hover:border-slate-900/50 transition-all duration-500 ease-in-out">
+<header class="sticky top-0 z-50 bg-transparent lg:bg-slate-950/30 backdrop-blur-none lg:backdrop-blur-sm border-b border-slate-900/10 lg:border-slate-900/20 hover:bg-slate-950/95 hover:backdrop-blur-md hover:border-slate-900/50 transition-all duration-500 ease-in-out">
   <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
     <div class="flex items-center space-x-6 lg:space-x-10">
       
@@ -17,7 +17,7 @@
         <a href="#explore" class="text-slate-300 hover:text-white transition">Explore Coaches</a>
         <a href="#features" class="text-slate-300 hover:text-white transition">Platform Benefits</a>
         <a href="#about" class="text-slate-300 hover:text-white transition">About Us</a>
-        <a href="coach-landing.html" class="text-emerald-400 hover:text-emerald-300 transition font-bold flex items-center space-x-1.5">
+        <a href="coach-landing.html" class="text-amber-400 hover:text-amber-300 transition font-bold flex items-center space-x-1.5">
           <i data-lucide="award" class="w-4 h-4"></i>
           <span>For Coaches</span>
         </a>
@@ -25,16 +25,41 @@
     </div>
     
     <!-- Bouton Profil avec Conteneur de Positionnement pour le menu au Clic -->
-    <div class="flex items-center relative">
-      <button id="profile-btn" aria-label="User Profile" class="w-12 h-12 rounded-full bg-slate-900 hover:bg-slate-850 border border-slate-800 flex items-center justify-center text-slate-300 transition shadow-md focus:outline-none">
-        <i data-lucide="user" class="w-6 h-6"></i>
+    <div class="flex items-center space-x-3">
+      <!-- Hamburger menu (mobile only) -->
+      <button id="mobile-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu" class="lg:hidden w-12 h-12 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 flex items-center justify-center text-slate-300 transition shadow-md focus:outline-none">
+        <i data-lucide="menu" class="w-6 h-6"></i>
       </button>
-      
-      <!-- Menu déroulant d'en-tête (Dropdown) - Masqué par défaut (hidden) et contrôlé uniquement au clic par app.js -->
-      <div id="profile-dropdown" class="absolute right-0 top-full mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-2 hidden z-50">
-        <!-- Rempli dynamiquement par app.js -->
+
+      <div class="flex items-center relative">
+        <button id="profile-btn" aria-label="User Profile" aria-expanded="false" aria-haspopup="true" class="w-12 h-12 rounded-full bg-slate-900 hover:bg-slate-850 border border-slate-800 flex items-center justify-center text-slate-300 transition shadow-md focus:outline-none">
+          <i data-lucide="user" class="w-6 h-6"></i>
+        </button>
+        
+        <!-- Menu déroulant d'en-tête (Dropdown) - Masqué par défaut (hidden) et contrôlé uniquement au clic par app.js -->
+        <div id="profile-dropdown" class="absolute right-0 top-full mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-2 hidden z-50">
+          <!-- Rempli dynamiquement par app.js -->
+        </div>
       </div>
     </div>
 
   </div>
 </header>
+
+<!-- Mobile navigation panel -->
+<div id="mobile-menu" class="hidden fixed inset-x-0 top-[calc(72px+1px)] bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 shadow-2xl z-50 lg:hidden" aria-label="Navigation">
+  <nav class="flex flex-col py-4 px-6 space-y-1">
+    <a href="#" class="text-teal-400 flex items-center space-x-3 px-4 py-3 rounded-xl font-bold">
+      <i data-lucide="home" class="w-5 h-5"></i>
+      <span>Home</span>
+    </a>
+    <a href="#how-it-works" class="text-slate-300 hover:text-white hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition">How It Works</a>
+    <a href="#explore" class="text-slate-300 hover:text-white hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition">Explore Coaches</a>
+    <a href="#features" class="text-slate-300 hover:text-white hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition">Platform Benefits</a>
+    <a href="#about" class="text-slate-300 hover:text-white hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition">About Us</a>
+    <a href="coach-landing.html" class="text-amber-400 hover:text-amber-300 hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition flex items-center space-x-2">
+      <i data-lucide="award" class="w-4 h-4"></i>
+      <span>For Coaches</span>
+    </a>
+  </nav>
+</div>

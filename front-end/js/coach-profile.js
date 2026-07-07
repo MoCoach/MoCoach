@@ -1,5 +1,5 @@
 // COACH_PROFILES removed — data now loads from localStorage mocoach_coaches
-
+"use strict";
 const BADGE_CATEGORIES = [
   { key: 'technical_coach', label: 'Technical Coach', icon: 'book-open', desc: 'Deep expertise in their discipline' },
   { key: 'flexibility_adaptability', label: 'Flexibility & Adaptability', icon: 'shuffle', desc: 'Adjusts sessions to individual needs' },
@@ -9,7 +9,7 @@ const BADGE_CATEGORIES = [
 
 const TAG_COLORS = [
   'bg-teal-500/10 text-teal-400 border-teal-500/20',
-  'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  'bg-amber-500/10 text-amber-400 border-amber-500/20',
   'bg-purple-500/10 text-purple-400 border-purple-500/20',
   'bg-amber-500/10 text-amber-400 border-amber-500/20',
   'bg-rose-500/10 text-rose-400 border-rose-500/20',
@@ -498,7 +498,7 @@ const CoachProfileApp = {
           cb.type = 'checkbox';
           cb.value = tag;
           cb.checked = selected.has(tag);
-          cb.className = 'w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500/50 cursor-pointer';
+          cb.className = 'w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500/50 cursor-pointer';
           cb.addEventListener('change', () => {
             if (cb.checked) {
               if (selected.size >= 3) {
@@ -562,7 +562,7 @@ const CoachProfileApp = {
           <p class="text-xs font-bold text-white">${cat.label}</p>
           <p class="text-[10px] text-slate-400 mt-0.5 leading-tight">${cat.desc}</p>
           <div class="mt-2 w-7 h-7 rounded-full ${isActive ? 'bg-amber-400/20 text-amber-400' : 'bg-slate-800 text-slate-600'} flex items-center justify-center text-xs font-bold">${count}</div>
-          ${viewerHasVoted ? '<span class="text-[10px] text-emerald-400 font-bold mt-1">✓ You awarded this</span>' : ''}
+          ${viewerHasVoted ? '<span class="text-[10px] text-amber-400 font-bold mt-1">✓ You awarded this</span>' : ''}
         </div>
       `;
     }).join('');
@@ -597,9 +597,9 @@ const CoachProfileApp = {
         </div>
       </div>
       <div class="flex items-center justify-center gap-8 py-4">
-        <button onclick="CoachProfileApp.vote('up')" ${viewerIsCustomer ? '' : 'disabled'} class="flex flex-col items-center gap-2 px-6 py-4 rounded-2xl transition ${userVote === 'up' ? 'bg-emerald-500/20 border-emerald-500/50 border' : viewerIsCustomer ? 'bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/50 cursor-pointer' : 'bg-slate-800/40 border border-slate-700/30 opacity-60'}">
-          <i data-lucide="thumbs-up" class="w-8 h-8 ${userVote === 'up' ? 'text-emerald-400' : 'text-slate-400'}"></i>
-          <span class="text-2xl font-black ${userVote === 'up' ? 'text-emerald-400' : 'text-white'}">${upCount}</span>
+        <button onclick="CoachProfileApp.vote('up')" ${viewerIsCustomer ? '' : 'disabled'} class="flex flex-col items-center gap-2 px-6 py-4 rounded-2xl transition ${userVote === 'up' ? 'bg-amber-500/20 border-amber-500/50 border' : viewerIsCustomer ? 'bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/50 cursor-pointer' : 'bg-slate-800/40 border border-slate-700/30 opacity-60'}">
+          <i data-lucide="thumbs-up" class="w-8 h-8 ${userVote === 'up' ? 'text-amber-400' : 'text-slate-400'}"></i>
+          <span class="text-2xl font-black ${userVote === 'up' ? 'text-amber-400' : 'text-white'}">${upCount}</span>
           <span class="text-xs text-slate-500 font-medium">Up</span>
         </button>
         <button onclick="CoachProfileApp.vote('down')" ${viewerIsCustomer ? '' : 'disabled'} class="flex flex-col items-center gap-2 px-6 py-4 rounded-2xl transition ${userVote === 'down' ? 'bg-red-500/20 border-red-500/50 border' : viewerIsCustomer ? 'bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/50 cursor-pointer' : 'bg-slate-800/40 border border-slate-700/30 opacity-60'}">
@@ -838,7 +838,8 @@ const CoachProfileApp = {
     const container = document.getElementById('cp-stars-container');
     if (!container) return;
     container.innerHTML = '';
-    for (let i = 0; i < 120; i++) {
+    const starCount = window.matchMedia('(max-width: 768px)').matches ? 15 : 30;
+    for (let i = 0; i < starCount; i++) {
       const star = document.createElement('div');
       star.className = 'star';
       star.style.cssText = `
@@ -886,7 +887,7 @@ const CoachProfileApp = {
   showToast(message, type) {
     const container = document.getElementById('cp-toast-container');
     if (!container) return;
-    const bg = type === 'success' ? 'bg-emerald-500' : 'bg-red-500';
+    const bg = type === 'success' ? 'bg-amber-500' : 'bg-red-500';
     const icon = type === 'success' ? 'check-circle' : 'alert-circle';
     const toast = document.createElement('div');
     toast.className = `${bg} text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg flex items-center space-x-2 animate-toast-in`;

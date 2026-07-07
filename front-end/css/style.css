@@ -32,12 +32,12 @@ body {
 }
 
 .animate-mauritius-flag {
-  background: linear-gradient(to right, #F59E0B 0%, #0EA5A0 50%, #F59E0B 100%);
+  background: linear-gradient(to right, #0A558C 0%, #047857 50%, #0A558C 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: flagScroll 4s linear infinite;
+  animation: flagScroll 7s linear infinite;
   display: inline-block;
 }
 
@@ -147,10 +147,30 @@ body {
   z-index: 30;
 }
 
-.badge-cell:hover .badge-tooltip {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
+@media (hover: hover) {
+  .badge-cell:hover .badge-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@media (hover: none) {
+  .badge-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+    position: static;
+  }
+  .badge-tooltip-inner {
+    background: transparent;
+    color: #94a3b8;
+    padding: 0;
+    box-shadow: none;
+  }
+  .badge-tooltip-arrow {
+    display: none;
+  }
 }
 
 .badge-tooltip-inner {
@@ -190,4 +210,22 @@ body {
   background-color: #ffffff;
   border-radius: 50%;
   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-title-punch,
+  .animate-fade-delayed-1,
+  .animate-sweep,
+  .animate-mauritius-flag,
+  .star,
+  .msg-unread-pulse,
+  .animate-toast-in,
+  .coach-card,
+  .coach-card-sm {
+    animation: none !important;
+    transition: none !important;
+  }
+  .star {
+    display: none;
+  }
 }

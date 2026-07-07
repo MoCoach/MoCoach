@@ -12,6 +12,7 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
   <!-- External CSS stylesheet link -->
   <link class="rounded-full" rel="stylesheet" href="css/style.css">
   <style>
@@ -20,21 +21,34 @@
       100% { background-position: 200% center; }
     }
     .animate-sweep {
+      font-family: 'Abril Fatface', serif;
+      font-size: 1.15em;
       background: linear-gradient(
         120deg,
-        #F59E0B 0%, #F59E0B 40%,
-        #0EA5A0 65%, #0EA5A0 100%
+        #0A558C 0%, #0A558C 40%,
+        #047857 65%, #047857 100%
       );
       background-size: 200% auto;
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: sweep 4s ease-in-out infinite;
+      animation: sweep 7s ease-in-out infinite;
     }
     .coach-card { cursor: pointer; }
     .coach-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(13,148,136,0.2); }
     .coach-card-sm { transform: scale(0.9); transform-origin: top center; }
-    .coach-card-sm:hover { transform: scale(0.9) translateY(-2px); }
+    @media (min-width: 640px) {
+      .coach-card-sm:hover { transform: scale(0.9) translateY(-2px); }
+    }
+    #how-it-works::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cg fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round'%3E%3C!-- Soccer ball --%3E%3Ccircle cx='120' cy='80' r='35' stroke-width='2.5'/%3E%3Cpath d='M120 45 L100 100 L140 95 Z' stroke-width='1.5'/%3E%3Cpath d='M92 60 L148 72' stroke-width='1.5'/%3E%3Cpath d='M88 100 L120 115 L152 100' stroke-width='1.5'/%3E%3C!-- Running figure --%3E%3Ccircle cx='480' cy='55' r='14' stroke-width='2.5'/%3E%3Cpath d='M480 69 L470 120 L465 150' stroke-width='3'/%3E%3Cpath d='M470 90 L440 80 L425 65' stroke-width='2.5'/%3E%3Cpath d='M470 90 L505 105 L515 130' stroke-width='2.5'/%3E%3Cpath d='M465 120 L440 145 L435 170' stroke-width='2.5'/%3E%3Cpath d='M465 120 L490 145 L495 170' stroke-width='2.5'/%3E%3C!-- Dumbbell --%3E%3Cline x1='260' y1='330' x2='340' y2='330' stroke-width='5'/%3E%3Crect x='245' y='317' width='15' height='26' rx='4' stroke-width='2.5'/%3E%3Crect x='340' y='317' width='15' height='26' rx='4' stroke-width='2.5'/%3E%3Crect x='225' y='323' width='20' height='14' rx='3' stroke-width='2'/%3E%3Crect x='355' y='323' width='20' height='14' rx='3' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E") no-repeat bottom center / cover;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 0;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-teal-600 selection:text-white">
@@ -47,8 +61,8 @@
     <section class="relative bg-slate-950 overflow-hidden min-h-[calc(100vh-121px)] flex flex-col justify-between py-6 lg:py-10">
       
       <!-- Video background -->
-      <video autoplay loop muted playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover z-10 opacity-50 pointer-events-none">
-        <source src="assets/video/Unlock your full potential.mp4" type="video/mp4">
+      <video id="hero-video" autoplay loop muted playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover z-10 opacity-50 pointer-events-none">
+        <source src="assets/video/Unlock%20your%20full%20potential.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
 
@@ -77,35 +91,35 @@
           
           <div class="animate-fade-delayed-1 flex flex-col sm:flex-row items-center justify-center gap-5">
             <div class="role-group relative w-full sm:w-auto">
-              <button class="role-toggle-btn w-full sm:w-auto bg-[#0D9488] hover:bg-[#0F766E] text-white px-10 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(13,148,136,0.35)] hover:scale-[1.02] flex items-center justify-center space-x-3 text-base border border-teal-400/20" data-role="client">
+               <button class="role-toggle-btn w-full sm:w-auto bg-[#0D9488] hover:bg-[#0F766E] text-white px-10 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(13,148,136,0.35)] hover:scale-[1.02] flex items-center justify-center space-x-3 text-base border border-teal-400/20" data-role="client" aria-expanded="false" aria-haspopup="true">
                 <i data-lucide="user" class="w-5.5 h-5.5"></i>
                 <span>I am a client</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
               </button>
-              <div class="role-submenu hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl z-40" data-role="client">
-                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="explore">
+              <div class="role-submenu hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl z-40" data-role="client" role="menu">
+                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="explore" role="menuitem">
                   <i data-lucide="search" class="w-4 h-4 text-teal-400"></i>
                   <span>Find a Coach Now</span>
                 </button>
-                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="register">
+                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="register" role="menuitem">
                   <i data-lucide="log-in" class="w-4 h-4 text-teal-400"></i>
                   <span>Sign Up / Login</span>
                 </button>
               </div>
             </div>
             <div class="role-group relative w-full sm:w-auto">
-              <button class="role-toggle-btn w-full sm:w-auto bg-[#030712]/50 hover:bg-[#030712]/95 backdrop-blur-md text-slate-100 px-10 py-4 rounded-full font-bold transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:scale-[1.02] flex items-center justify-center space-x-3 text-base shadow-sm" data-role="coach">
-                <i data-lucide="award" class="w-5.5 h-5.5 text-emerald-400"></i>
+              <button class="role-toggle-btn w-full sm:w-auto bg-[#030712]/50 hover:bg-[#030712]/95 backdrop-blur-md text-slate-100 px-10 py-4 rounded-full font-bold transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:scale-[1.02] flex items-center justify-center space-x-3 text-base shadow-sm" data-role="coach" aria-expanded="false" aria-haspopup="true">
+                <i data-lucide="award" class="w-5.5 h-5.5 text-amber-400"></i>
                 <span>I am a coach</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
               </button>
-              <div class="role-submenu hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl z-40" data-role="coach">
-                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="how-it-works">
-                  <i data-lucide="info" class="w-4 h-4 text-emerald-400"></i>
+              <div class="role-submenu hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl z-40" data-role="coach" role="menu">
+                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="how-it-works" role="menuitem">
+                  <i data-lucide="info" class="w-4 h-4 text-amber-400"></i>
                   <span>How It Works</span>
                 </button>
-                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="coach-register">
-                  <i data-lucide="user-plus" class="w-4 h-4 text-emerald-400"></i>
+                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="coach-register" role="menuitem">
+                  <i data-lucide="user-plus" class="w-4 h-4 text-amber-400"></i>
                   <span>Sign Up as a Coach</span>
                 </button>
               </div>
@@ -129,8 +143,8 @@
               <p class="text-xs text-slate-300 leading-tight">Build strength and feel stronger</p>
             </a>
 
-            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-emerald-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4">
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
+              <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
                 <i data-lucide="zap" class="w-6 h-6"></i>
               </div>
               <h3 class="font-bold text-white text-sm mb-1">Cardio & HIIT</h3>
@@ -173,89 +187,10 @@
 
         <div id="coach-pagination" class="flex justify-center items-center gap-3 mt-8 hidden">
           <span class="text-slate-400 text-sm font-medium">Page</span>
-          <button data-page="1" class="w-9 h-9 rounded-lg bg-teal-600 text-white text-sm font-bold transition">1</button>
-          <button data-page="2" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 text-sm font-bold hover:bg-slate-700 transition">2</button>
+          <button data-page="1" class="w-11 h-11 rounded-lg bg-teal-600 text-white text-sm font-bold transition">1</button>
+          <button data-page="2" class="w-11 h-11 rounded-lg bg-slate-800 text-slate-300 text-sm font-bold hover:bg-slate-700 transition">2</button>
         </div>
 
-      </div>
-    </section>
-
-    <!-- SECTION: HOW IT WORKS -->
-    <section id="how-it-works" class="py-24 bg-slate-900/50 relative">
-      <div class="max-w-[1600px] mx-auto px-8">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-          <span class="text-teal-500 text-xs font-bold uppercase tracking-wider">Simple Coaching Journey</span>
-          <h2 class="text-3xl font-extrabold text-white mt-2">How MoCoach Simplifies Your Booking ?</h2>
-          <p class="text-slate-400 text-sm mt-3">From selection to training without standard social media friction.</p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-          <!-- Step 1 -->
-          <div class="bg-slate-950 border border-slate-900 p-10 rounded-2xl relative flex flex-col justify-between group transition">
-            <div>
-              <span class="absolute top-6 right-8 text-6xl font-extrabold text-slate-800/10 transition">01</span>
-              <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
-                <i data-lucide="search" class="w-7 h-7"></i>
-              </div>
-              <h3 class="font-bold text-xl text-white mb-3">Find Your Coach</h3>
-              <p class="text-base text-slate-300 leading-loose mb-8">
-                Filter by verified expertise, direct hourly rate, dynamic location, and realistic customer reviews. No hidden agency costs.
-              </p>
-            </div>
-            <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
-              <span class="flex items-center space-x-1.5"><i data-lucide="map" class="w-4 h-4 text-teal-500"></i> <span>Grand Baie</span></span>
-              <span class="font-semibold text-white">24 verified coaches near you</span>
-            </div>
-          </div>
-
-          <!-- Step 2 -->
-          <div class="bg-slate-950 border border-slate-900 p-10 rounded-2xl relative flex flex-col justify-between group transition">
-            <div>
-              <span class="absolute top-6 right-8 text-6xl font-extrabold text-slate-800/10 transition">02</span>
-              <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
-                <i data-lucide="calendar-check" class="w-7 h-7"></i>
-              </div>
-              <h3 class="font-bold text-xl text-white mb-3">Book Centrally</h3>
-              <p class="text-base text-slate-300 leading-loose mb-8">
-              Choose your coach based on your preferred activity and location.
-              </p>
-            </div>
-            <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
-              <span class="flex items-center space-x-1.5"><i data-lucide="clock" class="w-4 h-4 text-teal-500"></i> <span>Contact Coach</span></span>
-              <span class="font-semibold text-emerald-400"></span>
-            </div>
-          </div>
-
-          <!-- Step 3 -->
-          <div class="bg-slate-950 border border-slate-900 p-10 rounded-2xl relative flex flex-col justify-between group transition">
-            <div>
-              <span class="absolute top-6 right-8 text-6xl font-extrabold text-slate-800/10 transition">03</span>
-              <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
-                <i data-lucide="dumbbell" class="w-7 h-7"></i>
-              </div>
-              <h3 class="font-bold text-xl text-white mb-3">Begin Your Session</h3>
-              <p class="text-base text-slate-300 leading-loose mb-8">
-                Meet your professional coach and receive focused attention. Leave an honest client rating to support our island's active community.
-              </p>
-            </div>
-            <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
-              <span class="flex items-center space-x-1.5"><i data-lucide="thumbs-up" class="w-4 h-4 text-emerald-400"></i> <span>Rate Session</span></span>
-              <span class="text-amber-400 text-sm"></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-16 text-center bg-gradient-to-r from-slate-900/50 via-teal-950/30 to-slate-900/50 border border-slate-800/50 rounded-3xl p-10 max-w-3xl mx-auto">
-          <i data-lucide="award" class="w-10 h-10 text-emerald-400 mx-auto mb-4"></i>
-          <h3 class="text-2xl font-extrabold text-white mb-2">Are You a Coach?</h3>
-          <p class="text-slate-300 text-sm mb-6 max-w-xl mx-auto">
-            Grow your client base in Mauritius. Create your professional profile, set your schedule, and connect with clients looking for your expertise.
-          </p>
-          <a href="coach-landing.html" class="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-full transition-all duration-300 shadow-lg hover:scale-[1.02]">
-            <i data-lucide="user-plus" class="w-5 h-5"></i>
-            <span>Register as a Coach</span>
-          </a>
-        </div>
       </div>
     </section>
 
@@ -279,10 +214,11 @@
                 id="search-input"
                 type="text" 
                 placeholder="Search coach, discipline..." 
-                class="w-full rounded-xl border border-slate-800 bg-slate-900 py-3 pl-11 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:border-teal-500 focus:outline-none transition-colors"
+                aria-label="Search coaches"
+                class="w-full rounded-xl border border-slate-800 bg-slate-900 py-3 pl-11 pr-4 text-base text-slate-200 placeholder-slate-500 focus:border-teal-500 focus:outline-none transition-colors"
               >
             </div>
-            <button id="see-all-coaches" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap">
+            <button id="see-all-coaches" onclick="location.href='all-coaches.html'" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap">
               See All Coaches
             </button>
           </div>
@@ -293,100 +229,89 @@
       </div>
     </section>
 
-    <!-- SECTION: TRUST & SOCIAL PROOF -->
-    <section class="py-20 bg-slate-900 border-b border-slate-950">
-      <div class="max-w-[1600px] mx-auto px-8">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-          <span class="text-emerald-400 text-xs font-bold uppercase tracking-wider">Success Stories</span>
-          <h2 class="text-3xl font-extrabold text-white mt-2">Endorsed by Residents & Tourists</h2>
-          <p class="text-slate-400 text-sm mt-3">Read honest, central-booking reviews from our island community.</p>
+    <!-- SECTION: HOW IT WORKS -->
+    <section id="how-it-works" class="py-16 md:py-24">
+      <div class="max-w-[1600px] mx-auto px-8 relative z-10">
+        <div class="text-center max-w-2xl mx-auto mb-10 md:mb-16">
+          <span class="text-teal-500 text-xs font-bold uppercase tracking-wider">Simple Coaching Journey</span>
+          <h2 class="text-3xl font-extrabold text-white mt-2">How MoCoach Simplifies Your Booking ?</h2>
+          <p class="text-slate-400 text-sm mt-3">From selection to training without standard social media friction.</p>
         </div>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          
-          <!-- Testimonial 1 -->
-          <div class="bg-slate-950 p-8 rounded-2xl flex flex-col justify-between">
-            <div class="space-y-4">
-              <div class="flex items-center space-x-1 text-amber-400">
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Step 1 -->
+          <div class="bg-slate-950 border border-slate-900 p-6 md:p-10 rounded-2xl relative flex flex-col justify-between group transition">
+            <div>
+              <span class="absolute top-6 right-8 text-6xl font-extrabold text-slate-800/10 transition">01</span>
+              <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
+                <i data-lucide="search" class="w-7 h-7"></i>
               </div>
-              <p class="text-slate-200 text-sm leading-relaxed italic">
-                "Finding an experienced prenatal Pilates coach in Grand Baie used to be tough, with endless back-and-fois WhatsApp follow-ups. MoCoach let me view verified certifications and secure standard scheduling instantly."
+              <h3 class="font-bold text-xl text-white mb-3">Find Your Coach</h3>
+              <p class="text-base text-slate-300 leading-loose mb-8">
+                Filter by verified expertise, direct hourly rate, dynamic location, and realistic customer reviews. No hidden agency costs.
               </p>
             </div>
-            <div class="flex items-center space-x-4 mt-8 pt-4 border-t border-slate-900">
-              <div class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center font-bold text-sm text-teal-400">
-                SD
-              </div>
-              <div>
-                <p class="text-sm font-bold text-white">Sarena Dev</p>
-                <p class="text-[10px] text-slate-500">Verified Client • Mauritius Resident</p>
-              </div>
+            <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
+              <span class="flex items-center space-x-1.5"><i data-lucide="map" class="w-4 h-4 text-teal-500"></i> <span>Grand Baie</span></span>
+              <span class="font-semibold text-white">24 verified coaches near you</span>
             </div>
           </div>
 
-          <!-- Testimonial 2 -->
-          <div class="bg-slate-950 p-8 rounded-2xl flex flex-col justify-between">
-            <div class="space-y-4">
-              <div class="flex items-center space-x-1 text-amber-400">
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+          <!-- Step 2 -->
+          <div class="bg-slate-950 border border-slate-900 p-6 md:p-10 rounded-2xl relative flex flex-col justify-between group transition">
+            <div>
+              <span class="absolute top-6 right-8 text-6xl font-extrabold text-slate-800/10 transition">02</span>
+              <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
+                <i data-lucide="calendar-check" class="w-7 h-7"></i>
               </div>
-              <p class="text-slate-200 text-sm leading-relaxed italic">
-                "Focused pad work, boxing fundamentals, and intense conditioning drills."
+              <h3 class="font-bold text-xl text-white mb-3">Book Centrally</h3>
+              <p class="text-base text-slate-300 leading-loose mb-8">
+              Choose your coach based on your preferred activity and location.
               </p>
             </div>
-            <div class="flex items-center space-x-4 mt-8 pt-4 border-t border-slate-900">
-              <div class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center font-bold text-sm text-teal-400">
-                CL
-              </div>
-              <div>
-                <p class="text-sm font-bold text-white">Cedric L.</p>
-                <p class="text-[10px] text-slate-500">Verified Client • Mauritius Resident</p>
-              </div>
+            <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
+              <span class="flex items-center space-x-1.5"><i data-lucide="clock" class="w-4 h-4 text-teal-500"></i> <span>Contact Coach</span></span>
+              <span class="font-semibold text-amber-400"></span>
             </div>
           </div>
 
-          <!-- Testimonial 3 -->
-          <div class="bg-slate-950 p-8 rounded-2xl flex flex-col justify-between">
-            <div class="space-y-4">
-              <div class="flex items-center space-x-1 text-amber-400">
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+          <!-- Step 3 -->
+          <div class="bg-slate-950 border border-slate-900 p-6 md:p-10 rounded-2xl relative flex flex-col justify-between group transition">
+            <div>
+              <span class="absolute top-6 right-8 text-6xl font-extrabold text-slate-800/10 transition">03</span>
+              <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
+                <i data-lucide="dumbbell" class="w-7 h-7"></i>
               </div>
-              <p class="text-slate-200 text-sm leading-relaxed italic">
-                "Moving my client scheduling to MoCoach saved me hours of daily text coordination. My bookings are transparently scheduled, and tourists can easily find and book my slots before arriving in Mauritius."
+              <h3 class="font-bold text-xl text-white mb-3">Begin Your Session</h3>
+              <p class="text-base text-slate-300 leading-loose mb-8">
+                Meet your professional coach and receive focused attention. Leave an honest client rating to support our island's active community.
               </p>
             </div>
-            <div class="flex items-center space-x-4 mt-8 pt-4 border-t border-slate-900">
-              <div class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center font-bold text-sm text-amber-400">
-                AM
-              </div>
-              <div>
-                <p class="text-sm font-bold text-white">Anusha S.</p>
-                <p class="text-[10px] text-slate-500">Verified Yoga Instructor • Coach</p>
-              </div>
+            <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
+              <span class="flex items-center space-x-1.5"><i data-lucide="thumbs-up" class="w-4 h-4 text-amber-400"></i> <span>Rate Session</span></span>
+              <span class="text-amber-400 text-sm"></span>
             </div>
           </div>
+        </div>
 
+        <div class="mt-16 text-center bg-gradient-to-r from-slate-900/50 via-teal-950/30 to-slate-900/50 border border-slate-800/50 rounded-3xl p-6 md:p-10 max-w-3xl mx-auto">
+          <i data-lucide="award" class="w-10 h-10 text-amber-400 mx-auto mb-4"></i>
+          <h3 class="text-2xl font-extrabold text-white mb-2">Are You a Coach?</h3>
+          <p class="text-slate-300 text-sm mb-6 max-w-xl mx-auto">
+            Grow your client base in Mauritius. Create your professional profile, set your schedule, and connect with clients looking for your expertise.
+          </p>
+          <a href="coach-landing.html" class="inline-flex items-center space-x-2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-8 py-3.5 rounded-full transition-all duration-300 shadow-lg hover:scale-[1.02]">
+            <i data-lucide="user-plus" class="w-5 h-5"></i>
+            <span>Register as a Coach</span>
+          </a>
         </div>
       </div>
     </section>
 
     <!-- SECTION: PLATFORM BENEFITS -->
-    <section id="features" class="py-24 bg-slate-950">
+    <section id="features" class="py-16 md:py-24 bg-slate-950">
       <div class="max-w-[1600px] mx-auto px-8">
-        <div class="text-center max-w-2xl mx-auto mb-16">
+        <div class="text-center max-w-2xl mx-auto mb-10 md:mb-16">
           <span class="text-teal-500 text-xs font-bold uppercase tracking-wider">Engineered For Quality</span>
           <h2 class="text-3xl font-extrabold text-white mt-2">Why MoCoach Benefits Everyone</h2>
           <p class="text-slate-400 text-sm mt-3">A transparent ecosystem developed to serve clients and professional trainers alike.</p>
@@ -395,7 +320,7 @@
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           
           <!-- Card 1 -->
-          <div class="bg-slate-900 p-8 rounded-2xl flex flex-col items-start">
+          <div class="bg-slate-900 p-5 md:p-8 rounded-2xl flex flex-col items-start">
             <div class="w-12 h-12 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center mb-5">
               <i data-lucide="check-square" class="w-6 h-6"></i>
             </div>
@@ -406,8 +331,8 @@
           </div>
 
           <!-- Card 2 -->
-          <div class="bg-slate-900 p-8 rounded-2xl flex flex-col items-start">
-            <div class="w-12 h-12 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-5">
+          <div class="bg-slate-900 p-5 md:p-8 rounded-2xl flex flex-col items-start">
+            <div class="w-12 h-12 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-5">
               <i data-lucide="map-pin" class="w-6 h-6"></i>
             </div>
             <h3 class="font-bold text-white text-base mb-3">Localized Navigation</h3>
@@ -417,7 +342,7 @@
           </div>
 
           <!-- Card 3 -->
-          <div class="bg-slate-900 p-8 rounded-2xl flex flex-col items-start">
+          <div class="bg-slate-900 p-5 md:p-8 rounded-2xl flex flex-col items-start">
             <div class="w-12 h-12 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-5">
               <i data-lucide="calendar" class="w-6 h-6"></i>
             </div>
@@ -428,7 +353,7 @@
           </div>
 
           <!-- Card 4 -->
-          <div class="bg-slate-900 p-8 rounded-2xl flex flex-col items-start">
+          <div class="bg-slate-900 p-5 md:p-8 rounded-2xl flex flex-col items-start">
             <div class="w-12 h-12 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mb-5">
               <i data-lucide="smartphone" class="w-6 h-6"></i>
             </div>
@@ -443,7 +368,7 @@
     </section>
 
     <!-- ABOUT SECTION -->
-    <section id="about" class="py-24 bg-slate-900 relative">
+    <section id="about" class="py-16 md:py-24 bg-slate-900 relative">
       <div class="max-w-[1600px] mx-auto px-8">
         <div class="grid lg:grid-cols-2 gap-16 items-center">
           <div>
@@ -464,7 +389,7 @@
               </div>
               <div class="w-px h-10 bg-slate-800"></div>
               <div class="text-left">
-                <span class="block text-3xl font-extrabold text-emerald-400">Mauritius</span>
+                <span class="block text-3xl font-extrabold text-amber-400">Mauritius</span>
                 <span class="text-xs uppercase text-slate-500 tracking-wider">Connecting Local Islandwide</span>
               </div>
             </div>
@@ -474,7 +399,7 @@
             <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80" alt="Active community lifestyle in Mauritius" class="w-full h-96 object-cover group-hover:scale-105 transition duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
             <div class="absolute bottom-8 left-8 right-8">
-              <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest block mb-1.5">Our Mission</span>
+              <span class="text-xs font-semibold text-amber-400 uppercase tracking-widest block mb-1.5">Our Mission</span>
               <h3 class="text-xl font-bold text-white mb-2">Helping People Stay Active and Connected</h3>
               <p class="text-sm text-slate-200 leading-relaxed">
                 We want to make it easier for everyone in Mauritius to find the right coach, build healthier habits, and support local sports and wellness professionals.
@@ -499,7 +424,7 @@
   <div id="coach-profile-placeholder"></div>
 
   <!-- MODAL "APPLY AS A COACH" (Dual Register & Login Tabs) -->
-  <div id="coach-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden">
+  <div id="coach-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl p-8 relative my-auto shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
       
       <!-- Modal Header -->
@@ -508,54 +433,54 @@
           <h2 id="modal-title" class="text-2xl font-bold text-white">Join the Community</h2>
           <p id="modal-subtitle" class="text-sm text-slate-400 mt-0.5">Create your account and start connecting with coaches</p>
         </div>
-        <button id="close-modal-btn" class="text-slate-400 hover:text-white transition focus:outline-none flex-shrink-0">
+        <button id="close-modal-btn" class="text-slate-400 hover:text-white transition focus:outline-none flex-shrink-0" aria-label="Close modal">
           <i data-lucide="x" class="w-6 h-6"></i>
         </button>
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex border-b border-slate-800 mb-6">
-        <button id="tab-register-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-teal-500 text-white transition focus:outline-none">Register</button>
-        <button id="tab-login-btn" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-transparent text-slate-400 hover:text-white transition focus:outline-none">Login</button>
+      <div class="flex border-b border-slate-800 mb-6" role="tablist">
+        <button id="tab-register-btn" role="tab" aria-selected="true" aria-controls="register-form" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-teal-500 text-white transition focus:outline-none">Register</button>
+        <button id="tab-login-btn" role="tab" aria-selected="false" aria-controls="login-form" class="flex-1 py-3 text-center font-bold text-base border-b-2 border-transparent text-slate-400 hover:text-white transition focus:outline-none">Login</button>
       </div>
 
       <!-- Registration Form -->
-      <form id="register-form" novalidate class="flex flex-col gap-5 text-left">
+      <form id="register-form" novalidate class="flex flex-col gap-5 text-left" role="tabpanel" aria-labelledby="tab-register-btn">
 
         <!-- Username -->
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username (Pseudo) *</label>
-          <input type="text" id="reg-nickname" placeholder="ex: pseudo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="text" id="reg-nickname" placeholder="ex: pseudo" required autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <!-- First Name -->
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name</label>
-          <input type="text" id="reg-firstname" placeholder="ex: yourname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="text" id="reg-firstname" placeholder="ex: yourname" autocomplete="given-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <!-- Last Name -->
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name</label>
-          <input type="text" id="reg-lastname" placeholder="ex: yourlastname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="text" id="reg-lastname" placeholder="ex: yourlastname" autocomplete="family-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <!-- Email -->
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Email Address *</label>
-          <input type="email" id="reg-email" placeholder="ex: @example.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="email" id="reg-email" placeholder="ex: @example.com" required autocomplete="email" inputmode="email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <!-- Password -->
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
-          <input type="password" id="reg-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="password" id="reg-password" placeholder="••••••••••••" required autocomplete="new-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <!-- Confirm Password -->
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Confirm Password *</label>
-          <input type="password" id="reg-confirm-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="password" id="reg-confirm-password" placeholder="••••••••••••" required autocomplete="new-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <!-- Profile Picture (optional, single) -->
@@ -573,15 +498,15 @@
       </form>
 
       <!-- Connexion / Login Form (Fully translated into English with Placeholders) -->
-      <form id="login-form" class="hidden flex flex-col gap-5 text-left">
+      <form id="login-form" class="hidden flex flex-col gap-5 text-left" role="tabpanel" aria-labelledby="tab-login-btn">
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username or Email *</label>
-          <input type="text" id="login-identity" placeholder="ex: pseudo or yourname@email.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="text" id="login-identity" placeholder="ex: pseudo or yourname@email.com" required autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
-          <input type="password" id="login-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="password" id="login-password" placeholder="••••••••••••" required autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
 
         <!-- Error Container -->
@@ -662,6 +587,11 @@
           if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
           return;
         }
+        if (container.id === 'coach-carousel') {
+          var w = window.innerWidth;
+          var perRow = w < 640 ? 1 : w < 1024 ? 2 : w < 1280 ? 3 : 4;
+          coaches = coaches.slice(0, perRow * 2);
+        }
         container.innerHTML = coaches.map(function(c) {
           var name = (c.firstName || '') + ' ' + (c.lastName || '');
           name = name.trim() || c.username;
@@ -671,7 +601,7 @@
           var price = c.price || '—';
           var avatar = c.avatar || 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80';
           var tags = (c.tags || []).join(' ');
-          return '<div data-coach-id="' + c.username + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.bio||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-64 object-cover" loading="lazy"><span class="absolute top-3 right-3 bg-teal-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow"><i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span></span></div><div class="p-8 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><h3 class="text-xl font-bold text-white">' + name + '</h3><span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Certified</span></div></div><p class="text-sm text-emerald-400 font-semibold mb-3">' + disc + '</p><p class="text-sm text-slate-400 leading-relaxed mb-4">' + bio + '</p></div></div><div class="px-8 pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40"><span class="text-xl font-black text-white">Rs ' + price + '<span class="text-sm text-white font-normal"> per session</span></span><button onclick="ChatApp.open(\'' + c.username + '\')" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button></div></div>';
+          return '<div data-coach-id="' + c.username + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.bio||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-48 sm:h-64 object-cover" loading="lazy"><span class="absolute top-3 right-3 bg-teal-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow"><i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span></span></div><div class="p-5 md:p-8 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><h3 class="text-xl font-bold text-white">' + name + '</h3><span class="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Certified</span></div></div><p class="text-sm text-amber-400 font-semibold mb-3">' + disc + '</p><p class="text-sm text-slate-400 leading-relaxed mb-4">' + bio + '</p></div></div><div class="px-5 md:px-8 pb-5 md:pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40"><span class="text-xl font-black text-white">Rs ' + price + '<span class="text-sm text-white font-normal"> per session</span></span><button onclick="ChatApp.open(\'' + c.username + '\')" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button></div></div>';
         }).join('');
         if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
       });

@@ -38,10 +38,10 @@
 
     <!-- Coaches Tab -->
     <div id="admin-coaches-tab" class="admin-tab-content">
-      <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-md">
+      <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-4 sm:p-6 backdrop-blur-md">
         <h2 class="text-xl font-extrabold text-white mb-4">Coach Management</h2>
         <div class="overflow-x-auto">
-          <table class="w-full text-sm">
+          <table class="w-full text-sm min-w-[700px]">
             <thead>
               <tr class="text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
                 <th class="text-left py-3 px-2">Name</th>
@@ -64,10 +64,10 @@
 
     <!-- Customers Tab -->
     <div id="admin-customers-tab" class="admin-tab-content hidden">
-      <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-md">
+      <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-4 sm:p-6 backdrop-blur-md">
         <h2 class="text-xl font-extrabold text-white mb-4">Customer Management</h2>
         <div class="overflow-x-auto">
-          <table class="w-full text-sm">
+          <table class="w-full text-sm min-w-[700px]">
             <thead>
               <tr class="text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
                 <th class="text-left py-3 px-2">Username</th>
@@ -182,13 +182,13 @@
                 <input type="checkbox" ${isVetted ? 'checked' : ''} onchange="AdminApp.toggleCoachFlag('${c.username}', 'is_vetted', this.checked)" class="w-4 h-4 rounded accent-teal-600">
               </td>
               <td class="py-3 px-2 text-center">
-                <input type="checkbox" ${isCertified ? 'checked' : ''} onchange="AdminApp.toggleCoachFlag('${c.username}', 'is_certified', this.checked)" class="w-4 h-4 rounded accent-emerald-600">
+                <input type="checkbox" ${isCertified ? 'checked' : ''} onchange="AdminApp.toggleCoachFlag('${c.username}', 'is_certified', this.checked)" class="w-4 h-4 rounded accent-amber-600">
               </td>
               <td class="py-3 px-2 text-center">
-                <button onclick="AdminApp.toggleCoachFlag('${c.username}', 'is_blocked')" class="px-3 py-1 rounded-lg text-xs font-bold ${isBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${isBlocked ? 'Blocked' : 'Active'}</button>
+                <button onclick="AdminApp.toggleCoachFlag('${c.username}', 'is_blocked')" class="px-4 py-2 rounded-lg text-xs font-bold ${isBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${isBlocked ? 'Blocked' : 'Active'}</button>
               </td>
               <td class="py-3 px-2 text-center">
-                <button onclick="AdminApp.toggleCoachFlag('${c.username}', 'messaging_blocked')" class="px-3 py-1 rounded-lg text-xs font-bold ${msgBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${msgBlocked ? 'Blocked' : 'Active'}</button>
+                <button onclick="AdminApp.toggleCoachFlag('${c.username}', 'messaging_blocked')" class="px-4 py-2 rounded-lg text-xs font-bold ${msgBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${msgBlocked ? 'Blocked' : 'Active'}</button>
               </td>
               <td class="py-3 px-2 text-center">
                 <button onclick="AdminApp.removeCoachPhotos('${c.username}')" class="text-xs text-red-400 hover:text-red-300 font-semibold">Remove Photos</button>
@@ -245,10 +245,10 @@
               <td class="py-3 px-2 text-white font-semibold">${this._esc(u.username)}</td>
               <td class="py-3 px-2 text-slate-300">${this._esc(u.email)}</td>
               <td class="py-3 px-2 text-center">
-                <button onclick="AdminApp.toggleCustomerFlag('${u.username}', 'is_blocked')" class="px-3 py-1 rounded-lg text-xs font-bold ${isBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${isBlocked ? 'Blocked' : 'Active'}</button>
+                <button onclick="AdminApp.toggleCustomerFlag('${u.username}', 'is_blocked')" class="px-4 py-2 rounded-lg text-xs font-bold ${isBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${isBlocked ? 'Blocked' : 'Active'}</button>
               </td>
               <td class="py-3 px-2 text-center">
-                <button onclick="AdminApp.toggleCustomerFlag('${u.username}', 'messaging_blocked')" class="px-3 py-1 rounded-lg text-xs font-bold ${msgBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${msgBlocked ? 'Blocked' : 'Active'}</button>
+                <button onclick="AdminApp.toggleCustomerFlag('${u.username}', 'messaging_blocked')" class="px-4 py-2 rounded-lg text-xs font-bold ${msgBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${msgBlocked ? 'Blocked' : 'Active'}</button>
               </td>
             </tr>
           `;
@@ -304,7 +304,7 @@
                         <p class="text-xs text-slate-500">${msg.senderId === 'user' ? 'Customer' : this._esc(coachName)} <span class="text-slate-600">· ${new Date(msg.timestamp).toLocaleString()}</span></p>
                         <p class="text-sm text-slate-200 mt-0.5">${this._esc(msg.text)}</p>
                       </div>
-                      <button onclick="AdminApp.deleteMessage('${conv.id}', '${msg.id}')" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 p-1 transition flex-shrink-0" title="Delete message">
+                      <button onclick="AdminApp.deleteMessage('${conv.id}', '${msg.id}')" class="opacity-100 sm:opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 p-1 transition flex-shrink-0" title="Delete message">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                       </button>
                     </div>
@@ -347,7 +347,7 @@
 
       showToast(msg, type) {
         const toast = document.createElement('div');
-        toast.className = `fixed bottom-6 right-6 z-50 ${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg flex items-center space-x-2`;
+        toast.className = `fixed bottom-6 right-6 z-50 ${type === 'success' ? 'bg-amber-600' : 'bg-red-600'} text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg flex items-center space-x-2`;
         toast.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i><span>${msg}</span>`;
         document.body.appendChild(toast);
         if (window.lucide) lucide.createIcons();

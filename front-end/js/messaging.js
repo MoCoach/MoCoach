@@ -1,3 +1,4 @@
+"use strict";
 const ChatApp = {
   currentUser: { id: 'user', name: 'You' },
   conversations: [],
@@ -16,7 +17,26 @@ const ChatApp = {
     this.renderConversations();
     this.renderChat(null);
     this.updateMobileView();
+    this._setupKeyboardHandler();
     window.addEventListener('resize', () => this.updateMobileView());
+  },
+
+  _setupKeyboardHandler() {
+    if (!window.visualViewport) return;
+    const panel = document.querySelector('.messaging-panel');
+    if (!panel) return;
+    const onViewportChange = () => {
+      const diff = window.innerHeight - window.visualViewport.height;
+      if (diff > 100) {
+        panel.style.height = window.visualViewport.height + 'px';
+        panel.style.bottom = '0';
+      } else {
+        panel.style.height = '';
+        panel.style.bottom = '';
+      }
+    };
+    window.visualViewport.addEventListener('resize', onViewportChange);
+    window.visualViewport.addEventListener('scroll', onViewportChange);
   },
 
   _syncCurrentUser() {
@@ -334,7 +354,7 @@ const ChatApp = {
         </div>
         <div class="min-w-0">
           <p class="text-sm font-semibold text-white truncate">${this._esc(conv.coach.name)}</p>
-          <p class="text-[10px] text-emerald-400 truncate">${this._esc(conv.coach.discipline)}</p>
+          <p class="text-[10px] text-amber-400 truncate">${this._esc(conv.coach.discipline)}</p>
         </div>
       `;
     }

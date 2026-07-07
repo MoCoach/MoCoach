@@ -1,3 +1,4 @@
+"use strict";
 async function loadComponent(id, url) {
     const element = document.getElementById(id);
     if (element) {
@@ -8,6 +9,7 @@ async function loadComponent(id, url) {
             if (window.lucide) lucide.createIcons();
             if (id === 'header-placeholder') {
                 updateHeaderProfilePic();
+                initMobileMenu();
             }
         } catch (error) {
             console.error('Component loading error:', error);
@@ -261,6 +263,46 @@ function updateHeaderProfilePic() {
 }
 window.updateHeaderProfilePic = updateHeaderProfilePic;
 
+function initMobileMenu() {
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const icon = btn?.querySelector('i[data-lucide]');
+    if (!btn || !menu) return;
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = !menu.classList.contains('hidden');
+        menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+        if (icon) {
+            icon.setAttribute('data-lucide', isOpen ? 'menu' : 'x');
+            if (window.lucide) lucide.createIcons();
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && !btn.contains(e.target)) {
+            menu.classList.add('hidden');
+            btn.setAttribute('aria-expanded', 'false');
+            if (icon) {
+                icon.setAttribute('data-lucide', 'menu');
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+    });
+
+    menu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            menu.classList.add('hidden');
+            btn.setAttribute('aria-expanded', 'false');
+            if (icon) {
+                icon.setAttribute('data-lucide', 'menu');
+                if (window.lucide) lucide.createIcons();
+            }
+        });
+    });
+}
+
 function switchModalTab(tab) {
     const registerForm = document.getElementById('register-form');
     const loginForm = document.getElementById('login-form');
@@ -280,6 +322,8 @@ function switchModalTab(tab) {
         regTabBtn.classList.remove('border-transparent', 'text-slate-400');
         loginTabBtn.classList.remove('border-teal-500', 'text-white');
         loginTabBtn.classList.add('border-transparent', 'text-slate-400');
+        regTabBtn.setAttribute('aria-selected', 'true');
+        loginTabBtn.setAttribute('aria-selected', 'false');
         if (modalTitle) modalTitle.innerHTML = '<span class="flex items-center gap-2"><span class="text-amber-400">✨</span> Join the Community</span>';
         if (modalSubtitle) modalSubtitle.textContent = 'Create your account and start connecting with coaches';
     } else {
@@ -289,6 +333,8 @@ function switchModalTab(tab) {
         loginTabBtn.classList.remove('border-transparent', 'text-slate-400');
         regTabBtn.classList.remove('border-teal-500', 'text-white');
         regTabBtn.classList.add('border-transparent', 'text-slate-400');
+        loginTabBtn.setAttribute('aria-selected', 'true');
+        regTabBtn.setAttribute('aria-selected', 'false');
         if (modalTitle) modalTitle.textContent = 'Login';
         if (modalSubtitle) modalSubtitle.textContent = 'Welcome back — log in to connect with your coaches';
     }
@@ -526,9 +572,15 @@ const runAppInit = () => {
         if (btn) {
             e.preventDefault();
             e.stopPropagation();
-            if (dropdown) dropdown.classList.toggle('hidden');
+            if (dropdown) {
+                var isOpen = !dropdown.classList.contains('hidden');
+                dropdown.classList.toggle('hidden');
+                btn.setAttribute('aria-expanded', !isOpen);
+            }
         } else if (dropdown && !e.target.closest('#profile-dropdown')) {
             dropdown.classList.add('hidden');
+            var pb = document.getElementById('profile-btn');
+            if (pb) pb.setAttribute('aria-expanded', 'false');
         }
     });
 
@@ -563,14 +615,17 @@ const runAppInit = () => {
             document.querySelectorAll('.role-toggle-btn').forEach(function(b) {
                 var c = b.querySelector('[data-lucide="chevron-down"]');
                 if (c && c !== chevron) c.style.transform = '';
+                b.setAttribute('aria-expanded', 'false');
             });
 
             if (isOpen) {
                 menu.classList.add('hidden');
                 if (chevron) chevron.style.transform = '';
+                toggle.setAttribute('aria-expanded', 'false');
             } else {
                 menu.classList.remove('hidden');
                 if (chevron) chevron.style.transform = 'rotate(180deg)';
+                toggle.setAttribute('aria-expanded', 'true');
             }
         }
     });
@@ -586,6 +641,7 @@ const runAppInit = () => {
         document.querySelectorAll('.role-toggle-btn').forEach(function(b) {
             var c = b.querySelector('[data-lucide="chevron-down"]');
             if (c) c.style.transform = '';
+            b.setAttribute('aria-expanded', 'false');
         });
 
         if (action === 'explore') {
@@ -606,6 +662,7 @@ const runAppInit = () => {
             document.querySelectorAll('.role-toggle-btn').forEach(function(b) {
                 var c = b.querySelector('[data-lucide="chevron-down"]');
                 if (c) c.style.transform = '';
+                b.setAttribute('aria-expanded', 'false');
             });
         }
     });

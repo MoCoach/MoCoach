@@ -1,3 +1,4 @@
+"use strict";
 const USER_PROFILE_DATA = {
   username: 'username',
   firstName: '',

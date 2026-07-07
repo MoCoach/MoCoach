@@ -11,7 +11,7 @@
     </a>
 
     <!-- Header -->
-    <div id="cp-header-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
+    <div id="cp-header-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-5 md:p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
       <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-44 h-44 text-teal-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <path d="M 15 25 L 25 35 M 25 25 L 15 35" />
         <path d="M 45 15 L 55 25 M 55 15 L 45 25" />
@@ -38,7 +38,7 @@
         <!-- Info -->
         <div class="text-center md:text-left flex-1 min-w-0">
           <h1 id="cp-name" class="text-2xl md:text-3xl font-extrabold text-white"></h1>
-          <p id="cp-discipline" class="text-emerald-400 font-semibold text-lg mt-1"></p>
+          <p id="cp-discipline" class="text-amber-400 font-semibold text-lg mt-1"></p>
           <span id="cp-price-view" class="text-xl font-black text-white mt-1 block"></span>
           <div id="cp-price-edit-wrapper" class="hidden mt-1">
             <label class="block text-xs font-semibold text-slate-400 mb-1">Price per session (Rs) <span class="text-red-400">*</span></label>
@@ -90,7 +90,7 @@
           <button id="cp-edit-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold px-6 py-2.5 rounded-xl transition hidden">
             <i data-lucide="edit-3" class="w-4 h-4 inline mr-1.5"></i>Edit Profile
           </button>
-          <button id="cp-save-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition hidden">
+          <button id="cp-save-btn" class="bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition hidden">
             <i data-lucide="save" class="w-4 h-4 inline mr-1.5"></i>Save
           </button>
           <button id="cp-cancel-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold px-6 py-2.5 rounded-xl transition hidden">
@@ -101,8 +101,8 @@
     </div>
 
     <!-- Description & Tags -->
-    <div id="cp-info-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
-      <svg class="absolute right-6 bottom-6 w-36 h-36 text-emerald-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+    <div id="cp-info-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-5 md:p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
+      <svg class="absolute right-6 bottom-6 w-36 h-36 text-amber-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <path d="M 10 80 A 70 70 0 0 1 80 10" stroke-dasharray="3,3" />
         <path d="M 75 15 L 85 25 M 85 15 L 75 25" />
         <circle cx="45" cy="45" r="12" />
@@ -143,7 +143,7 @@
     </div>
 
     <!-- Gallery -->
-    <div id="cp-gallery-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
+    <div id="cp-gallery-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-5 md:p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
       <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-36 h-36 text-teal-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <line x1="10" y1="10" x2="90" y2="10" stroke-dasharray="2,2" />
         <line x1="10" y1="50" x2="90" y2="50" />
@@ -175,13 +175,13 @@
     </div>
 
     <!-- Ratings -->
-    <div id="cp-ratings-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
+    <div id="cp-ratings-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-5 md:p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
       <div id="cp-ratings" class="relative z-10">
       </div>
     </div>
 
     <!-- Badges -->
-    <div id="cp-badges-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
+    <div id="cp-badges-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-5 md:p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
       <svg class="absolute right-6 bottom-6 w-36 h-36 text-purple-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <path d="M 10 90 L 10 10 L 90 90 Z" />
         <line x1="10" y1="50" x2="50" y2="50" stroke-dasharray="2,2" />
@@ -191,7 +191,7 @@
       </svg>
 
       <div class="flex items-center space-x-3 mb-6 relative z-10">
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
           <i data-lucide="award" class="w-5 h-5"></i>
         </div>
         <div>
