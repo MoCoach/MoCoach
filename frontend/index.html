@@ -213,16 +213,17 @@
           </div>
           
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
-            <div class="relative w-full sm:w-80">
-              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500">
-                <i data-lucide="search" class="w-5 h-5"></i>
+            <div class="relative w-full sm:w-80 group">
+              <div class="absolute inset-0 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 pointer-events-none shadow-2xl shadow-teal-500/5 transition-all duration-300 group-focus-within:border-teal-400/50 group-focus-within:bg-white/10"></div>
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                <i data-lucide="search" class="w-5 h-5 text-teal-400"></i>
               </div>
-              <input 
+              <input
                 id="search-input"
-                type="text" 
-                placeholder="Search coach, discipline..." 
+                type="text"
+                placeholder="Search by coach, discipline, location..."
                 aria-label="Search coaches"
-                class="w-full rounded-xl border border-slate-800 bg-slate-900 py-3 pl-11 pr-4 text-base text-slate-200 placeholder-slate-500 focus:border-teal-500 focus:outline-none transition-colors"
+                class="relative w-full bg-transparent py-3 pl-11 pr-4 text-base text-white placeholder-white/40 focus:outline-none rounded-xl"
               >
             </div>
             <button id="see-all-coaches" onclick="location.href='all-coaches.html'" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap">
@@ -566,7 +567,8 @@
           var tags = (c.tags || []).map(function(t) { return t.name; }).join(' ');
           var showVetted = c.is_vetted || false;
           var showCert = c.is_certified || false;
-           return '<div data-coach-id="' + c.id + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.description||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-24 object-cover" loading="lazy" onerror="fallbackImg(this)">' + (showVetted ? '<span class="absolute bottom-2 right-2 bg-teal-600 text-white font-extrabold text-[8px] tracking-widest px-1.5 py-0.5 rounded-md flex items-center space-x-0.5 shadow"><i data-lucide="check" class="w-2 h-2"></i><span>VERIFIED</span></span>' : '') + '</div><div class="p-3 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-1"><h3 class="text-[11px] sm:text-xs font-bold text-white truncate">' + name + '</h3>' + (showCert ? '<span class="inline-flex items-center px-1 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[8px] font-bold">Cert</span>' : '') + '</div></div><p class="text-[10px] text-amber-400 font-semibold mb-1">' + disc + '</p><p class="text-[10px] text-slate-400 leading-relaxed mb-1.5 line-clamp-2">' + bio + '</p></div></div><div class="px-3 pb-3 pt-2 border-t border-slate-900 flex items-center justify-between bg-slate-950/40 gap-1"><span class="text-[11px] sm:text-xs font-black text-white">Rs ' + price + '</span><button onclick="ChatApp.open(' + c.id + ')" class="bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold px-2 py-1.5 rounded-xl transition shrink-0">Contact</button></div></div>';
+          var contactBtn = '<button onclick="ChatApp.open(' + c.id + ')" class="bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold px-2 py-1.5 rounded-xl transition shrink-0">Contact</button>';
+           return '<div data-coach-id="' + c.id + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.description||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-24 object-cover" loading="lazy" onerror="fallbackImg(this)">' + (showVetted ? '<span class="absolute bottom-2 right-2 bg-teal-600 text-white font-extrabold text-[8px] tracking-widest px-1.5 py-0.5 rounded-md flex items-center space-x-0.5 shadow"><i data-lucide="check" class="w-2 h-2"></i><span>VERIFIED</span></span>' : '') + '</div><div class="p-3 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-1"><h3 class="text-[11px] sm:text-xs font-bold text-white truncate">' + name + '</h3>' + (showCert ? '<span class="inline-flex items-center px-1 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[8px] font-bold">Cert</span>' : '') + '</div></div><p class="text-[10px] text-amber-400 font-semibold mb-1">' + disc + '</p><p class="text-[10px] text-slate-400 leading-relaxed mb-1.5 line-clamp-2">' + bio + '</p></div></div><div class="px-3 pb-3 pt-2 border-t border-slate-900 flex items-center justify-between bg-slate-950/40 gap-1"><span class="text-[11px] sm:text-xs font-black text-white">Rs ' + price + '</span>' + contactBtn + '</div></div>';
         }).join('');
         if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
       });

@@ -76,7 +76,7 @@ const ChatApp = {
       otherPerson: other,
       messages: [],
       unread: 0,
-      lastActivity: null,
+      lastActivity: chat.last_message_time,
       _fetched: false,
     };
   },
@@ -143,9 +143,16 @@ const ChatApp = {
       if (conv) {
         this.selectConversation(conv.id);
       } else {
+        const coachRes = await api.getCoach(parsedId);
+        const coachName = coachRes.success
+          ? `${coachRes.data.first_name || ''} ${coachRes.data.last_name || ''}`.trim() || coachRes.data.username || 'Coach'
+          : 'Coach';
+        const coachTags = coachRes.success
+          ? (coachRes.data.tags || []).map(t => t.name || t)
+          : [];
         const placeholderConv = {
           id: 'pending-' + parsedId,
-          otherPerson: { id: parsedId, name: 'Coach' },
+          otherPerson: { id: parsedId, name: coachName, tags: coachTags },
           messages: [],
           unread: 0,
           lastActivity: null,
@@ -335,6 +342,9 @@ const ChatApp = {
         </div>
         <div class="min-w-0">
           <p class="text-sm font-semibold text-white truncate">${this._esc(conv.otherPerson.name)}</p>
+          ${conv.otherPerson.tags && conv.otherPerson.tags.length > 0
+            ? `<p class="text-[10px] text-teal-400 truncate">${this._esc(conv.otherPerson.tags.join(', '))}</p>`
+            : ''}
         </div>
       `;
     }

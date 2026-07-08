@@ -100,7 +100,7 @@ const ProfileApp = {
     if (!el) return;
     const d = this.data;
 
-    const avatarUrl = d.profile_pic || 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop';
+    const avatarUrl = d.profile_pic || this._initialsAvatar(d.first_name, d.last_name, d.username);
 
     el.innerHTML = `
       <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
@@ -341,6 +341,15 @@ const ProfileApp = {
       e.preventDefault();
       if (window.showMainView) window.showMainView();
     });
+  },
+
+  _initialsAvatar(firstName, lastName, username) {
+    const initial = ((firstName || username || '?')[0] || '?').toUpperCase();
+    const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#8b5cf6', '#ec4899'];
+    let bg = colors[(initial.charCodeAt(0) - 65) % colors.length];
+    if (!bg) bg = colors[0];
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="${bg}" width="100" height="100" rx="50"/><text x="50" y="50" dominant-baseline="central" text-anchor="middle" fill="white" font-size="48" font-weight="bold" font-family="sans-serif">${initial}</text></svg>`;
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
   },
 
   _esc(text) {

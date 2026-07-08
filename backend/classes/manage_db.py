@@ -22,7 +22,7 @@ from backend.classes.user_badge import UserBadge
 from backend.classes.coach_rating import CoachRating
 
 
-DEFAULT_PIC = "backend/static/uploads/profile_pics/default/profile.jpg"
+DEFAULT_PIC = "static/uploads/profile_pics/default/profile.jpg"
 
 
 class DbError(Exception):
@@ -86,6 +86,14 @@ class Db_Management:
     )
 
     @staticmethod
+    def _cache_bust(url, filepath):
+        try:
+            mtime = int(os.path.getmtime(filepath))
+            return f"{url}?t={mtime}"
+        except OSError:
+            return url
+
+    @staticmethod
     def save_profile_picture(user_id, image_bytes):
         """Validate, resize and save a profile picture.
 
@@ -113,7 +121,8 @@ class Db_Management:
         dest_path = os.path.join(dest_dir, "profile.jpg")
         img.save(dest_path, "JPEG", quality=85)
 
-        return f"static/uploads/profile_pics/{user_id}/profile.jpg"
+        url = f"static/uploads/profile_pics/{user_id}/profile.jpg"
+        return Db_Management._cache_bust(url, dest_path)
 
     @staticmethod
     def remove_profile_picture(user_id):
@@ -128,7 +137,7 @@ class Db_Management:
         """Return the relative URL to the user's profile picture, or ``None``."""
         candidate = f"static/uploads/profile_pics/{user_id}/profile.jpg"
         full = os.path.join(Db_Management.UPLOAD_BASE, str(user_id), "profile.jpg")
-        return candidate if os.path.isfile(full) else None
+        return Db_Management._cache_bust(candidate, full) if os.path.isfile(full) else None
 
     COACH_PICS_BASE = os.path.join(
         os.path.dirname(__file__), '..', 'static', 'uploads', 'coach_pics'
@@ -152,7 +161,8 @@ class Db_Management:
         os.makedirs(dest_dir, exist_ok=True)
         dest_path = os.path.join(dest_dir, filename)
         img.save(dest_path, "JPEG", quality=85)
-        return f"static/uploads/coach_pics/{os.path.basename(dest_dir)}/{filename}"
+        url = f"static/uploads/coach_pics/{os.path.basename(dest_dir)}/{filename}"
+        return Db_Management._cache_bust(url, dest_path)
 
     @staticmethod
     def save_coach_picture(user_id, numero, image_bytes):
@@ -187,7 +197,8 @@ class Db_Management:
         for i in range(1, 8):
             full = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id), f"{i}.jpg")
             if os.path.isfile(full):
-                paths.append(f"static/uploads/coach_pics/{user_id}/{i}.jpg")
+                url = f"static/uploads/coach_pics/{user_id}/{i}.jpg"
+                paths.append(Db_Management._cache_bust(url, full))
         return paths
 
     # ------------------------------------------------------------------
@@ -409,14 +420,20 @@ class Db_Management:
         }
         return d
 
-    def get_coach(self, coach_id):
+    def get_coach(self, coach_id, current_user_id=None):
         """Return public coach details by coach id."""
         session = self._session()
         try:
             coach = session.query(Coach).filter_by(id=coach_id).first()
             if not coach:
                 raise DbError("Coach not found", 404)
-            return self._coach_to_dict(coach)
+            d = self._coach_to_dict(coach)
+            if current_user_id:
+                rating = session.query(CoachRating).filter_by(
+                    coach_id=coach_id, customer_id=current_user_id
+                ).first()
+                d["my_vote"] = rating.rating if rating else None
+            return d
         finally:
             session.close()
 
@@ -585,9 +602,20 @@ class Db_Management:
         """
         session = self._session()
         try:
+            from sqlalchemy import func
+
             chats = session.query(Chat).filter(
                 (Chat.id_coach == user_id) | (Chat.id_cust == user_id)
             ).all()
+
+            chat_ids = [c.id for c in chats]
+            max_ts_map = {}
+            if chat_ids:
+                rows = session.query(
+                    Message.chat_id,
+                    func.max(Message.timestamp).label('last_ts')
+                ).filter(Message.chat_id.in_(chat_ids)).group_by(Message.chat_id).all()
+                max_ts_map = {r.chat_id: r.last_ts for r in rows}
 
             result = []
             for chat in chats:
@@ -601,6 +629,7 @@ class Db_Management:
                     "id": chat.id,
                     "coach": {"id": coach.id, "username": coach.username, "first_name": coach.first_name, "last_name": coach.last_name},
                     "customer": {"id": customer.id, "username": customer.username, "first_name": customer.first_name, "last_name": customer.last_name},
+                    "last_message_time": max_ts_map.get(chat.id),
                 })
             return result
         finally:
@@ -683,6 +712,7 @@ class Db_Management:
                     continue
 
                 entry = {
+                    "id": msg.id,
                     "sender": {
                         "id": msg.sender_id,
                         **senders.get(msg.sender_id, {"first_name": None, "last_name": None, "username": None}),
@@ -1175,6 +1205,10 @@ class Db_Management:
                 target.is_blocked = bool(data["is_blocked"])
             if "is_messaging_blocked" in data:
                 target.is_messaging_blocked = bool(data["is_messaging_blocked"])
+            if "email_blocked" in data:
+                target.email_blocked = bool(data["email_blocked"])
+            if "ip_blocked" in data:
+                target.ip_blocked = bool(data["ip_blocked"])
             session.commit()
             return target.to_dict()
         except DbError:

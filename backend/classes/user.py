@@ -36,12 +36,15 @@ class User(Base):
     is_messaging_blocked = Column(Boolean, nullable=False, default=False)
     is_vetted  = Column(Boolean,     nullable=False, default=False)
     is_certified = Column(Boolean,   nullable=False, default=False)
+    email_blocked = Column(Boolean,  nullable=False, default=False)
+    ip_blocked    = Column(Boolean,  nullable=False, default=False)
+    ip_address    = Column(String(45), nullable=True)
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
     def __init__(self, username, email, pwd, is_coach=False, description=None,
                  tags=None, phone=None, is_admin=False, first_name=None,
-                 last_name=None, city_id=None, price=None):
+                 last_name=None, city_id=None, price=None, ip_address=None):
         """Generates a new user profile.
 
         :param username: unique login identifier
@@ -99,6 +102,7 @@ class User(Base):
         self.is_coach = is_coach
         self.phone    = phone
         self.is_admin = is_admin
+        self.ip_address = ip_address
 
         if is_coach:
             if city_id is None:
@@ -204,7 +208,8 @@ class User(Base):
             'profile_pics', str(self.id), 'profile.jpg'
         )
         if os.path.isfile(path):
-            return f"static/uploads/profile_pics/{self.id}/profile.jpg"
+            mtime = int(os.path.getmtime(path))
+            return f"static/uploads/profile_pics/{self.id}/profile.jpg?t={mtime}"
         return None
 
     def to_dict(self):
@@ -222,6 +227,9 @@ class User(Base):
             "is_messaging_blocked": self.is_messaging_blocked,
             "is_vetted": self.is_vetted,
             "is_certified": self.is_certified,
+            "email_blocked": self.email_blocked,
+            "ip_blocked": self.ip_blocked,
+            "ip_address": self.ip_address,
         }
         if self.coach:
             d["coach"] = self.coach.to_dict()

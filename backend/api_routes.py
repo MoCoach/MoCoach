@@ -293,10 +293,12 @@ def register_routes(app, db):
     # ------------------------------------------------------------------
 
     @app.get("/api/v1/coach/<int:coach_id>")
+    @jwt_required(optional=True)
     def get_coach(coach_id):
         """Return public details for a specific coach."""
         try:
-            return jsonify(db.get_coach(coach_id)), 200
+            current_id = get_jwt_identity()
+            return jsonify(db.get_coach(coach_id, current_id)), 200
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 

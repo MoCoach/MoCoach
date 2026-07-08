@@ -1,9 +1,9 @@
 "use strict";
 const BADGE_CATEGORIES = [
-  { key: 'technical_coach', label: 'Technical Coach', icon: 'book-open', desc: 'Deep expertise in their discipline' },
-  { key: 'flexibility_adaptability', label: 'Flexibility & Adaptability', icon: 'shuffle', desc: 'Adjusts sessions to individual needs' },
-  { key: 'motivator', label: 'Motivator', icon: 'heart', desc: 'Inspires and pushes clients to excel' },
-  { key: 'champion_builder', label: 'Champion Builder', icon: 'trophy', desc: 'Helps clients achieve real results' },
+  { key: 'technical_coach', label: 'Technical Coach', image: 'assets/img/badges/technical-coach.png', desc: 'Deep expertise in their discipline' },
+  { key: 'flexibility_adaptability', label: 'Flexibility & Adaptability', image: 'assets/img/badges/flexibility-adaptability.png', desc: 'Adjusts sessions to individual needs' },
+  { key: 'motivator', label: 'Motivator', image: 'assets/img/badges/motivator.png', desc: 'Inspires and pushes clients to excel' },
+  { key: 'champion_builder', label: 'Champion Builder', image: 'assets/img/badges/champion-builder.png', desc: 'Helps clients achieve real results' },
 ];
 
 const BADGE_NAMES = {
@@ -137,6 +137,7 @@ const CoachProfileApp = {
       gallery: galleryItems,
       thumbsUp: d.thumbs_up || 0,
       thumbsDown: d.thumbs_down || 0,
+      my_vote: d.my_vote,
     };
 
     this._coachData = d;
@@ -239,11 +240,7 @@ const CoachProfileApp = {
 
     const contactBtn = document.getElementById('cp-contact-btn');
     if (contactBtn) {
-      if (this.isOwnProfile) {
-        contactBtn.classList.add('hidden');
-      } else {
-        contactBtn.classList.remove('hidden');
-      }
+      contactBtn.classList.toggle('hidden', this.isOwnProfile);
     }
 
     const chatBtn = document.getElementById('cp-chat-btn');
@@ -355,6 +352,8 @@ const CoachProfileApp = {
       const res = await api.uploadCoachPicture(slot, file);
       if (res.success) {
         gallery.push({ type: 'image', src: res.data.picture || '' });
+      } else {
+        this.showToast('Failed to upload gallery photo', 'error');
       }
     }
 
@@ -386,9 +385,10 @@ const CoachProfileApp = {
       } else {
         this.showToast('Failed to update profile photo', 'error');
       }
-      e.target.value = '';
     } catch (err) {
       this.showToast('Failed to read file', 'error');
+    } finally {
+      e.target.value = '';
     }
   },
 
@@ -526,15 +526,18 @@ const CoachProfileApp = {
       const isActive = count > 0;
       const viewerHasVoted = viewerIsCustomer && Array.isArray(givers) && givers.some(g => g.giver_id === user.userId);
       return `
-        <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50 flex flex-col items-center text-center transition ${isActive ? 'badge-active' : 'opacity-50'} ${viewerIsCustomer ? 'cursor-pointer hover:border-amber-500/50 hover:bg-slate-800/80' : ''}"
-             ${viewerIsCustomer ? `onclick="CoachProfileApp.toggleBadge('${cat.key}')"` : ''}>
-          <div class="w-12 h-12 rounded-xl ${isActive ? 'bg-gradient-to-br from-amber-400/20 to-orange-500/20 border-amber-500/30' : 'bg-slate-800/80 border-slate-700/50'} flex items-center justify-center mb-2 border">
-            <i data-lucide="${cat.icon}" class="w-6 h-6 ${isActive ? 'text-amber-400' : 'text-slate-600'}"></i>
+        <div class="bg-slate-800/60 rounded-xl overflow-hidden border border-slate-700/50 flex flex-col transition ${isActive ? 'badge-active' : 'opacity-50'} cursor-pointer hover:border-amber-500/50 hover:bg-slate-800/80"
+             onclick="CoachProfileApp._handleBadgeClick('${cat.key}')">
+          <div class="aspect-[3/4] overflow-hidden">
+            <img src="${cat.image}" alt="${cat.label}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'">
           </div>
-          <p class="text-xs font-bold text-white">${cat.label}</p>
-          <p class="text-[10px] text-slate-400 mt-0.5 leading-tight">${cat.desc}</p>
-          <div class="mt-2 w-7 h-7 rounded-full ${isActive ? 'bg-amber-400/20 text-amber-400' : 'bg-slate-800 text-slate-600'} flex items-center justify-center text-xs font-bold">${count}</div>
-          ${viewerHasVoted ? '<span class="text-[10px] text-amber-400 font-bold mt-1">✓ You awarded this</span>' : ''}
+          <div class="p-2 flex items-center justify-between gap-1">
+            <p class="text-xs font-bold text-white truncate">${cat.label}</p>
+            <div class="flex items-center gap-1 flex-shrink-0">
+              <div class="w-6 h-6 rounded-full ${isActive ? 'bg-amber-400/20 text-amber-400' : 'bg-slate-800 text-slate-600'} flex items-center justify-center text-xs font-bold">${count}</div>
+              ${viewerHasVoted ? '<span class="text-[10px] text-amber-400 font-bold">✓</span>' : ''}
+            </div>
+          </div>
         </div>
       `;
     }).join('');
@@ -587,14 +590,34 @@ const CoachProfileApp = {
     }
     if (!this.currentId) return;
 
-    const body = type === 'up' ? true : (type === 'down' ? false : null);
+    const newVote = type === 'up' ? true : false;
+    const currentVote = this.currentData.my_vote;
+    const body = (currentVote === newVote) ? null : newVote;
+
     const res = await api.rateCoach(this.currentId, body);
     if (res.success) {
       await this._refreshCoachData();
-      this.showToast(type === 'up' ? 'Thumbs up!' : 'Thumbs down', 'success');
+      if (body === null) {
+        this.showToast('Vote removed', 'success');
+      } else {
+        this.showToast(type === 'up' ? 'Thumbs up!' : 'Thumbs down', 'success');
+      }
     } else {
       this.showToast(res.error || 'Failed to rate', 'error');
     }
+  },
+
+  _handleBadgeClick(categoryKey) {
+    const user = this._getAuthUser();
+    if (!user) {
+      this.showToast('Please log in to award badges', 'error');
+      return;
+    }
+    if (user.role !== 'customer') {
+      this.showToast('Only customers can award badges', 'error');
+      return;
+    }
+    this.toggleBadge(categoryKey);
   },
 
   async toggleBadge(categoryKey) {
@@ -627,6 +650,7 @@ const CoachProfileApp = {
     if (res.success) {
       this.currentData.thumbsUp = res.data.thumbs_up || 0;
       this.currentData.thumbsDown = res.data.thumbs_down || 0;
+      this.currentData.my_vote = res.data.my_vote;
       this.renderRatings();
     }
   },
