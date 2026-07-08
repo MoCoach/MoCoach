@@ -1,6 +1,6 @@
 # MoCoach API Documentation
 
-Base URL: `http://localhost:5678`
+Base URL: `http://localhost:5678/api/v1`
 
 ## Authentication
 

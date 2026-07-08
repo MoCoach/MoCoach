@@ -18,12 +18,12 @@ def register_routes(app, db):
     # Availability checks
     # ------------------------------------------------------------------
 
-    @app.get("/check-username/<username>")
+    @app.get("/api/v1/check-username/<username>")
     def check_username(username):
         """Return whether a username is available."""
         return jsonify({"available": db.check_username_available(username)}), 200
 
-    @app.get("/check-email/<email>")
+    @app.get("/api/v1/check-email/<email>")
     def check_email(email):
         """Return whether an email is available."""
         return jsonify({"available": db.check_email_available(email)}), 200
@@ -32,7 +32,7 @@ def register_routes(app, db):
     # Authentication
     # ------------------------------------------------------------------
 
-    @app.post("/register")
+    @app.post("/api/v1/register")
     def register():
         """Register a new user account."""
         data = request.get_json()
@@ -67,7 +67,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.post("/login")
+    @app.post("/api/v1/login")
     def login():
         """Authenticate via email or username and return a JWT access token."""
         data = request.get_json()
@@ -90,7 +90,7 @@ def register_routes(app, db):
     # Profile
     # ------------------------------------------------------------------
 
-    @app.put("/profile")
+    @app.put("/api/v1/profile")
     @jwt_required()
     def edit_profile():
         """Update the authenticated user's profile."""
@@ -126,7 +126,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.get("/profile/picture/<int:user_id>")
+    @app.get("/api/v1/profile/picture/<int:user_id>")
     def serve_profile_picture(user_id):
         """Serve a user's profile picture, falling back to the default."""
         pic_path = db.get_profile_pic_path(user_id)
@@ -148,11 +148,11 @@ def register_routes(app, db):
             )
         return "", 204
 
-    @app.get("/coach/picture/<int:user_id>/<int:numero>")
+    @app.get("/api/v1/coach/picture/<int:user_id>/<int:numero>")
     def serve_coach_picture(user_id, numero):
         """Serve one of a coach's pictures (numero 1‑7), or 204 if absent."""
         pic_path = db.get_coach_picture_paths(user_id)
-        if f"static/uploads/coach_pics/{user_id}/{numero}.jpg" in pic_path:
+        if f"static/uploads/api/v1/coach_pics/{user_id}/{numero}.jpg" in pic_path:
             full_dir = os.path.join(
                 os.path.dirname(__file__), "static", "uploads", "coach_pics",
                 str(user_id)
@@ -160,7 +160,7 @@ def register_routes(app, db):
             return send_from_directory(full_dir, f"{numero}.jpg")
         return "", 204
 
-    @app.post("/profile/picture")
+    @app.post("/api/v1/profile/picture")
     @jwt_required()
     def upload_profile_picture():
         """Upload or replace the authenticated user's profile picture.
@@ -185,7 +185,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.post("/coach/picture/<int:numero>")
+    @app.post("/api/v1/coach/picture/<int:numero>")
     @jwt_required()
     def upload_coach_picture(numero):
         """Upload or replace one of a coach's up‑to‑7 pictures (numero 1‑7).
@@ -210,7 +210,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.put("/password")
+    @app.put("/api/v1/password")
     @jwt_required()
     def edit_password():
         """Change the authenticated user's password."""
@@ -229,7 +229,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.get("/profile/<int:profile_id>")
+    @app.get("/api/v1/profile/<int:profile_id>")
     @jwt_required()
     def get_profile(profile_id):
         """View a user's profile (visibility rules enforced)."""
@@ -238,7 +238,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.delete("/profile")
+    @app.delete("/api/v1/profile")
     @jwt_required()
     def delete_own_profile():
         """Delete the authenticated user's own account.
@@ -260,7 +260,7 @@ def register_routes(app, db):
     # Ratings
     # ------------------------------------------------------------------
 
-    @app.post("/coach/<int:coach_id>/rate")
+    @app.post("/api/v1/coach/<int:coach_id>/rate")
     @jwt_required()
     def rate_coach(coach_id):
         """Set a thumbs-up (1), thumbs-down (0), or remove (null) rating."""
@@ -282,7 +282,7 @@ def register_routes(app, db):
     # Coach queries (public)
     # ------------------------------------------------------------------
 
-    @app.get("/coach/<int:coach_id>")
+    @app.get("/api/v1/coach/<int:coach_id>")
     def get_coach(coach_id):
         """Return public details for a specific coach."""
         try:
@@ -290,17 +290,17 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.get("/coach")
+    @app.get("/api/v1/coach")
     def list_coaches():
         """Return all coaches."""
         return jsonify(db.list_coaches()), 200
 
-    @app.get("/coach/tag/<tag_name>")
+    @app.get("/api/v1/coach/tag/<tag_name>")
     def list_coaches_by_tag(tag_name):
         """Return coaches filtered by tag name."""
         return jsonify(db.list_coaches_by_tag(tag_name)), 200
 
-    @app.get("/coach/search")
+    @app.get("/api/v1/coach/search")
     def search_coaches():
         """Search coaches by description, name, username, or tag name.
 
@@ -316,17 +316,17 @@ def register_routes(app, db):
     # Chat / Messages
     # ------------------------------------------------------------------
 
-    @app.get("/chat")
+    @app.get("/api/v1/chat")
     @jwt_required()
     def list_chats():
         """Return chats for the authenticated user.
 
         Users only see their own chats.  Admins may consult another
-        user's chats via ``GET /user/<id>/chats``.
+        user's chats via ``GET /api/v1/user/<id>/chats``.
         """
         return jsonify(db.list_user_chats(get_jwt_identity())), 200
 
-    @app.get("/chat/<int:chat_id>")
+    @app.get("/api/v1/chat/<int:chat_id>")
     @jwt_required()
     def get_chat_messages(chat_id):
         """Return messages for a given chat.
@@ -339,7 +339,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.post("/message")
+    @app.post("/api/v1/message")
     @jwt_required()
     def send_message():
         """Send a message to another user."""
@@ -358,7 +358,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.put("/message/<message_id>/hide")
+    @app.put("/api/v1/message/<message_id>/hide")
     @jwt_required()
     def hide_message(message_id):
         """Hide (soft-delete) one of your own messages.
@@ -372,7 +372,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.delete("/message/<message_id>")
+    @app.delete("/api/v1/message/<message_id>")
     @jwt_required()
     def delete_message(message_id):
         """Permanently delete any message (admin-only)."""
@@ -386,12 +386,12 @@ def register_routes(app, db):
     # Tag management
     # ------------------------------------------------------------------
 
-    @app.get("/tag")
+    @app.get("/api/v1/tag")
     def list_tags():
         """Return all tags (public)."""
         return jsonify(db.list_tags()), 200
 
-    @app.post("/tag")
+    @app.post("/api/v1/tag")
     @jwt_required()
     def create_tag():
         """Create a new tag (admin-only)."""
@@ -410,7 +410,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.put("/tag/<int:tag_id>")
+    @app.put("/api/v1/tag/<int:tag_id>")
     @jwt_required()
     def edit_tag(tag_id):
         """Update a tag (admin-only)."""
@@ -427,7 +427,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.delete("/tag/<int:tag_id>")
+    @app.delete("/api/v1/tag/<int:tag_id>")
     @jwt_required()
     def delete_tag(tag_id):
         """Delete a tag (admin-only)."""
@@ -441,7 +441,7 @@ def register_routes(app, db):
     # City management (admin only)
     # ------------------------------------------------------------------
 
-    @app.post("/city")
+    @app.post("/api/v1/city")
     @jwt_required()
     def create_city():
         """Create a new city (admin-only)."""
@@ -459,7 +459,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.put("/city/<int:city_id>")
+    @app.put("/api/v1/city/<int:city_id>")
     @jwt_required()
     def edit_city(city_id):
         """Update a city's name (admin-only)."""
@@ -477,12 +477,12 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.get("/city")
+    @app.get("/api/v1/city")
     def list_cities():
         """Return all cities (public)."""
         return jsonify(db.list_cities()), 200
 
-    @app.get("/city/<int:city_id>")
+    @app.get("/api/v1/city/<int:city_id>")
     def get_city(city_id):
         """Return a city by id (public)."""
         try:
@@ -494,7 +494,7 @@ def register_routes(app, db):
     # Badge management
     # ------------------------------------------------------------------
 
-    @app.get("/badge")
+    @app.get("/api/v1/badge")
     @jwt_required()
     def list_badges():
         """Return the authenticated user's received badges, grouped by badge."""
@@ -504,7 +504,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.post("/badge/give")
+    @app.post("/api/v1/badge/give")
     @jwt_required()
     def give_badge():
         """Give a badge to another user."""
@@ -523,12 +523,12 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.get("/badge/all")
+    @app.get("/api/v1/badge/all")
     def list_all_badges():
         """Return all available badges (public)."""
         return jsonify(db.list_all_badges()), 200
 
-    @app.get("/badge/for/<string:role>")
+    @app.get("/api/v1/badge/for/<string:role>")
     def list_badges_by_role(role):
         """Return badges for a specific role (public).
 
@@ -542,7 +542,7 @@ def register_routes(app, db):
             return jsonify({"msg": "Role must be 'coach' or 'customer'"}), 400
         return jsonify(db.list_badges_by_role(for_coach)), 200
 
-    @app.post("/badge")
+    @app.post("/api/v1/badge")
     @jwt_required()
     def create_badge():
         """Create a new badge (admin-only)."""
@@ -562,7 +562,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.put("/badge/<int:badge_id>")
+    @app.put("/api/v1/badge/<int:badge_id>")
     @jwt_required()
     def edit_badge(badge_id):
         """Update a badge (admin-only)."""
@@ -580,7 +580,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.delete("/badge/<int:badge_id>")
+    @app.delete("/api/v1/badge/<int:badge_id>")
     @jwt_required()
     def delete_badge(badge_id):
         """Delete a badge (admin-only)."""
@@ -594,7 +594,7 @@ def register_routes(app, db):
     # Admin user management
     # ------------------------------------------------------------------
 
-    @app.get("/users")
+    @app.get("/api/v1/users")
     @jwt_required()
     def list_users():
         """List all non-admin users (admin-only)."""
@@ -604,7 +604,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.delete("/user/<int:user_id>")
+    @app.delete("/api/v1/user/<int:user_id>")
     @jwt_required()
     def delete_user(user_id):
         """Delete a non-admin user (admin-only)."""
@@ -614,7 +614,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.put("/user/<int:user_id>/promote")
+    @app.put("/api/v1/user/<int:user_id>/promote")
     @jwt_required()
     def promote_user(user_id):
         """Promote a user to admin (admin-only, irreversible)."""
@@ -624,7 +624,7 @@ def register_routes(app, db):
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
-    @app.get("/user/<int:user_id>/chats")
+    @app.get("/api/v1/user/<int:user_id>/chats")
     @jwt_required()
     def get_user_chats(user_id):
         """Return a specific user's chats (admin-only consultation)."""

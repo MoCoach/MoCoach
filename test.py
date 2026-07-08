@@ -14,7 +14,7 @@ import requests
 from PIL import Image
 from sqlalchemy import create_engine, text
 
-BASE = "http://localhost:5678"
+BASE = "http://localhost:5678/api/v1"
 DB_URL = "mysql+mysqldb://emilien:1234@localhost/moCoach"
 
 TABLES = ["users", "coaches", "tags", "coach_tags", "chats", "messages", "badges", "user_badges", "cities", "coach_ratings"]
@@ -93,7 +93,7 @@ def start_server():
     )
     for _ in range(20):
         try:
-            r = requests.get("http://localhost:5678/check-username/startupcheck", timeout=2)
+            r = requests.get("http://localhost:5678/api/v1/check-username/startupcheck", timeout=2)
             if r.status_code == 200:
                 return
         except requests.ConnectionError:
