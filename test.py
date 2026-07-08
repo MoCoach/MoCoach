@@ -86,7 +86,7 @@ def start_server():
         SERVER_PROC.kill()
         SERVER_PROC.wait()
     log = open("/tmp/flask-test.log", "w")
-    route_py = os.path.join(os.path.dirname(__file__) or ".", "back-end", "routing.py")
+    route_py = os.path.join(os.path.dirname(__file__) or ".", "app.py")
     SERVER_PROC = subprocess.Popen(
         [sys.executable, "-u", route_py],
         stdout=log, stderr=subprocess.STDOUT,
