@@ -1,24 +1,23 @@
 "use strict";
 const ChatApp = {
-  currentUser: { id: 'user', name: 'You' },
+  currentUser: { id: null, name: 'You', role: null, isBlocked: false, isMsgBlocked: false },
   conversations: [],
-
-  activeId: null,
+  activeChatId: null,
   isOpen: false,
 
-  init() {
+  async init() {
     if (!document.getElementById('msg-conversation-list')) {
       setTimeout(() => this.init(), 50);
       return;
     }
     this._syncCurrentUser();
-    this._syncFromStorage();
     this.bindEvents();
     this.renderConversations();
     this.renderChat(null);
     this.updateMobileView();
     this._setupKeyboardHandler();
     window.addEventListener('resize', () => this.updateMobileView());
+    if (this.isOpen) await this._loadConversations();
   },
 
   _setupKeyboardHandler() {
@@ -45,87 +44,54 @@ const ChatApp = {
       this.currentUser = {
         id: auth.userId,
         name: auth.username,
-        avatar: auth.avatar || '',
+        role: auth.role,
+        isBlocked: auth.is_blocked || false,
+        isMsgBlocked: auth.is_messaging_blocked || false,
       };
     }
-  },
-
-  _syncFromStorage() {
-    const stored = localStorage.getItem('mocoach_chats');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          this.conversations = parsed;
-        }
-      } catch (e) {}
-    }
-  },
-
-  _saveToStorage() {
-    localStorage.setItem('mocoach_chats', JSON.stringify(this.conversations));
   },
 
   _getAuthUser() {
     try { return JSON.parse(sessionStorage.getItem('mocoach_auth')); } catch { return null; }
   },
 
-  _getAdminData() {
-    try { return JSON.parse(localStorage.getItem('mocoach_admin_data') || '{"coaches":{},"customers":{}}'); }
-    catch { return { coaches: {}, customers: {} }; }
+  async _loadConversations() {
+    const res = await api.getChats();
+    if (res.success && Array.isArray(res.data)) {
+      const oldIds = new Set(this.conversations.map(c => c.id));
+      const newData = res.data.filter(c => !oldIds.has(c.id));
+      this.conversations = res.data.map(chat => {
+        const existing = this.conversations.find(c => c.id === chat.id);
+        if (existing) return existing;
+        return this._toConv(chat);
+      });
+      this.renderConversations();
+    }
   },
 
-  _isBlocked() {
-    const user = this._getAuthUser();
-    if (!user) return false;
-    const admin = this._getAdminData();
-    if (user.role === 'coach') {
-      return !!(admin.coaches[user.userId] && admin.coaches[user.userId].messaging_blocked);
-    }
-    if (user.role === 'customer') {
-      return !!(admin.customers[user.userId] && admin.customers[user.userId].messaging_blocked);
-    }
-    return false;
+  _toConv(chat) {
+    const other = this._otherPerson(chat);
+    return {
+      id: chat.id,
+      otherPerson: other,
+      messages: [],
+      unread: 0,
+      lastActivity: null,
+      _fetched: false,
+    };
   },
 
-  _isFullyBlocked() {
-    const user = this._getAuthUser();
-    if (!user) return false;
-    const admin = this._getAdminData();
-    if (user.role === 'coach') {
-      return !!(admin.coaches[user.userId] && admin.coaches[user.userId].is_blocked);
-    }
-    if (user.role === 'customer') {
-      return !!(admin.customers[user.userId] && admin.customers[user.userId].is_blocked);
-    }
-    return false;
+  _otherPerson(chat) {
+    const me = this.currentUser.id;
+    const isCoach = chat.coach && chat.coach.id === me;
+    const person = isCoach ? chat.customer : chat.coach;
+    return {
+      id: person.id,
+      name: `${person.first_name || ''} ${person.last_name || ''}`.trim() || person.username || 'Unknown',
+    };
   },
 
-  bindEvents() {
-    const $ = (id) => document.getElementById(id);
-
-    $('msg-close-btn')?.addEventListener('click', () => this.close());
-
-    document.querySelector('.messaging-backdrop')?.addEventListener('click', (e) => {
-      if (e.target === document.querySelector('.messaging-backdrop')) this.close();
-    });
-
-    $('msg-send-btn')?.addEventListener('click', () => this.send());
-    $('msg-input')?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        this.send();
-      }
-    });
-
-    $('msg-search')?.addEventListener('input', (e) => this.filterConversations(e.target.value));
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.isOpen) this.close();
-    });
-  },
-
-  open(coachId) {
+  async open(coachId) {
     const user = this._getAuthUser();
 
     if (!user) {
@@ -141,66 +107,61 @@ const ChatApp = {
 
     if (user.role === 'coach') {
       if (coachId && coachId !== user.userId) {
-        showToast("As a coach, you can't message other coaches. This feature is for customers looking for a coach.");
+        showToast("As a coach, you can't message other coaches.");
         return;
       }
       if (!coachId) {
-        showToast("As a coach, you can't message other coaches. This feature is for customers looking for a coach.");
-        return;
-      }
-      if (coachId && coachId === user.userId) {
-        this._syncCurrentUser();
-        this.isOpen = true;
-        const overlay = document.getElementById('messaging-overlay');
-        overlay.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
-        setTimeout(() => overlay.classList.add('open'), 10);
-        this.renderConversations();
+        showToast("As a coach, you can't message other coaches.");
         return;
       }
     }
 
-    if (this._isFullyBlocked()) {
+    if (user.is_blocked) {
       showToast('Your account has been blocked. Please contact support.');
       return;
     }
 
     this._syncCurrentUser();
+
+    if (this.conversations.length === 0) {
+      await this._loadConversations();
+    }
+
     this.isOpen = true;
     const overlay = document.getElementById('messaging-overlay');
     overlay.classList.remove('hidden');
     document.body.classList.add('overflow-hidden');
-
     setTimeout(() => overlay.classList.add('open'), 10);
 
     if (coachId) {
-      let conv = this.conversations.find(c => c.coach.id === coachId);
-      if (!conv) {
-        const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
-        const coachData = coaches.find(c => c.username === coachId);
-        if (coachData) {
-          conv = {
-            id: 'conv-' + coachId,
-            coach: {
-              id: coachId,
-              name: `${coachData.firstName || ''} ${coachData.lastName || ''}`.trim() || coachData.username,
-              discipline: coachData.discipline || '',
-              avatar: coachData.avatar || '',
-            },
-            messages: [],
-            unread: 0,
-            lastActivity: new Date().toISOString(),
-          };
-          this.conversations.unshift(conv);
-        }
+      const parsedId = typeof coachId === 'number' ? coachId : parseInt(coachId, 10);
+      if (isNaN(parsedId)) {
+        this.renderConversations();
+        return;
       }
+      let conv = this.conversations.find(c => c.otherPerson && c.otherPerson.id === parsedId);
       if (conv) {
         this.selectConversation(conv.id);
+      } else {
+        const placeholderConv = {
+          id: 'pending-' + parsedId,
+          otherPerson: { id: parsedId, name: 'Coach' },
+          messages: [],
+          unread: 0,
+          lastActivity: null,
+          _fetched: true,
+        };
+        this.conversations.unshift(placeholderConv);
+        this.selectConversation(placeholderConv.id);
       }
     }
 
     this.renderConversations();
-    this._saveToStorage();
+
+    if (this.conversations.length === 0) {
+      await this._loadConversations();
+      this.renderConversations();
+    }
   },
 
   close() {
@@ -211,56 +172,81 @@ const ChatApp = {
     setTimeout(() => overlay.classList.add('hidden'), 300);
   },
 
-  selectConversation(id) {
-    this.activeId = id;
+  async selectConversation(id) {
+    this.activeChatId = id;
     const conv = this.conversations.find(c => c.id === id);
-    if (conv) {
-      conv.unread = 0;
-      this.renderConversations();
-      this.renderChat(conv);
-      this.updateMobileView();
-      this.scrollToBottom();
-      document.getElementById('msg-input')?.focus();
+    if (conv && !conv._fetched && typeof id === 'number') {
+      const res = await api.getChatMessages(id);
+      if (res.success && Array.isArray(res.data)) {
+        conv.messages = res.data.map(msg => ({
+          id: msg.sender.id + '-' + msg.timestamp,
+          senderId: msg.sender.id,
+          text: msg.text,
+          timestamp: msg.timestamp,
+        }));
+        conv._fetched = true;
+        if (res.data.length > 0) {
+          conv.lastActivity = res.data[res.data.length - 1].timestamp;
+        }
+      }
     }
+    if (conv) conv.unread = 0;
+    this.renderConversations();
+    this.renderChat(conv);
+    this.updateMobileView();
+    this.scrollToBottom();
+    document.getElementById('msg-input')?.focus();
   },
 
-  send() {
+  async send() {
     const input = document.getElementById('msg-input');
     const text = input.value.trim();
-    if (!text || !this.activeId) return;
+    if (!text || !this.activeChatId) return;
 
-    if (this._isBlocked() || this._isFullyBlocked()) {
+    if (this.currentUser.isBlocked || this.currentUser.isMsgBlocked) {
       showToast('You have been blocked from sending messages');
       return;
     }
 
-    const conv = this.conversations.find(c => c.id === this.activeId);
+    let conv = this.conversations.find(c => c.id === this.activeChatId);
     if (!conv) return;
 
-    const msg = {
-      id: this._id(),
-      senderId: this.currentUser.id,
-      text,
-      timestamp: new Date().toISOString(),
-    };
-    conv.messages.push(msg);
-    conv.lastActivity = msg.timestamp;
-    input.value = '';
-    input.style.height = 'auto';
+    const recipientId = conv.otherPerson.id;
+    const isPending = typeof conv.id === 'string' && conv.id.startsWith('pending-');
 
-    this.renderChat(conv);
-    this.renderConversations();
-    this._saveToStorage();
-    this.scrollToBottom();
+    const res = await api.sendMessage(recipientId, text);
+    if (res.success) {
+      const msgData = res.data;
+      if (isPending && msgData.chat_id) {
+        conv.id = msgData.chat_id;
+        conv._fetched = true;
+      }
+      conv.messages.push({
+        id: msgData.id,
+        senderId: msgData.sender.id,
+        text: msgData.text,
+        timestamp: msgData.timestamp,
+      });
+      conv.lastActivity = msgData.timestamp;
+      input.value = '';
+      input.style.height = 'auto';
+      this.renderChat(conv);
+      this.renderConversations();
+      this.scrollToBottom();
+    } else {
+      showToast(res.error || 'Failed to send message', 'error');
+    }
   },
 
   renderConversations() {
     const list = document.getElementById('msg-conversation-list');
     if (!list) return;
 
-    const sorted = [...this.conversations].sort((a, b) =>
-      new Date(b.lastActivity) - new Date(a.lastActivity)
-    );
+    const sorted = [...this.conversations].sort((a, b) => {
+      if (!a.lastActivity) return 1;
+      if (!b.lastActivity) return -1;
+      return b.lastActivity - a.lastActivity;
+    });
 
     if (sorted.length === 0) {
       list.innerHTML = `
@@ -280,20 +266,18 @@ const ChatApp = {
         ? (lastMsg.senderId === this.currentUser.id ? 'You: ' : '') +
           lastMsg.text.substring(0, 55) + (lastMsg.text.length > 55 ? '...' : '')
         : '';
-      const isActive = conv.id === this.activeId;
+      const isActive = conv.id === this.activeChatId;
 
       return `
-        <button onclick="ChatApp.selectConversation('${conv.id}')"
+        <button onclick="ChatApp.selectConversation(${JSON.stringify(conv.id)})"
           class="w-full text-left px-4 py-3 flex items-center space-x-3 hover:bg-slate-900/60 transition ${isActive ? 'bg-slate-900/80 border-l-2 border-teal-500' : 'border-l-2 border-transparent'}">
           <div class="w-10 h-10 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden">
-            ${conv.coach.avatar
-              ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" loading="lazy" onerror="fallbackImg(this)">`
-              : `<div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${conv.coach.name.charAt(0)}</div>`}
+            <div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${this._esc((conv.otherPerson.name || '?').charAt(0))}</div>
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-semibold text-white truncate">${this._esc(conv.coach.name)}</span>
-              <span class="text-[10px] text-slate-500 flex-shrink-0 ml-2">${this._formatTime(conv.lastActivity)}</span>
+              <span class="text-sm font-semibold text-white truncate">${this._esc(conv.otherPerson.name)}</span>
+              <span class="text-[10px] text-slate-500 flex-shrink-0 ml-2">${conv.lastActivity ? this._formatTime(conv.lastActivity) : ''}</span>
             </div>
             <div class="flex items-center justify-between mt-0.5">
               <span class="text-xs text-slate-500 truncate">${this._esc(preview)}</span>
@@ -316,7 +300,7 @@ const ChatApp = {
     const inputArea = document.getElementById('msg-input-area');
     const user = this._getAuthUser();
     const isAdmin = user && user.role === 'admin';
-    const isBlocked = this._isBlocked() || this._isFullyBlocked();
+    const isBlocked = this.currentUser.isBlocked || this.currentUser.isMsgBlocked;
 
     if (!conv) {
       if (header) header.innerHTML = '';
@@ -329,16 +313,15 @@ const ChatApp = {
     if (messagesEl) messagesEl.classList.remove('hidden');
     if (emptyState) emptyState.classList.add('hidden');
     if (inputArea) {
+      inputArea.classList.remove('hidden');
+      const msgInput = document.getElementById('msg-input');
+      const sendBtn = document.getElementById('msg-send-btn');
       if (isBlocked) {
-        inputArea.classList.remove('hidden');
-        document.getElementById('msg-input')?.setAttribute('disabled', 'disabled');
-        document.getElementById('msg-input')?.setAttribute('placeholder', 'You have been blocked from sending messages');
-        document.getElementById('msg-send-btn')?.setAttribute('disabled', 'disabled');
+        if (msgInput) { msgInput.setAttribute('disabled', 'disabled'); msgInput.setAttribute('placeholder', 'You have been blocked from sending messages'); }
+        if (sendBtn) sendBtn.setAttribute('disabled', 'disabled');
       } else {
-        inputArea.classList.remove('hidden');
-        document.getElementById('msg-input')?.removeAttribute('disabled');
-        document.getElementById('msg-input')?.setAttribute('placeholder', 'Type a message...');
-        document.getElementById('msg-send-btn')?.removeAttribute('disabled');
+        if (msgInput) { msgInput.removeAttribute('disabled'); msgInput.setAttribute('placeholder', 'Type a message...'); }
+        if (sendBtn) sendBtn.removeAttribute('disabled');
       }
     }
 
@@ -348,56 +331,59 @@ const ChatApp = {
           <i data-lucide="arrow-left" class="w-5 h-5"></i>
         </button>
         <div class="w-9 h-9 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden">
-          ${conv.coach.avatar
-            ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" loading="lazy" onerror="fallbackImg(this)">`
-            : `<div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${conv.coach.name.charAt(0)}</div>`}
+          <div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${this._esc((conv.otherPerson.name || '?').charAt(0))}</div>
         </div>
         <div class="min-w-0">
-          <p class="text-sm font-semibold text-white truncate">${this._esc(conv.coach.name)}</p>
-          <p class="text-[10px] text-amber-400 truncate">${this._esc(conv.coach.discipline)}</p>
+          <p class="text-sm font-semibold text-white truncate">${this._esc(conv.otherPerson.name)}</p>
         </div>
       `;
     }
 
     if (messagesEl) {
-      messagesEl.innerHTML = conv.messages.map(msg => {
-        const isUser = msg.senderId === this.currentUser.id;
-        const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const showAvatar = !isUser;
-        return `
-          <div class="flex ${isUser ? 'justify-end' : 'justify-start'} items-end space-x-2 group">
-            ${showAvatar
-              ? `<div class="w-6 h-6 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden hidden sm:block">
-                  ${conv.coach.avatar
-                    ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" onerror="fallbackImg(this)">`
-                    : `<div class="w-full h-full flex items-center justify-center text-[8px] font-bold text-teal-400">${conv.coach.name.charAt(0)}</div>`}
-                </div>`
-              : '<div class="w-6 flex-shrink-0 hidden sm:block"></div>'}
-            <div class="max-w-[85%] sm:max-w-[70%] ${isUser ? 'bg-teal-600 text-white rounded-2xl rounded-br-md' : 'bg-slate-800 text-slate-200 rounded-2xl rounded-bl-md'} px-4 py-2.5 relative">
-              <p class="text-sm leading-relaxed whitespace-pre-wrap break-words">${this._esc(msg.text)}</p>
-              <p class="text-[10px] ${isUser ? 'text-teal-200' : 'text-slate-500'} text-right mt-1 opacity-80">${time}</p>
-              ${isAdmin ? `
-                <button onclick="ChatApp.adminDeleteMessage('${conv.id}', '${msg.id}')" class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-700" title="Delete message">
-                  <i data-lucide="x" class="w-3 h-3"></i>
-                </button>
-              ` : ''}
+      if (conv.messages.length === 0) {
+        messagesEl.innerHTML = '<div class="flex items-center justify-center h-full text-slate-500 text-sm">Send a message to start the conversation</div>';
+      } else {
+        messagesEl.innerHTML = conv.messages.map(msg => {
+          const isUser = msg.senderId === this.currentUser.id;
+          const time = new Date(msg.timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const showAvatar = !isUser;
+          return `
+            <div class="flex ${isUser ? 'justify-end' : 'justify-start'} items-end space-x-2 group">
+              ${showAvatar
+                ? `<div class="w-6 h-6 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden hidden sm:block">
+                    <div class="w-full h-full flex items-center justify-center text-[8px] font-bold text-teal-400">${this._esc((conv.otherPerson.name || '?').charAt(0))}</div>
+                  </div>`
+                : '<div class="w-6 flex-shrink-0 hidden sm:block"></div>'}
+              <div class="max-w-[85%] sm:max-w-[70%] ${isUser ? 'bg-teal-600 text-white rounded-2xl rounded-br-md' : 'bg-slate-800 text-slate-200 rounded-2xl rounded-bl-md'} px-4 py-2.5 relative">
+                <p class="text-sm leading-relaxed whitespace-pre-wrap break-words">${this._esc(msg.text)}</p>
+                <p class="text-[10px] ${isUser ? 'text-teal-200' : 'text-slate-500'} text-right mt-1 opacity-80">${time}</p>
+                ${isAdmin ? `
+                  <button onclick="ChatApp.adminDeleteMessage(${JSON.stringify(conv.id)}, ${JSON.stringify(msg.id)})" class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-700" title="Delete message">
+                    <i data-lucide="x" class="w-3 h-3"></i>
+                  </button>
+                ` : ''}
+              </div>
             </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
+      }
     }
 
     if (window.lucide) lucide.createIcons();
   },
 
-  adminDeleteMessage(convId, msgId) {
+  async adminDeleteMessage(convId, msgId) {
     if (!confirm('Delete this message?')) return;
-    const conv = this.conversations.find(c => c.id === convId);
-    if (conv) {
-      conv.messages = conv.messages.filter(m => m.id !== msgId);
-      this._saveToStorage();
-      this.renderChat(conv);
-      showToast('Message deleted by admin');
+    const res = await api.deleteMessage(msgId);
+    if (res.success) {
+      const conv = this.conversations.find(c => c.id === convId);
+      if (conv) {
+        conv.messages = conv.messages.filter(m => m.id !== msgId);
+        this.renderChat(conv);
+      }
+      showToast('Message deleted');
+    } else {
+      showToast(res.error || 'Failed to delete message', 'error');
     }
   },
 
@@ -418,7 +404,7 @@ const ChatApp = {
     if (!sidebar || !chatPanel) return;
 
     if (isMobile) {
-      if (this.activeId) {
+      if (this.activeChatId) {
         sidebar.classList.add('hidden');
         chatPanel.classList.remove('hidden');
         chatPanel.classList.add('flex');
@@ -445,14 +431,14 @@ const ChatApp = {
   },
 
   _goBackToList() {
-    this.activeId = null;
+    this.activeChatId = null;
     this.renderConversations();
     this.renderChat(null);
     this.updateMobileView();
   },
 
-  _formatTime(iso) {
-    const date = new Date(iso);
+  _formatTime(ts) {
+    const date = typeof ts === 'number' ? new Date(ts * 1000) : new Date(ts);
     const now = new Date();
     const diff = now - date;
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -468,14 +454,34 @@ const ChatApp = {
     }
   },
 
-  _id() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
-  },
-
   _esc(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  },
+
+  bindEvents() {
+    const $ = (id) => document.getElementById(id);
+
+    $('msg-close-btn')?.addEventListener('click', () => this.close());
+
+    document.querySelector('.messaging-backdrop')?.addEventListener('click', (e) => {
+      if (e.target === document.querySelector('.messaging-backdrop')) this.close();
+    });
+
+    $('msg-send-btn')?.addEventListener('click', () => this.send());
+    $('msg-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        this.send();
+      }
+    });
+
+    $('msg-search')?.addEventListener('input', (e) => this.filterConversations(e.target.value));
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.isOpen) this.close();
+    });
   },
 };
 

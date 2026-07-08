@@ -4,7 +4,7 @@ const ProfileApp = {
   editing: false,
   passwordVisible: { current: false, new: false, confirm: false },
 
-  init() {
+  async init() {
     if (!document.getElementById('profile-header-card')) {
       setTimeout(() => this.init(), 50);
       return;
@@ -15,16 +15,15 @@ const ProfileApp = {
       return;
     }
 
-    const users = JSON.parse(localStorage.getItem('mocoach_users') || '[]');
-    const user = users.find(u => u.username === auth.userId);
-    if (user) {
-      this.data = JSON.parse(JSON.stringify(user));
+    const res = await api.getProfile(auth.userId);
+    if (res.success) {
+      this.data = res.data;
     } else {
       this.data = {
+        id: auth.userId,
         username: auth.username || '',
         email: auth.email || '',
-        avatar: auth.avatar || '',
-        password: '',
+        profile_pic: auth.avatar || '',
         role: 'customer',
       };
     }
@@ -38,18 +37,30 @@ const ProfileApp = {
     try { return JSON.parse(sessionStorage.getItem('mocoach_auth')); } catch { return null; }
   },
 
-  _saveUserData() {
-    const users = JSON.parse(localStorage.getItem('mocoach_users') || '[]');
-    const idx = users.findIndex(u => u.username === this.data.username);
-    if (idx >= 0) {
-      users[idx] = { ...this.data };
-      localStorage.setItem('mocoach_users', JSON.stringify(users));
+  _updateSession(updates) {
+    const auth = this._getAuth();
+    if (auth) {
+      Object.assign(auth, updates);
+      sessionStorage.setItem('mocoach_auth', JSON.stringify(auth));
     }
-    const session = this._getAuth();
-    if (session) {
-      session.avatar = this.data.avatar;
-      session.email = this.data.email;
-      sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
+  },
+
+  async _saveUserData() {
+    const payload = {
+      username: this.data.username,
+      email: this.data.email,
+      first_name: this.data.first_name,
+      last_name: this.data.last_name,
+    };
+    const res = await api.updateProfile(payload);
+    if (res.success) {
+      this._updateSession({
+        username: this.data.username,
+        email: this.data.email,
+        avatar: this.data.profile_pic || '',
+      });
+    } else {
+      this.showToast(res.error || 'Failed to save', 'error');
     }
   },
 
@@ -89,11 +100,13 @@ const ProfileApp = {
     if (!el) return;
     const d = this.data;
 
+    const avatarUrl = d.profile_pic || 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop';
+
     el.innerHTML = `
       <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
         <div class="relative flex-shrink-0 group">
           <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-teal-500/30 shadow-xl">
-            <img src="${this._esc(d.avatar || 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop')}" alt="User avatar" class="w-full h-full object-cover" loading="lazy" onerror="fallbackImg(this)">
+            <img src="${this._esc(avatarUrl)}" alt="User avatar" class="w-full h-full object-cover" loading="lazy" onerror="fallbackImg(this)">
           </div>
           <div class="absolute -bottom-1 -right-1 bg-amber-500 w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center">
             <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
@@ -174,7 +187,7 @@ const ProfileApp = {
     `;
   },
 
-  savePersonalInfo() {
+  async savePersonalInfo() {
     const username = document.getElementById('pf-username')?.value.trim();
     const email = document.getElementById('pf-email')?.value.trim();
 
@@ -185,7 +198,7 @@ const ProfileApp = {
 
     this.data.username = username;
     this.data.email = email;
-    this._saveUserData();
+    await this._saveUserData();
     this.editing = false;
     this.showToast('Profile updated successfully!', 'success');
     this.render();
@@ -246,7 +259,7 @@ const ProfileApp = {
     if (window.lucide) lucide.createIcons();
   },
 
-  changePassword() {
+  async changePassword() {
     const currentPw = document.getElementById('pf-currentPw')?.value;
     const newPw = document.getElementById('pf-newPw')?.value;
     const confirmPw = document.getElementById('pf-confirmPw')?.value;
@@ -254,11 +267,6 @@ const ProfileApp = {
 
     if (!currentPw || !newPw || !confirmPw) {
       this._showPwFeedback('Please fill in all password fields', 'error');
-      return;
-    }
-
-    if (this.data.password && currentPw !== this.data.password) {
-      this._showPwFeedback('Current password is incorrect', 'error');
       return;
     }
 
@@ -272,13 +280,16 @@ const ProfileApp = {
       return;
     }
 
-    this.data.password = newPw;
-    this._saveUserData();
-    document.getElementById('pf-currentPw').value = '';
-    document.getElementById('pf-newPw').value = '';
-    document.getElementById('pf-confirmPw').value = '';
-    this._showPwFeedback('Password changed successfully!', 'success');
-    this.showToast('Password changed!', 'success');
+    const res = await api.changePassword(currentPw, newPw);
+    if (res.success) {
+      document.getElementById('pf-currentPw').value = '';
+      document.getElementById('pf-newPw').value = '';
+      document.getElementById('pf-confirmPw').value = '';
+      this._showPwFeedback('Password changed successfully!', 'success');
+      this.showToast('Password changed!', 'success');
+    } else {
+      this._showPwFeedback(res.error || 'Failed to change password', 'error');
+    }
   },
 
   _showPwFeedback(msg, type) {
@@ -311,16 +322,19 @@ const ProfileApp = {
   },
 
   bindEvents() {
-    document.getElementById('pf-avatar-input')?.addEventListener('change', (e) => {
+    document.getElementById('pf-avatar-input')?.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      compressImage(file, 800, 0.7, (dataUrl) => {
-        this.data.avatar = dataUrl;
-        this._saveUserData();
+      const res = await api.uploadProfilePicture(file);
+      if (res.success) {
+        this.data.profile_pic = res.data.profile_pic;
+        this._updateSession({ avatar: res.data.profile_pic || '' });
         this.renderHeader();
         if (window.updateHeaderProfilePic) window.updateHeaderProfilePic();
         this.showToast('Profile photo updated!', 'success');
-      });
+      } else {
+        this.showToast(res.error || 'Failed to upload photo', 'error');
+      }
     });
 
     document.getElementById('profile-back-btn')?.addEventListener('click', (e) => {

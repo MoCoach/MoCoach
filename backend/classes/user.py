@@ -32,6 +32,10 @@ class User(Base):
     phone      = Column(String(16),  nullable=True)
     is_coach   = Column(Boolean,     nullable=False)
     is_admin   = Column(Boolean,     nullable=False, default=False)
+    is_blocked = Column(Boolean,     nullable=False, default=False)
+    is_messaging_blocked = Column(Boolean, nullable=False, default=False)
+    is_vetted  = Column(Boolean,     nullable=False, default=False)
+    is_certified = Column(Boolean,   nullable=False, default=False)
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
@@ -87,7 +91,7 @@ class User(Base):
         _validate_name(first_name, "first_name")
         _validate_name(last_name, "last_name")
 
-        self.password = generate_password_hash(pwd)
+        self.password = generate_password_hash(pwd, method='pbkdf2:sha256')
         self.username = username
         self.first_name = first_name
         self.last_name  = last_name
@@ -169,7 +173,7 @@ class User(Base):
                 raise TypeError("password must be a string")
             if len(pwd) < 8:
                 raise ValueError("password must be at least 8 characters")
-            self.password = generate_password_hash(pwd)
+            self.password = generate_password_hash(pwd, method='pbkdf2:sha256')
 
         if phone is not _UNSET:
             if phone is not None and not isinstance(phone, str):
@@ -214,6 +218,10 @@ class User(Base):
             "is_coach": self.is_coach,
             "is_admin": self.is_admin,
             "phone": self.phone,
+            "is_blocked": self.is_blocked,
+            "is_messaging_blocked": self.is_messaging_blocked,
+            "is_vetted": self.is_vetted,
+            "is_certified": self.is_certified,
         }
         if self.coach:
             d["coach"] = self.coach.to_dict()

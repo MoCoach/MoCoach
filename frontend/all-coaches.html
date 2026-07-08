@@ -224,18 +224,19 @@
   </script>
 
   <!-- External JS scripts -->
+  <script src="js/api.js?v=2"></script>
   <script src="js/app.js"></script>
   <script src="js/messaging.js"></script>
   <script src="js/profile.js"></script>
   <script src="js/coach-profile.js"></script>
-  <!-- Render coach cards from localStorage -->
+  <!-- Render coach cards from API -->
   <script>
-    function renderCoachCards() {
+    async function renderCoachCards() {
+      const res = await api.getCoaches();
+      const coaches = res.success && Array.isArray(res.data) ? res.data : [];
       var containers = [document.getElementById('coach-carousel'), document.getElementById('all-coaches-grid')];
       containers.forEach(function(container) {
         if (!container) return;
-        var coaches = [];
-        try { coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]'); } catch(e) {}
         if (coaches.length === 0) {
           var isGrid = container.id === 'all-coaches-grid';
           var cols = isGrid ? '' : 'col-span-full';
@@ -244,15 +245,17 @@
           return;
         }
         container.innerHTML = coaches.map(function(c) {
-          var name = (c.firstName || '') + ' ' + (c.lastName || '');
+          var name = (c.first_name || '') + ' ' + (c.last_name || '');
           name = name.trim() || c.username;
-          var disc = c.discipline || 'Personal Trainer';
-          var bio = (c.bio || '').substring(0, 100);
-          if ((c.bio || '').length > 100) bio += '...';
+          var disc = (c.tags && c.tags.length > 0) ? c.tags[0].name : 'Personal Trainer';
+          var bio = (c.description || '').substring(0, 100);
+          if ((c.description || '').length > 100) bio += '...';
           var price = c.price || '—';
-          var avatar = c.avatar || 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80';
-          var tags = (c.tags || []).join(' ');
-           return '<div data-coach-id="' + c.username + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.bio||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-48 sm:h-64 object-cover" loading="lazy" onerror="fallbackImg(this)"><span class="absolute top-3 right-3 bg-teal-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow"><i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span></span></div><div class="p-5 md:p-8 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><h3 class="text-lg sm:text-xl font-bold text-white">' + name + '</h3><span class="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Certified</span></div></div><p class="text-sm text-amber-400 font-semibold mb-3">' + disc + '</p><p class="text-sm sm:text-base text-slate-400 leading-relaxed mb-4">' + bio + '</p></div></div><div class="px-5 md:px-8 pb-5 md:pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40"><span class="text-lg sm:text-xl font-black text-white">Rs ' + price + '<span class="text-sm text-white font-normal"> per session</span></span><button onclick="ChatApp.open(\'' + c.username + '\')" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button></div></div>';
+          var avatar = c.profile_pic || 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80';
+          var tags = (c.tags || []).map(function(t) { return t.name; }).join(' ');
+          var showVetted = c.is_vetted || false;
+          var showCert = c.is_certified || false;
+           return '<div data-coach-id="' + c.id + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.description||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-48 sm:h-64 object-cover" loading="lazy" onerror="fallbackImg(this)">' + (showVetted ? '<span class="absolute top-3 right-3 bg-teal-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow"><i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span></span>' : '') + '</div><div class="p-5 md:p-8 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><h3 class="text-lg sm:text-xl font-bold text-white">' + name + '</h3>' + (showCert ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Certified</span>' : '') + '</div></div><p class="text-sm text-amber-400 font-semibold mb-3">' + disc + '</p><p class="text-sm sm:text-base text-slate-400 leading-relaxed mb-4">' + bio + '</p></div></div><div class="px-5 md:px-8 pb-5 md:pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40"><span class="text-lg sm:text-xl font-black text-white">Rs ' + price + '<span class="text-sm text-white font-normal"> per session</span></span><button onclick="ChatApp.open(' + c.id + ')" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button></div></div>';
         }).join('');
         if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
       });

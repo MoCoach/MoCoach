@@ -17,7 +17,7 @@ from classes.tag import Tag
 from classes.user import User
 from classes.coach import Coach
 
-DB_URL = "mysql+mysqldb://emilien:1234@localhost/moCoach"
+DB_URL = os.environ.get("MYSQL_URL", "mysql+mysqldb://emilien:1234@localhost/moCoach")
 DIR = os.path.dirname(os.path.abspath(__file__))
 
 _EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')

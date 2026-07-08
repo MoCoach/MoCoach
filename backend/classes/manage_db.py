@@ -8,7 +8,7 @@ import re
 from PIL import Image
 from sqlalchemy import create_engine, or_
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import joinedload, selectinload, sessionmaker
 
 from backend.classes import Base
 from backend.classes.user import User, _UNSET, _FORBIDDEN_USERNAMES
@@ -240,11 +240,15 @@ class Db_Management:
                 raise DbError("Email already taken", 409)
 
             tags = []
-            if is_coach:
+            if is_coach and tags_data:
                 for t in tags_data:
-                    tag = session.query(Tag).filter_by(name=t["name"]).first()
+                    if isinstance(t, dict):
+                        name = t.get("name", str(t))
+                    else:
+                        name = str(t)
+                    tag = session.query(Tag).filter_by(name=name).first()
                     if not tag:
-                        tag = Tag(name=t["name"], description=t["description"])
+                        tag = Tag(name=name, description=name)
                         session.add(tag)
                     tags.append(tag)
 
@@ -266,9 +270,15 @@ class Db_Management:
         """Authenticate a user by email or username and return the User object."""
         session = self._session()
         try:
-            user = session.query(User).filter_by(email=login).first()
+            user = session.query(User).options(
+                joinedload(User.coach).joinedload(Coach.city),
+                joinedload(User.coach).selectinload(Coach.tags),
+            ).filter_by(email=login).first()
             if not user:
-                user = session.query(User).filter_by(username=login).first()
+                user = session.query(User).options(
+                    joinedload(User.coach).joinedload(Coach.city),
+                    joinedload(User.coach).selectinload(Coach.tags),
+                ).filter_by(username=login).first()
             if not user or not user.verify_pwd(password):
                 raise DbError("Bad credentials", 401)
             return user
@@ -308,9 +318,13 @@ class Db_Management:
             if tags_data is not None and user.is_coach:
                 tags = []
                 for t in tags_data:
-                    tag = session.query(Tag).filter_by(name=t["name"]).first()
+                    if isinstance(t, dict):
+                        name = t.get("name", str(t))
+                    else:
+                        name = str(t)
+                    tag = session.query(Tag).filter_by(name=name).first()
                     if not tag:
-                        tag = Tag(name=t["name"], description=t["description"])
+                        tag = Tag(name=name, description=name)
                         session.add(tag)
                     tags.append(tag)
 
@@ -383,12 +397,15 @@ class Db_Management:
             "price": coach.price,
             "city": coach.city.name if coach.city else None,
             "phone": coach.user.phone,
+            "email": coach.user.email,
             "tags": [{"name": t.name, "description": t.description}
                      for t in coach.tags],
             "profile_pic": pic_url or DEFAULT_PIC,
             "pictures": Db_Management.get_coach_picture_paths(coach.id),
             "thumbs_up": thumbs_up,
             "thumbs_down": thumbs_down,
+            "is_vetted": coach.user.is_vetted,
+            "is_certified": coach.user.is_certified,
         }
         return d
 
@@ -718,6 +735,7 @@ class Db_Management:
 
             return {
                 "id": msg.id,
+                "chat_id": chat.id,
                 "sender": {"id": sender.id, "first_name": sender.first_name, "last_name": sender.last_name, "username": sender.username},
                 "timestamp": msg.timestamp,
                 "text": msg.text,
@@ -1070,6 +1088,47 @@ class Db_Management:
         finally:
             session.close()
 
+    def toggle_badge(self, giver_id, user_id, badge_id):
+        """Give or remove a badge (toggle)."""
+        session = self._session()
+        try:
+            giver = session.query(User).filter_by(id=giver_id).first()
+            if not giver:
+                raise DbError("Giver not found", 404)
+            user = session.query(User).filter_by(id=user_id).first()
+            if not user:
+                raise DbError("User not found", 404)
+            if giver_id == user_id:
+                raise DbError("Cannot give badge to yourself", 400)
+            if giver.is_admin or user.is_admin:
+                raise DbError("Admins cannot give or receive badges", 400)
+            if user.is_coach == giver.is_coach:
+                raise DbError("Cannot give badge to someone with the same role", 400)
+            badge = session.query(Badge).filter_by(id=badge_id).first()
+            if not badge:
+                raise DbError("Badge not found", 404)
+
+            existing = session.query(UserBadge).filter_by(
+                user_id=user_id, giver_id=giver_id, badge_id=badge_id,
+            ).first()
+            if existing:
+                session.delete(existing)
+                session.commit()
+                return {"msg": "Badge removed", "active": False}
+            else:
+                ub = UserBadge(user_id=user_id, giver_id=giver_id, badge_id=badge_id)
+                session.add(ub)
+                session.commit()
+                return {"msg": "Badge given", "active": True}
+        except DbError:
+            session.rollback()
+            raise
+        except Exception as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
     def get_user_badges(self, user_id):
         """Return badges received by *user*, grouped by badge id.
 
@@ -1095,6 +1154,80 @@ class Db_Management:
                     "name": badge_name,
                 })
             return result
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Admin user management
+    # ------------------------------------------------------------------
+
+    def toggle_user_block(self, admin_id, user_id, data):
+        """Toggle block and/or messaging_blocked flags on a user (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+            target = session.query(User).filter_by(id=user_id).first()
+            if not target:
+                raise DbError("User not found", 404)
+            if "is_blocked" in data:
+                target.is_blocked = bool(data["is_blocked"])
+            if "is_messaging_blocked" in data:
+                target.is_messaging_blocked = bool(data["is_messaging_blocked"])
+            session.commit()
+            return target.to_dict()
+        except DbError:
+            session.rollback()
+            raise
+        except Exception as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
+    def flag_user(self, admin_id, user_id, data):
+        """Set vetted/certified flags on a user (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+            target = session.query(User).filter_by(id=user_id).first()
+            if not target:
+                raise DbError("User not found", 404)
+            if "is_vetted" in data:
+                target.is_vetted = bool(data["is_vetted"])
+            if "is_certified" in data:
+                target.is_certified = bool(data["is_certified"])
+            session.commit()
+            return target.to_dict()
+        except DbError:
+            session.rollback()
+            raise
+        except Exception as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
+    def remove_all_coach_pictures_admin(self, admin_id, user_id):
+        """Remove all coach pictures for a user (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+            target = session.query(User).filter_by(id=user_id).first()
+            if not target:
+                raise DbError("User not found", 404)
+            self.remove_profile_picture(user_id)
+            self.remove_all_coach_pictures(user_id)
+            return {"msg": "Pictures removed"}
+        except DbError:
+            raise
+        except Exception as e:
+            raise DbError(str(e), 400)
         finally:
             session.close()
 

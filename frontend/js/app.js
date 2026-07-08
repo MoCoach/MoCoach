@@ -24,51 +24,42 @@ async function loadComponent(id, url) {
 let currentView = 'home';
 
 const AuthService = {
-    ADMIN_USERNAME: 'Admin1',
-    ADMIN_PASSWORD: 'Admin123',
+    async login(identity, password) {
+        const res = await api.login(identity, password);
+        if (!res.success) return { success: false, error: res.error };
 
-    login(identity, password) {
-        if (identity === this.ADMIN_USERNAME && password === this.ADMIN_PASSWORD) {
-            const session = { role: 'admin', username: 'Admin1', userId: 'admin-1' };
-            sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
-            return { success: true, role: 'admin', user: session };
+        const u = res.data.user;
+        const session = {
+            token: api.getToken(),
+            user: u,
+            role: u.is_admin ? 'admin' : (u.is_coach ? 'coach' : 'customer'),
+            userId: u.id,
+            username: u.username,
+            email: u.email,
+            avatar: u.profile_pic || '',
+            firstName: u.first_name || '',
+            lastName: u.last_name || '',
+        };
+        if (u.coach) {
+            session.city = u.coach.city || '';
+            session.bio = u.coach.description || '';
+            session.tags = (u.coach.tags || []).map(t => t.name || t);
+            session.price = u.coach.price || '';
+            session.gallery = u.coach.pictures || [];
+            session.discipline = (u.coach.tags && u.coach.tags[0]) ? u.coach.tags[0].name || u.coach.tags[0] : '';
         }
-
-        const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
-        const coach = coaches.find(c => (c.username === identity || c.email === identity) && c.password === password);
-        if (coach) {
-            const session = {
-                role: 'coach', username: coach.username, userId: coach.username,
-                firstName: coach.firstName, lastName: coach.lastName, email: coach.email,
-                city: coach.city, avatar: coach.avatar || '', bio: coach.bio || '',
-                tags: coach.tags || [], price: coach.price || '', discipline: coach.discipline || '',
-                gallery: coach.gallery || [],
-            };
-            sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
-            return { success: true, role: 'coach', user: session };
-        }
-
-        const users = JSON.parse(localStorage.getItem('mocoach_users') || '[]');
-        const user = users.find(u => (u.username === identity || u.email === identity) && u.password === password);
-        if (user) {
-            const session = { role: 'customer', username: user.username, userId: user.username, email: user.email, avatar: user.avatar || '' };
-            sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
-            return { success: true, role: 'customer', user: session };
-        }
-
-        return { success: false };
+        sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
+        return { success: true, role: session.role, user: session };
     },
 
-    register(data) {
-        const users = JSON.parse(localStorage.getItem('mocoach_users') || '[]');
-        if (users.some(u => u.username === data.username)) return { success: false, error: 'Username already taken' };
-        if (users.some(u => u.email === data.email)) return { success: false, error: 'Email already registered' };
-        users.push(data);
-        localStorage.setItem('mocoach_users', JSON.stringify(users));
+    async register(data) {
+        const res = await api.register(data);
+        if (!res.success) return res;
         return { success: true };
     },
 
     logout() {
+        api.clearToken();
         sessionStorage.removeItem('mocoach_auth');
         window.location.reload();
     },
@@ -85,23 +76,6 @@ const AuthService = {
     getRole() {
         const user = this.getCurrentUser();
         return user ? user.role : null;
-    },
-
-    getAdminData() {
-        try { return JSON.parse(localStorage.getItem('mocoach_admin_data') || '{"coaches":{},"customers":{}}'); }
-        catch { return { coaches: {}, customers: {} }; }
-    },
-
-    isUserBlocked(userId, type) {
-        const admin = this.getAdminData();
-        if (type === 'coach') return !!(admin.coaches[userId] && admin.coaches[userId].is_blocked);
-        return !!(admin.customers[userId] && admin.customers[userId].is_blocked);
-    },
-
-    isMessagingBlocked(userId, type) {
-        const admin = this.getAdminData();
-        if (type === 'coach') return !!(admin.coaches[userId] && admin.coaches[userId].messaging_blocked);
-        return !!(admin.customers[userId] && admin.customers[userId].messaging_blocked);
     },
 };
 
@@ -240,8 +214,9 @@ function updateHeaderProfilePic() {
     const user = AuthService.getCurrentUser();
 
     if (user) {
-        if (user.avatar) {
-            btn.innerHTML = `<img src="${user.avatar}" class="w-full h-full object-cover rounded-full" alt="Profile">`;
+        const avatarUrl = user.avatar || '';
+        if (avatarUrl) {
+            btn.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full" alt="Profile">`;
         } else {
             btn.innerHTML = `<i data-lucide="user" class="w-6 h-6"></i>`;
             if (window.lucide) lucide.createIcons();
@@ -418,7 +393,7 @@ const runAppInit = () => {
         }
     });
 
-    document.addEventListener('submit', (e) => {
+    document.addEventListener('submit', async (e) => {
         if (e.target.id === 'register-form') {
             e.preventDefault();
             hideRegError();
@@ -441,27 +416,27 @@ const runAppInit = () => {
             var previewImg = document.querySelector('#modal-previews-container img');
             var avatarSrc = previewImg ? previewImg.src : '';
 
-            var newUser = {
+            var regData = {
                 username: nickname,
                 email: email,
                 password: pass,
-                avatar: avatarSrc,
-                role: 'customer',
+                is_coach: false,
             };
 
+            if (avatarSrc && avatarSrc.startsWith('data:')) {
+                var blob = dataURItoBlob(avatarSrc);
+                regData.avatar_blob = blob;
+            }
+
             try {
-                var result = AuthService.register(newUser);
+                var result = await AuthService.register(regData);
                 if (!result || !result.success) {
                     showRegError((result && result.error) || 'Registration failed');
                     return;
                 }
             } catch (err) {
-                if (err && (err.name === 'QuotaExceededError' || err.name === 'NS_ERROR_DOM_QUOTA_REACHED' || err.code === 22)) {
-                    showRegError('Storage full. Try a smaller profile photo or clear browser storage.');
-                } else {
-                    showRegError('Registration error. Please try again.');
-                }
                 console.error('Customer registration error:', err);
+                showRegError('Registration error. Please try again.');
                 return;
             }
 
@@ -472,7 +447,7 @@ const runAppInit = () => {
             if (pc) pc.innerHTML = '';
 
             try {
-                var loginResult = AuthService.login(newUser.username, pass);
+                var loginResult = await AuthService.login(nickname, pass);
                 if (loginResult && loginResult.success) {
                     updateHeaderProfilePic();
                     if (window.ProfileApp) window.ProfileApp.init();
@@ -484,14 +459,14 @@ const runAppInit = () => {
         }
     });
 
-    document.addEventListener('submit', (e) => {
+    document.addEventListener('submit', async (e) => {
         if (e.target.id === 'login-form') {
             e.preventDefault();
             const identity = document.getElementById('login-identity').value.trim();
             const pass = document.getElementById('login-password').value;
             const errorDiv = document.getElementById('login-error-feedback');
 
-            const result = AuthService.login(identity, pass);
+            const result = await AuthService.login(identity, pass);
 
             if (result.success) {
                 if (errorDiv) errorDiv.classList.add('hidden');
@@ -696,7 +671,7 @@ const runAppInit = () => {
             const coachId = card.getAttribute('data-coach-id');
             if (coachId) {
                 e.preventDefault();
-                showCoachProfileView(coachId);
+                showCoachProfileView(parseInt(coachId));
             }
         }
     });
@@ -732,6 +707,17 @@ const runAppInit = () => {
         }
     });
 };
+
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+}
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', runAppInit);
