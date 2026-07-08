@@ -323,6 +323,19 @@ def list_coaches_by_tag(tag_name):
     return jsonify(db.list_coaches_by_tag(tag_name)), 200
 
 
+@app.get("/coach/search")
+def search_coaches():
+    """Search coaches by description, name, username, or tag name.
+
+    Accepts a ``q`` query parameter with one or more space-separated
+    terms.  Only coaches matching ALL terms are returned.
+    """
+    q = request.args.get("q", "").strip()
+    if not q:
+        return jsonify([]), 200
+    return jsonify(db.search_coaches(q)), 200
+
+
 # ------------------------------------------------------------------
 # Chat / Messages
 # ------------------------------------------------------------------
