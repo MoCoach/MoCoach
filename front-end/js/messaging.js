@@ -287,7 +287,7 @@ const ChatApp = {
           class="w-full text-left px-4 py-3 flex items-center space-x-3 hover:bg-slate-900/60 transition ${isActive ? 'bg-slate-900/80 border-l-2 border-teal-500' : 'border-l-2 border-transparent'}">
           <div class="w-10 h-10 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden">
             ${conv.coach.avatar
-              ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" loading="lazy">`
+              ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" loading="lazy" onerror="fallbackImg(this)">`
               : `<div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${conv.coach.name.charAt(0)}</div>`}
           </div>
           <div class="flex-1 min-w-0">
@@ -349,7 +349,7 @@ const ChatApp = {
         </button>
         <div class="w-9 h-9 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden">
           ${conv.coach.avatar
-            ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" loading="lazy">`
+            ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" loading="lazy" onerror="fallbackImg(this)">`
             : `<div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${conv.coach.name.charAt(0)}</div>`}
         </div>
         <div class="min-w-0">
@@ -369,7 +369,7 @@ const ChatApp = {
             ${showAvatar
               ? `<div class="w-6 h-6 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden hidden sm:block">
                   ${conv.coach.avatar
-                    ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover">`
+                    ? `<img src="${this._esc(conv.coach.avatar)}" class="w-full h-full object-cover" onerror="fallbackImg(this)">`
                     : `<div class="w-full h-full flex items-center justify-center text-[8px] font-bold text-teal-400">${conv.coach.name.charAt(0)}</div>`}
                 </div>`
               : '<div class="w-6 flex-shrink-0 hidden sm:block"></div>'}

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel - MoCoach</title>
+  <meta name="description" content="MoCoach admin panel for managing coaches, customers, and messages.">
   <link rel="icon" type="image/png" href="assets/img/favicon_MoCoach_4.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -19,7 +20,7 @@
       <div class="flex items-center space-x-4">
         <img src="assets/img/mocoach-logo.png" alt="MoCoach" class="h-12 w-auto">
         <div>
-          <h1 class="text-2xl font-extrabold text-white">Admin Panel</h1>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-white">Admin Panel</h1>
           <p id="admin-greeting" class="text-sm text-slate-400"></p>
         </div>
       </div>
@@ -39,7 +40,7 @@
     <!-- Coaches Tab -->
     <div id="admin-coaches-tab" class="admin-tab-content">
       <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-4 sm:p-6 backdrop-blur-md">
-        <h2 class="text-xl font-extrabold text-white mb-4">Coach Management</h2>
+        <h2 class="text-lg sm:text-xl font-extrabold text-white mb-4">Coach Management</h2>
         <div class="overflow-x-auto">
           <table class="w-full text-sm min-w-[700px]">
             <thead>
@@ -65,7 +66,7 @@
     <!-- Customers Tab -->
     <div id="admin-customers-tab" class="admin-tab-content hidden">
       <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-4 sm:p-6 backdrop-blur-md">
-        <h2 class="text-xl font-extrabold text-white mb-4">Customer Management</h2>
+        <h2 class="text-lg sm:text-xl font-extrabold text-white mb-4">Customer Management</h2>
         <div class="overflow-x-auto">
           <table class="w-full text-sm min-w-[700px]">
             <thead>
@@ -86,7 +87,7 @@
     <!-- Messages Tab -->
     <div id="admin-messages-tab" class="admin-tab-content hidden">
       <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-md">
-        <h2 class="text-xl font-extrabold text-white mb-4">Message Moderation</h2>
+        <h2 class="text-lg sm:text-xl font-extrabold text-white mb-4">Message Moderation</h2>
         <div id="admin-conversations-list" class="space-y-3">
           <!-- Filled by JS -->
         </div>

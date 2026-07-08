@@ -592,7 +592,7 @@ const CoachProfileApp = {
           <i data-lucide="thumbs-up" class="w-5 h-5"></i>
         </div>
         <div>
-          <h2 class="text-xl font-extrabold text-white">Ratings</h2>
+          <h2 class="text-lg sm:text-xl font-extrabold text-white">Ratings</h2>
           <p class="text-sm text-slate-300 font-medium mt-0.5">Thumbs up/down from customers</p>
         </div>
       </div>

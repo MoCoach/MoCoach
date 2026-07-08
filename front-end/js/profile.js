@@ -93,7 +93,7 @@ const ProfileApp = {
       <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
         <div class="relative flex-shrink-0 group">
           <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-teal-500/30 shadow-xl">
-            <img src="${this._esc(d.avatar || 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop')}" alt="User avatar" class="w-full h-full object-cover" loading="lazy">
+            <img src="${this._esc(d.avatar || 'https://images.unsplash.com/photo-1637434071656-e4ecd2567e82?q=80&w=716&auto=format&fit=crop')}" alt="User avatar" class="w-full h-full object-cover" loading="lazy" onerror="fallbackImg(this)">
           </div>
           <div class="absolute -bottom-1 -right-1 bg-amber-500 w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center">
             <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>

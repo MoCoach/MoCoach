@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>All Coaches - MoCoach</title>
+  <meta name="description" content="Browse all verified sports and wellness coaches in Mauritius. Filter by discipline, location, and price to find your perfect coach.">
+  <meta property="og:title" content="All Coaches - MoCoach">
+  <meta property="og:description" content="Browse all verified coaches in Mauritius. Find your perfect trainer, yoga instructor, swimming coach and more.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mocoach.mu/all-coaches">
+  <meta name="twitter:card" content="summary_large_image">
 
   <link class="rounded-full" rel="icon" type="image/png" href="assets/img/favicon_MoCoach.png">
   
@@ -33,9 +39,9 @@
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-12 gap-4">
           <div>
-            <span class="text-teal-500 text-xs font-bold uppercase tracking-widest">All Coaches</span>
-            <h2 class="text-3xl font-extrabold text-white mt-2">Browse All Certified Coaches</h2>
-            <p class="text-slate-400 text-sm mt-2">Every coach undergoes credential checks to ensure safety and professionalism.</p>
+            <span class="text-teal-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">All Coaches</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">Browse All Certified Coaches</h2>
+            <p class="text-slate-400 text-sm sm:text-base mt-2">Every coach undergoes credential checks to ensure safety and professionalism.</p>
           </div>
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
             <div class="relative w-full sm:w-80">
@@ -57,7 +63,18 @@
         </div>
 
         <!-- ALL COACHES GRID: 6 per row -->
-        <div id="all-coaches-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"></div>
+        <div id="all-coaches-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+        <div id="no-results" class="hidden flex-col items-center justify-center py-16 text-slate-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6"/></svg>
+          <p class="text-base font-semibold text-slate-500">No coaches match your search</p>
+          <p class="text-sm text-slate-600 mt-1">Try a different name, discipline, or location</p>
+        </div>
 
               </div>
 
@@ -83,8 +100,8 @@
       <!-- Modal Header -->
       <div class="flex justify-between items-start mb-4">
         <div>
-          <h2 id="modal-title" class="text-2xl font-bold text-white">Join the Community</h2>
-          <p id="modal-subtitle" class="text-sm text-slate-400 mt-0.5">Create your account and start connecting with coaches</p>
+          <h2 id="modal-title" class="text-xl sm:text-2xl font-bold text-white">Join the Community</h2>
+          <p id="modal-subtitle" class="text-sm sm:text-base text-slate-400 mt-0.5">Create your account and start connecting with coaches</p>
         </div>
         <button id="close-modal-btn" class="text-slate-400 hover:text-white transition focus:outline-none flex-shrink-0">
           <i data-lucide="x" class="w-6 h-6"></i>
@@ -222,7 +239,7 @@
         if (coaches.length === 0) {
           var isGrid = container.id === 'all-coaches-grid';
           var cols = isGrid ? '' : 'col-span-full';
-          container.innerHTML = '<div class="' + cols + ' flex flex-col items-center justify-center py-20 text-slate-600"><i data-lucide="users" class="w-16 h-16 mb-4"></i><p class="text-lg font-semibold text-slate-500">No coaches registered yet</p><p class="text-sm text-slate-600 mt-2">Be the first to <a href="coach-register.html" class="text-teal-400 hover:underline">register as a coach</a></p></div>';
+          container.innerHTML = '<div class="' + cols + ' flex flex-col items-center justify-center py-20 text-slate-600"><i data-lucide="users" class="w-16 h-16 mb-4"></i><p class="text-lg font-semibold text-slate-500">No coaches registered yet</p><p class="text-sm sm:text-base text-slate-600 mt-2">Be the first to <a href="coach-register.html" class="text-teal-400 hover:underline">register as a coach</a></p></div>';
           if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
           return;
         }
@@ -235,12 +252,15 @@
           var price = c.price || '—';
           var avatar = c.avatar || 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80';
           var tags = (c.tags || []).join(' ');
-          return '<div data-coach-id="' + c.username + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.bio||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-48 sm:h-64 object-cover" loading="lazy"><span class="absolute top-3 right-3 bg-teal-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow"><i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span></span></div><div class="p-5 md:p-8 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><h3 class="text-xl font-bold text-white">' + name + '</h3><span class="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Certified</span></div></div><p class="text-sm text-amber-400 font-semibold mb-3">' + disc + '</p><p class="text-sm text-slate-400 leading-relaxed mb-4">' + bio + '</p></div></div><div class="px-5 md:px-8 pb-5 md:pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40"><span class="text-xl font-black text-white">Rs ' + price + '<span class="text-sm text-white font-normal"> per session</span></span><button onclick="ChatApp.open(\'' + c.username + '\')" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button></div></div>';
+           return '<div data-coach-id="' + c.username + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.bio||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-48 sm:h-64 object-cover" loading="lazy" onerror="fallbackImg(this)"><span class="absolute top-3 right-3 bg-teal-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow"><i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span></span></div><div class="p-5 md:p-8 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><h3 class="text-lg sm:text-xl font-bold text-white">' + name + '</h3><span class="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Certified</span></div></div><p class="text-sm text-amber-400 font-semibold mb-3">' + disc + '</p><p class="text-sm sm:text-base text-slate-400 leading-relaxed mb-4">' + bio + '</p></div></div><div class="px-5 md:px-8 pb-5 md:pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40"><span class="text-lg sm:text-xl font-black text-white">Rs ' + price + '<span class="text-sm text-white font-normal"> per session</span></span><button onclick="ChatApp.open(\'' + c.username + '\')" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button></div></div>';
         }).join('');
         if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
       });
     }
     document.addEventListener('DOMContentLoaded', renderCoachCards);
   </script>
+  <button id="back-to-top" aria-label="Back to top">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
 </body>
 </html>

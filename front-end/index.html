@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoCoach - Centralized Sports & Wellness Marketplace in Mauritius</title>
+  <meta name="description" content="Find verified sports and wellness coaches across Mauritius. Book personal training, yoga, swimming, and more. Join Mauritius' first dedicated coaching marketplace.">
+  <meta property="og:title" content="MoCoach - Find Your Coach in Mauritius">
+  <meta property="og:description" content="Book verified sports and wellness coaches across Mauritius. Personal training, yoga, HIIT, swimming and more.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mocoach.mu">
+  <meta property="og:image" content="https://mocoach.mu/assets/img/mocoach-og.png">
+  <meta name="twitter:card" content="summary_large_image">
 
   <link rel="icon" type="image/png" href="assets/img/favicon_MoCoach_4.png">
   
@@ -84,7 +91,7 @@
       <div class="max-w-[1600px] mx-auto px-8 relative z-30 w-full flex-1 flex flex-col justify-between">
         
         <div class="text-center max-w-5xl mx-auto my-auto pt-4 pb-8">
-          <h1 class="animate-title-punch text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight text-white tracking-tight mb-8 font-['Poppins']">
+          <h1 class="animate-title-punch text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-white tracking-tight mb-8 font-['Poppins']">
             Find. Book. Train. <br>
             Across <span class="animate-sweep">Mauritius</span>
           </h1>
@@ -130,11 +137,11 @@
         <!-- Categories -->
         <div class="pt-8 mt-auto">
           <div class="text-center mb-8">
-            <span class="text-teal-500 text-xs font-bold uppercase tracking-widest">Explore Coaches</span>
-            <h2 class="text-2xl font-extrabold text-white mt-1">Explore Specialized Categories</h2>
+            <span class="text-teal-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">Explore Coaches</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-1">Explore Specialized Categories</h2>
           </div>
 
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div class="grid grid-cols-3 gap-6">
             <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-teal-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 mb-4">
                 <i data-lucide="dumbbell" class="w-6 h-6"></i>
@@ -200,9 +207,9 @@
         
         <div class="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-12 gap-6">
           <div class="max-w-xl">
-            <span class="text-teal-500 text-xs font-bold uppercase tracking-widest">Explore Coaches</span>
-            <h2 class="text-3xl font-extrabold text-white mt-2">Meet Our   Coaches</h2>
-            <p class="text-slate-400 text-sm mt-2">Every coach undergoes credential checks to ensure safety and professionalism.</p>
+            <span class="text-teal-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">Explore Coaches</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">Meet Our   Coaches</h2>
+            <p class="text-slate-400 text-sm sm:text-base mt-2">Every coach undergoes credential checks to ensure safety and professionalism.</p>
           </div>
           
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
@@ -224,7 +231,19 @@
           </div>
         </div>
 
-        <div id="coach-carousel" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+        <div id="coach-carousel" class="grid grid-cols-3 gap-4">
+          <div class="skeleton-card-sm"></div>
+          <div class="skeleton-card-sm"></div>
+          <div class="skeleton-card-sm"></div>
+          <div class="skeleton-card-sm"></div>
+          <div class="skeleton-card-sm"></div>
+          <div class="skeleton-card-sm"></div>
+        </div>
+        <div id="no-results" class="hidden flex-col items-center justify-center py-16 text-slate-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6"/></svg>
+          <p class="text-base font-semibold text-slate-500">No coaches match your search</p>
+          <p class="text-sm text-slate-600 mt-1">Try a different name, discipline, or location</p>
+        </div>
 
       </div>
     </section>
@@ -233,71 +252,15 @@
     <section id="how-it-works" class="py-16 md:py-24">
       <div class="max-w-[1600px] mx-auto px-8 relative z-10">
         <div class="text-center max-w-2xl mx-auto mb-10 md:mb-16">
-          <span class="text-teal-500 text-xs font-bold uppercase tracking-wider">Simple Coaching Journey</span>
-          <h2 class="text-3xl font-extrabold text-white mt-2">How MoCoach Simplifies Your Booking ?</h2>
-          <p class="text-slate-400 text-sm mt-3">From selection to training without standard social media friction.</p>
+          <span class="text-teal-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider">Simple Coaching Journey</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">How MoCoach Simplifies Your Booking ?</h2>
+          <p class="text-slate-400 text-sm sm:text-base mt-3">From selection to training without standard social media friction.</p>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-8">
-          <!-- Step 1 -->
-          <div class="bg-slate-950 border border-slate-900 p-6 md:p-10 rounded-2xl relative flex flex-col justify-between group transition">
-            <div>
-              <span class="absolute top-6 right-8 text-6xl font-extrabold text-slate-800/10 transition">01</span>
-              <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
-                <i data-lucide="search" class="w-7 h-7"></i>
-              </div>
-              <h3 class="font-bold text-xl text-white mb-3">Find Your Coach</h3>
-              <p class="text-base text-slate-300 leading-loose mb-8">
-                Filter by verified expertise, direct hourly rate, dynamic location, and realistic customer reviews. No hidden agency costs.
-              </p>
-            </div>
-            <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
-              <span class="flex items-center space-x-1.5"><i data-lucide="map" class="w-4 h-4 text-teal-500"></i> <span>Grand Baie</span></span>
-              <span class="font-semibold text-white">24 verified coaches near you</span>
-            </div>
-          </div>
-
-          <!-- Step 2 -->
-          <div class="bg-slate-950 border border-slate-900 p-6 md:p-10 rounded-2xl relative flex flex-col justify-between group transition">
-            <div>
-              <span class="absolute top-6 right-8 text-6xl font-extrabold text-slate-800/10 transition">02</span>
-              <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
-                <i data-lucide="calendar-check" class="w-7 h-7"></i>
-              </div>
-              <h3 class="font-bold text-xl text-white mb-3">Book Centrally</h3>
-              <p class="text-base text-slate-300 leading-loose mb-8">
-              Choose your coach based on your preferred activity and location.
-              </p>
-            </div>
-            <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
-              <span class="flex items-center space-x-1.5"><i data-lucide="clock" class="w-4 h-4 text-teal-500"></i> <span>Contact Coach</span></span>
-              <span class="font-semibold text-amber-400"></span>
-            </div>
-          </div>
-
-          <!-- Step 3 -->
-          <div class="bg-slate-950 border border-slate-900 p-6 md:p-10 rounded-2xl relative flex flex-col justify-between group transition">
-            <div>
-              <span class="absolute top-6 right-8 text-6xl font-extrabold text-slate-800/10 transition">03</span>
-              <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
-                <i data-lucide="dumbbell" class="w-7 h-7"></i>
-              </div>
-              <h3 class="font-bold text-xl text-white mb-3">Begin Your Session</h3>
-              <p class="text-base text-slate-300 leading-loose mb-8">
-                Meet your professional coach and receive focused attention. Leave an honest client rating to support our island's active community.
-              </p>
-            </div>
-            <div class="bg-slate-900 rounded-lg p-3.5 text-sm text-slate-400 flex items-center justify-between">
-              <span class="flex items-center space-x-1.5"><i data-lucide="thumbs-up" class="w-4 h-4 text-amber-400"></i> <span>Rate Session</span></span>
-              <span class="text-amber-400 text-sm"></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-16 text-center bg-gradient-to-r from-slate-900/50 via-teal-950/30 to-slate-900/50 border border-slate-800/50 rounded-3xl p-6 md:p-10 max-w-3xl mx-auto">
+        <div class="text-center bg-gradient-to-r from-slate-900/50 via-teal-950/30 to-slate-900/50 border border-slate-800/50 rounded-3xl p-6 md:p-10 max-w-3xl mx-auto">
           <i data-lucide="award" class="w-10 h-10 text-amber-400 mx-auto mb-4"></i>
-          <h3 class="text-2xl font-extrabold text-white mb-2">Are You a Coach?</h3>
-          <p class="text-slate-300 text-sm mb-6 max-w-xl mx-auto">
+          <h3 class="text-xl sm:text-2xl font-extrabold text-white mb-2">Are You a Coach?</h3>
+          <p class="text-slate-300 text-sm sm:text-base mb-6 max-w-xl mx-auto">
             Grow your client base in Mauritius. Create your professional profile, set your schedule, and connect with clients looking for your expertise.
           </p>
           <a href="coach-landing.html" class="inline-flex items-center space-x-2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-8 py-3.5 rounded-full transition-all duration-300 shadow-lg hover:scale-[1.02]">
@@ -312,9 +275,9 @@
     <section id="features" class="py-16 md:py-24 bg-slate-950">
       <div class="max-w-[1600px] mx-auto px-8">
         <div class="text-center max-w-2xl mx-auto mb-10 md:mb-16">
-          <span class="text-teal-500 text-xs font-bold uppercase tracking-wider">Engineered For Quality</span>
-          <h2 class="text-3xl font-extrabold text-white mt-2">Why MoCoach Benefits Everyone</h2>
-          <p class="text-slate-400 text-sm mt-3">A transparent ecosystem developed to serve clients and professional trainers alike.</p>
+          <span class="text-teal-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider">Engineered For Quality</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">Why MoCoach Benefits Everyone</h2>
+          <p class="text-slate-400 text-sm sm:text-base mt-3">A transparent ecosystem developed to serve clients and professional trainers alike.</p>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -346,7 +309,7 @@
             <div class="w-12 h-12 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-5">
               <i data-lucide="calendar" class="w-6 h-6"></i>
             </div>
-            <h3 class="font-bold text-white text-base mb-3">Centralized Logs</h3>
+            <h3 class="font-bold text-white text-base mb-3">Centralized Logs(coming soon) </h3>
             <p class="text-sm text-slate-300 leading-relaxed">
               Eliminate disjointed logs across social platforms. Track all your upcoming sessions, schedules, and receipts in one secure system.
             </p>
@@ -375,7 +338,7 @@
             <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
               <i data-lucide="info" class="w-7 h-7"></i>
             </div>
-            <h2 class="text-3xl font-extrabold text-white mb-6">About MoCoach</h2>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-6">About MoCoach</h2>
 <p class="text-slate-200 text-base leading-relaxed mb-6">
   <span class="text-teal-400 font-semibold">MoCoach represents Mauritius' first dedicated initiative to centralize and secure the sports, health, and wellness ecosystem.</span> For years, booking qualified local sports expertise has been fragmented across various social networks, leaving both local residents and visiting tourists struggling with timing sync and verification.
 </p>
@@ -399,9 +362,9 @@
             <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80" alt="Active community lifestyle in Mauritius" class="w-full h-96 object-cover group-hover:scale-105 transition duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
             <div class="absolute bottom-8 left-8 right-8">
-              <span class="text-xs font-semibold text-amber-400 uppercase tracking-widest block mb-1.5">Our Mission</span>
-              <h3 class="text-xl font-bold text-white mb-2">Helping People Stay Active and Connected</h3>
-              <p class="text-sm text-slate-200 leading-relaxed">
+              <span class="text-[10px] sm:text-xs font-semibold text-amber-400 uppercase tracking-widest block mb-1.5">Our Mission</span>
+              <h3 class="text-lg sm:text-xl font-bold text-white mb-2">Helping People Stay Active and Connected</h3>
+              <p class="text-sm sm:text-base text-slate-200 leading-relaxed">
                 We want to make it easier for everyone in Mauritius to find the right coach, build healthier habits, and support local sports and wellness professionals.
               </p>
             </div>
@@ -430,8 +393,8 @@
       <!-- Modal Header -->
       <div class="flex justify-between items-start mb-4">
         <div>
-          <h2 id="modal-title" class="text-2xl font-bold text-white">Join the Community</h2>
-          <p id="modal-subtitle" class="text-sm text-slate-400 mt-0.5">Create your account and start connecting with coaches</p>
+          <h2 id="modal-title" class="text-xl sm:text-2xl font-bold text-white">Join the Community</h2>
+          <p id="modal-subtitle" class="text-sm sm:text-base text-slate-400 mt-0.5">Create your account and start connecting with coaches</p>
         </div>
         <button id="close-modal-btn" class="text-slate-400 hover:text-white transition focus:outline-none flex-shrink-0" aria-label="Close modal">
           <i data-lucide="x" class="w-6 h-6"></i>
@@ -583,14 +546,12 @@
         if (coaches.length === 0) {
           var isGrid = container.id === 'all-coaches-grid';
           var cols = isGrid ? '' : 'col-span-full';
-          container.innerHTML = '<div class="' + cols + ' flex flex-col items-center justify-center py-20 text-slate-600"><i data-lucide="users" class="w-16 h-16 mb-4"></i><p class="text-lg font-semibold text-slate-500">No coaches registered yet</p><p class="text-sm text-slate-600 mt-2">Be the first to <a href="coach-register.html" class="text-teal-400 hover:underline">register as a coach</a></p></div>';
+          container.innerHTML = '<div class="' + cols + ' flex flex-col items-center justify-center py-20 text-slate-600"><i data-lucide="users" class="w-16 h-16 mb-4"></i><p class="text-lg font-semibold text-slate-500">No coaches registered yet</p><p class="text-sm sm:text-base text-slate-600 mt-2">Be the first to <a href="coach-register.html" class="text-teal-400 hover:underline">register as a coach</a></p></div>';
           if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
           return;
         }
         if (container.id === 'coach-carousel') {
-          var w = window.innerWidth;
-          var perRow = w < 640 ? 1 : w < 1024 ? 2 : w < 1280 ? 3 : 4;
-          coaches = coaches.slice(0, perRow * 2);
+          coaches = coaches.slice(0, 9);
         }
         container.innerHTML = coaches.map(function(c) {
           var name = (c.firstName || '') + ' ' + (c.lastName || '');
@@ -601,12 +562,15 @@
           var price = c.price || '—';
           var avatar = c.avatar || 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80';
           var tags = (c.tags || []).join(' ');
-          return '<div data-coach-id="' + c.username + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.bio||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-48 sm:h-64 object-cover" loading="lazy"><span class="absolute top-3 right-3 bg-teal-600 text-white font-extrabold text-[10px] tracking-widest px-2 py-1 rounded-md flex items-center space-x-1 shadow"><i data-lucide="check" class="w-3 h-3"></i><span>VERIFIED</span></span></div><div class="p-5 md:p-8 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><h3 class="text-xl font-bold text-white">' + name + '</h3><span class="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Certified</span></div></div><p class="text-sm text-amber-400 font-semibold mb-3">' + disc + '</p><p class="text-sm text-slate-400 leading-relaxed mb-4">' + bio + '</p></div></div><div class="px-5 md:px-8 pb-5 md:pb-8 pt-4 border-t border-slate-900 flex items-center justify-between bg-slate-950/40"><span class="text-xl font-black text-white">Rs ' + price + '<span class="text-sm text-white font-normal"> per session</span></span><button onclick="ChatApp.open(\'' + c.username + '\')" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition">Contact</button></div></div>';
+           return '<div data-coach-id="' + c.username + '" data-name="' + name.replace(/"/g,'&quot;') + '" data-discipline="' + disc.replace(/"/g,'&quot;') + '" data-city="' + (c.city||'').replace(/"/g,'&quot;') + '" data-bio="' + (c.bio||'').replace(/"/g,'&quot;') + '" data-tags="' + tags.replace(/"/g,'&quot;') + '" class="coach-card' + (container.id === 'all-coaches-grid' ? ' coach-card-sm' : '') + ' bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group transition"><div class="relative"><img src="' + avatar + '" alt="' + name + '" class="w-full h-24 object-cover" loading="lazy" onerror="fallbackImg(this)"><span class="absolute bottom-2 right-2 bg-teal-600 text-white font-extrabold text-[8px] tracking-widest px-1.5 py-0.5 rounded-md flex items-center space-x-0.5 shadow"><i data-lucide="check" class="w-2 h-2"></i><span>VERIFIED</span></span></div><div class="p-3 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-1"><h3 class="text-[11px] sm:text-xs font-bold text-white truncate">' + name + '</h3><span class="inline-flex items-center px-1 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[8px] font-bold">Cert</span></div></div><p class="text-[10px] text-amber-400 font-semibold mb-1">' + disc + '</p><p class="text-[10px] text-slate-400 leading-relaxed mb-1.5 line-clamp-2">' + bio + '</p></div></div><div class="px-3 pb-3 pt-2 border-t border-slate-900 flex items-center justify-between bg-slate-950/40 gap-1"><span class="text-[11px] sm:text-xs font-black text-white">Rs ' + price + '</span><button onclick="ChatApp.open(\'' + c.username + '\')" class="bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold px-2 py-1.5 rounded-xl transition shrink-0">Contact</button></div></div>';
         }).join('');
         if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
       });
     }
     document.addEventListener('DOMContentLoaded', renderCoachCards);
   </script>
+  <button id="back-to-top" aria-label="Back to top">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
 </body>
 </html>

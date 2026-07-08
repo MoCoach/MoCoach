@@ -1,4 +1,8 @@
 "use strict";
+function fallbackImg(img) {
+    img.onerror = null;
+    img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect fill="%231e293b" width="100" height="100"/%3E%3Ccircle cx="50" cy="36" r="22" fill="%23334155"/%3E%3Cpath d="M14 94Q50 68 86 94" fill="%23334155"/%3E%3C/svg%3E';
+}
 async function loadComponent(id, url) {
     const element = document.getElementById(id);
     if (element) {
@@ -371,6 +375,7 @@ function compressImage(file, maxDimension, quality, callback) {
 }
 
 const runAppInit = () => {
+    document.body.classList.add('loaded');
     if (window.lucide) lucide.createIcons();
 
     loadComponent('header-placeholder', 'components/header.html');
@@ -547,6 +552,7 @@ const runAppInit = () => {
             const query = searchInput.value.toLowerCase().trim();
             const grid = document.querySelector('#coach-carousel') || document.querySelector('#all-coaches-grid');
             if (!grid) return;
+            var visibleCount = 0;
             grid.querySelectorAll('.coach-card').forEach(card => {
                 const name = (card.getAttribute('data-name') || '').toLowerCase();
                 const discipline = (card.getAttribute('data-discipline') || '').toLowerCase();
@@ -555,13 +561,29 @@ const runAppInit = () => {
                 const tags = (card.getAttribute('data-tags') || '').toLowerCase();
                 const match = name.includes(query) || discipline.includes(query) || city.includes(query) || bio.includes(query) || tags.includes(query);
                 card.style.display = match ? 'flex' : 'none';
+                if (match) visibleCount++;
             });
+            var noResults = document.getElementById('no-results');
+            if (noResults) {
+                noResults.classList.toggle('visible', query.length > 0 && visibleCount === 0);
+                noResults.classList.toggle('hidden', !(query.length > 0 && visibleCount === 0));
+            }
         });
     }
 
     if (seeAllBtn) {
         seeAllBtn.addEventListener('click', () => {
             window.location.href = 'all-coaches.html';
+        });
+    }
+
+    var backToTop = document.getElementById('back-to-top');
+    if (backToTop) {
+        window.addEventListener('scroll', function() {
+            backToTop.classList.toggle('visible', window.scrollY > 400);
+        });
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 
