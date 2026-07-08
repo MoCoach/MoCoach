@@ -5,7 +5,7 @@ import os
 from flask import jsonify, send_from_directory
 
 
-FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "front-end")
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
 
 
 def register_routes(app):

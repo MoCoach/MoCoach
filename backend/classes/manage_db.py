@@ -10,19 +10,19 @@ from sqlalchemy import create_engine, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from classes import Base
-from classes.user import User, _UNSET, _FORBIDDEN_USERNAMES
-from classes.coach import Coach
-from classes.tag import Tag
-from classes.city import City
-from classes.chat import Chat
-from classes.message import Message
-from classes.badge import Badge
-from classes.user_badge import UserBadge
-from classes.coach_rating import CoachRating
+from backend.classes import Base
+from backend.classes.user import User, _UNSET, _FORBIDDEN_USERNAMES
+from backend.classes.coach import Coach
+from backend.classes.tag import Tag
+from backend.classes.city import City
+from backend.classes.chat import Chat
+from backend.classes.message import Message
+from backend.classes.badge import Badge
+from backend.classes.user_badge import UserBadge
+from backend.classes.coach_rating import CoachRating
 
 
-DEFAULT_PIC = "back-end/static/uploads/profile_pics/default/profile.jpg"
+DEFAULT_PIC = "backend/static/uploads/profile_pics/default/profile.jpg"
 
 
 class DbError(Exception):

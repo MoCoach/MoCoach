@@ -7,7 +7,7 @@ from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity,
 )
 
-from classes.manage_db import DbError
+from backend.classes.manage_db import DbError
 
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
