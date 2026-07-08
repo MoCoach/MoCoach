@@ -6,7 +6,7 @@ import os
 import re
 
 from PIL import Image
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
@@ -422,6 +422,39 @@ class Db_Management:
             coaches = session.query(Coach).filter(
                 Coach.tags.contains(tag)
             ).all()
+            return [self._coach_to_dict(c) for c in coaches]
+        finally:
+            session.close()
+
+    def search_coaches(self, query_string):
+        """Return coaches matching the given search string.
+
+        Splits *query_string* into individual terms and matches each
+        term against the coach's description, first_name, last_name,
+        username, and tag names.  Only coaches matching ALL terms are
+        returned.
+        """
+        session = self._session()
+        try:
+            terms = [t.strip() for t in query_string.split() if t.strip()]
+            if not terms:
+                return []
+
+            filters = []
+            for term in terms:
+                like = f"%{term}%"
+                filters.append(or_(
+                    Coach.description.ilike(like),
+                    User.first_name.ilike(like),
+                    User.last_name.ilike(like),
+                    User.username.ilike(like),
+                    Tag.name.ilike(like),
+                ))
+
+            query = session.query(Coach).join(Coach.user).outerjoin(Coach.tags)
+            for f in filters:
+                query = query.filter(f)
+            coaches = query.distinct().all()
             return [self._coach_to_dict(c) for c in coaches]
         finally:
             session.close()

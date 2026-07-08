@@ -416,6 +416,90 @@ def test_coaches():
 
 
 # ===================================================================
+# Search coaches
+# ===================================================================
+def test_search_coaches():
+    print("\n=== Search coaches ===")
+
+    # Register a second coach with different attributes
+    r = requests.post(f"{BASE}/register", json={
+        "username": "carol", "email": "carol@x.com", "password": "carolpass8",
+        "first_name": "Carol", "last_name": "Dancer", "is_coach": True,
+        "description": "I teach yoga and nutrition",
+        "tags": [{"name": "yoga", "description": "Yoga classes"}],
+        "city_id": DATA["city_id"],
+    })
+    print(r.json())
+    report("POST /register (coach carol)", r.status_code == 201 and r.json().get("is_coach") is True)
+
+    # Search by first_name
+    r = requests.get(f"{BASE}/coach/search", params={"q": "Bob"})
+    print(r.json())
+    report("GET /coach/search?q=Bob (by first_name)",
+        r.status_code == 200
+        and any(c["first_name"] == "Bob" for c in r.json())
+        and all(c["first_name"] != "Carol" for c in r.json()))
+
+    # Search by last_name
+    r = requests.get(f"{BASE}/coach/search", params={"q": "Builder"})
+    print(r.json())
+    report("GET /coach/search?q=Builder (by last_name)",
+        r.status_code == 200
+        and any(c["first_name"] == "Bob" for c in r.json()))
+
+    # Search by username
+    r = requests.get(f"{BASE}/coach/search", params={"q": "bob"})
+    print(r.json())
+    report("GET /coach/search?q=bob (by username)",
+        r.status_code == 200
+        and any(c["first_name"] == "Bob" for c in r.json()))
+
+    # Search by description
+    r = requests.get(f"{BASE}/coach/search", params={"q": "yoga"})
+    print(r.json())
+    report("GET /coach/search?q=yoga (by description)",
+        r.status_code == 200
+        and any(c["first_name"] == "Carol" for c in r.json()))
+
+    # Search by tag name
+    r = requests.get(f"{BASE}/coach/search", params={"q": "fitness"})
+    print(r.json())
+    report("GET /coach/search?q=fitness (by tag)",
+        r.status_code == 200
+        and any(c["first_name"] == "Bob" for c in r.json()))
+
+    # Multiple terms – both must match
+    r = requests.get(f"{BASE}/coach/search", params={"q": "Bob yoga"})
+    print(r.json())
+    report("GET /coach/search?q=Bob+yoga (multi-term, no match)",
+        r.status_code == 200 and r.json() == [])
+
+    # Multiple terms – one coach matches all
+    r = requests.get(f"{BASE}/coach/search", params={"q": "Carol yoga"})
+    print(r.json())
+    report("GET /coach/search?q=Carol+yoga (multi-term, match)",
+        r.status_code == 200 and any(c["first_name"] == "Carol" for c in r.json()))
+
+    # No match
+    r = requests.get(f"{BASE}/coach/search", params={"q": "nonexistent"})
+    print(r.json())
+    report("GET /coach/search?q=nonexistent (no results)",
+        r.status_code == 200 and r.json() == [])
+
+    # Empty query
+    r = requests.get(f"{BASE}/coach/search", params={"q": ""})
+    print(r.json())
+    report("GET /coach/search?q= (empty query)",
+        r.status_code == 200 and r.json() == [])
+
+    # No query param at all
+    r = requests.get(f"{BASE}/coach/search")
+    print(r.json())
+    report("GET /coach/search (no param)",
+        r.status_code == 200 and r.json() == [])
+
+
+# ===================================================================
 # Badges
 # ===================================================================
 def test_badges():
@@ -1075,6 +1159,7 @@ if __name__ == "__main__":
     test_login()
     test_tags()
     test_coaches()
+    test_search_coaches()
     test_pictures()
     test_badges()
     test_admin_tag()
