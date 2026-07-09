@@ -39,6 +39,7 @@ class Db_Management:
     def __init__(self, db_url: str | None = None) -> None:
         if db_url is None:
             db_url = "mysql+mysqldb://emilien:1234@localhost/moCoach"
+        self.db_url = db_url
         self.engine = create_engine(db_url)
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
