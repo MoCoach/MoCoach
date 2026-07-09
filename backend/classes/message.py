@@ -14,11 +14,11 @@ class Message(Base):
 
     __tablename__ = 'messages'
     id        = Column(String(128), nullable=False, primary_key=True)
-    chat_id   = Column(Integer, ForeignKey('chats.id'), nullable=False)
-    sender_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    chat_id   = Column(Integer,     ForeignKey('chats.id'), nullable=False)
+    sender_id = Column(Integer,     ForeignKey('users.id'), nullable=False)
     text      = Column(String(250), nullable=False)
-    timestamp = Column(Integer, nullable=False)
-    hidden    = Column(Boolean, nullable=False, default=False)
+    timestamp = Column(Integer,     nullable=False)
+    hidden    = Column(Boolean,     nullable=False, default=False)
 
     chat = relationship("Chat", back_populates="messages")
 
@@ -40,12 +40,12 @@ class Message(Base):
     def to_dict(self) -> dict:
         """Serialize message data to a dictionary."""
         return {
-            "id": self.id,
-            "chat_id": self.chat_id,
+            "id"       : self.id,
+            "chat_id"  : self.chat_id,
             "sender_id": self.sender_id,
-            "text": self.text,
+            "text"     : self.text,
             "timestamp": self.timestamp,
-            "hidden": self.hidden,
+            "hidden"   : self.hidden,
         }
 
     def __repr__(self):

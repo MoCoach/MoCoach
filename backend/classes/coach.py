@@ -10,7 +10,7 @@ coach_tags = Table(
     'coach_tags',
     Base.metadata,
     Column('coach_id', Integer, ForeignKey('coaches.id', ondelete="CASCADE"), primary_key=True),
-    Column('tag_id',   Integer, ForeignKey('tags.id', ondelete="CASCADE"),    primary_key=True),
+    Column('tag_id',   Integer, ForeignKey('tags.id',    ondelete="CASCADE"), primary_key=True),
 )
 
 

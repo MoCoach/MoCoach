@@ -5,8 +5,8 @@ from . import Base
 
 class City(Base):
     __tablename__ = 'cities'
-    id   = Column(Integer,     primary_key=True)
-    name = Column(String(25),  nullable=False, unique=True)
+    id   = Column(Integer,    primary_key=True)
+    name = Column(String(25), nullable=False, unique=True)
 
     def __init__(self, name: str) -> None:
         if not isinstance(name, str):

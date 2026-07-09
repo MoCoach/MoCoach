@@ -23,22 +23,22 @@ class User(Base):
     """Represents a user of the app."""
 
     __tablename__ = 'users'
-    id         = Column(Integer,     nullable=False, primary_key=True)
-    username   = Column(String(128), nullable=False, unique=True)
-    first_name = Column(String(128), nullable=True)
-    last_name  = Column(String(128), nullable=True)
-    email      = Column(String(128), nullable=False, unique=True)
-    password   = Column(String(255), nullable=False)
-    phone      = Column(String(16),  nullable=True)
-    is_coach   = Column(Boolean,     nullable=False)
-    is_admin   = Column(Boolean,     nullable=False, default=False)
-    is_blocked = Column(Boolean,     nullable=False, default=False)
-    is_messaging_blocked = Column(Boolean, nullable=False, default=False)
-    is_vetted  = Column(Boolean,     nullable=False, default=False)
-    is_certified = Column(Boolean,   nullable=False, default=False)
-    email_blocked = Column(Boolean,  nullable=False, default=False)
-    ip_blocked    = Column(Boolean,  nullable=False, default=False)
-    ip_address    = Column(String(45), nullable=True)
+    id                   = Column(Integer,     nullable=False, primary_key=True)
+    username             = Column(String(128), nullable=False, unique=True)
+    first_name           = Column(String(128), nullable=True)
+    last_name            = Column(String(128), nullable=True)
+    email                = Column(String(128), nullable=False, unique=True)
+    password             = Column(String(255), nullable=False)
+    phone                = Column(String(16),  nullable=True)
+    is_coach             = Column(Boolean,     nullable=False)
+    is_admin             = Column(Boolean,     nullable=False, default=False)
+    is_blocked           = Column(Boolean,     nullable=False, default=False)
+    is_messaging_blocked = Column(Boolean,     nullable=False, default=False)
+    is_vetted            = Column(Boolean,     nullable=False, default=False)
+    is_certified         = Column(Boolean,     nullable=False, default=False)
+    email_blocked        = Column(Boolean,     nullable=False, default=False)
+    ip_blocked           = Column(Boolean,     nullable=False, default=False)
+    ip_address           = Column(String(45),  nullable=True)
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
@@ -94,14 +94,14 @@ class User(Base):
         _validate_name(first_name, "first_name")
         _validate_name(last_name, "last_name")
 
-        self.password = generate_password_hash(pwd, method='pbkdf2:sha256')
-        self.username = username
+        self.password   = generate_password_hash(pwd, method='pbkdf2:sha256')
+        self.username   = username
         self.first_name = first_name
         self.last_name  = last_name
-        self.email    = email
-        self.is_coach = is_coach
-        self.phone    = phone
-        self.is_admin = is_admin
+        self.email      = email
+        self.is_coach   = is_coach
+        self.phone      = phone
+        self.is_admin   = is_admin
         self.ip_address = ip_address
 
         if is_coach:

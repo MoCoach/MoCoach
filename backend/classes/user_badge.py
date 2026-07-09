@@ -6,8 +6,8 @@ from . import Base
 class UserBadge(Base):
     __tablename__ = 'user_badges'
     id       = Column(Integer, primary_key=True)
-    user_id  = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"),  nullable=False)
-    giver_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"),  nullable=False)
+    user_id  = Column(Integer, ForeignKey('users.id',  ondelete="CASCADE"), nullable=False)
+    giver_id = Column(Integer, ForeignKey('users.id',  ondelete="CASCADE"), nullable=False)
     badge_id = Column(Integer, ForeignKey('badges.id', ondelete="CASCADE"), nullable=False)
 
     __table_args__ = (
@@ -16,14 +16,14 @@ class UserBadge(Base):
     )
 
     def __init__(self, user_id: int, giver_id: int, badge_id: int) -> None:
-        self.user_id = user_id
+        self.user_id  = user_id
         self.giver_id = giver_id
         self.badge_id = badge_id
 
     def to_dict(self) -> dict:
         return {
-            "id": self.id,
-            "user_id": self.user_id,
+            "id":       self.id,
+            "user_id":  self.user_id,
             "giver_id": self.giver_id,
             "badge_id": self.badge_id,
         }

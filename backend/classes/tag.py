@@ -8,7 +8,7 @@ class Tag(Base):
     Class representing a tag that can be assigned to a coach
     '''
     __tablename__ = 'tags'
-    id          = Column(Integer,      primary_key=True)
+    id          = Column(Integer,     primary_key=True)
     name        = Column(String(25),  nullable=False, unique=True)
     description = Column(String(100), nullable=False)
 

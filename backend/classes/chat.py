@@ -53,10 +53,10 @@ class Chat(Base):
 
     def to_dict(self) -> dict:
         return {
-            "id": self.id,
+            "id":       self.id,
             "id_coach": self.id_coach,
-            "id_cust": self.id_cust,
-            "msg_num": self.msg_num,
+            "id_cust":  self.id_cust,
+            "msg_num":  self.msg_num,
             "messages": [msg.to_dict() for msg in self.messages],
         }
 
