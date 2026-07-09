@@ -28,7 +28,7 @@ class Coach(Base):
     tags = relationship("Tag", secondary=coach_tags)
     city = relationship("City")
 
-    def __init__(self, description, city_id, price=None):
+    def __init__(self, description: str, city_id: int, price: int | None = None) -> None:
         if not isinstance(description, str):
             raise TypeError("description must be a string")
         if not isinstance(city_id, int):
@@ -37,7 +37,7 @@ class Coach(Base):
         self.city_id = city_id
         self.price = price
 
-    def add_tag(self, tag):
+    def add_tag(self, tag: Tag) -> None:
         if not isinstance(tag, Tag):
             raise TypeError("tag must be a Tag instance")
         if len(self.tags) >= 5:
@@ -45,11 +45,11 @@ class Coach(Base):
         if tag not in self.tags:
             self.tags.append(tag)
 
-    def remove_tag(self, tag):
+    def remove_tag(self, tag: Tag) -> None:
         if tag in self.tags:
             self.tags.remove(tag)
 
-    def set_tags(self, tags):
+    def set_tags(self, tags: list | None) -> None:
         if tags is None:
             self.tags = []
             return
@@ -62,7 +62,7 @@ class Coach(Base):
                 raise TypeError("each tag must be a Tag instance")
         self.tags = list(tags)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "description": self.description,

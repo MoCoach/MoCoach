@@ -22,7 +22,7 @@ class Message(Base):
 
     chat = relationship("Chat", back_populates="messages")
 
-    def __init__(self, msg_id, chat_id, sender_id, text):
+    def __init__(self, msg_id: str, chat_id: int, sender_id: int, text: str) -> None:
         """Create a new message.
 
         :param msg_id: unique message identifier
@@ -37,7 +37,7 @@ class Message(Base):
         self.timestamp = floor(time())
         self.hidden    = False
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Serialize message data to a dictionary."""
         return {
             "id": self.id,

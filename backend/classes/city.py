@@ -8,7 +8,7 @@ class City(Base):
     id   = Column(Integer,     primary_key=True)
     name = Column(String(25),  nullable=False, unique=True)
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         if not isinstance(name, str):
             raise TypeError("name must be a string")
         if not name.strip():
@@ -17,7 +17,7 @@ class City(Base):
             raise ValueError("name must be at most 25 characters")
         self.name = name
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "name": self.name,

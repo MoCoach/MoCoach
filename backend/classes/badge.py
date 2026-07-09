@@ -10,7 +10,7 @@ class Badge(Base):
     description = Column(String(100), nullable=False)
     for_coach   = Column(Boolean,     nullable=False, default=False)
 
-    def __init__(self, name, description, for_coach):
+    def __init__(self, name: str, description: str, for_coach: bool) -> None:
         if not isinstance(name, str):
             raise TypeError("name must be a string")
         if not name.strip():
@@ -29,7 +29,7 @@ class Badge(Base):
         self.description = description
         self.for_coach = for_coach
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "name": self.name,

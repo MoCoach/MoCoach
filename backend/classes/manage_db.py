@@ -6,9 +6,9 @@ import os
 import re
 
 from PIL import Image
-from sqlalchemy import create_engine, or_
+from sqlalchemy import create_engine, and_, or_
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from backend.classes import Base
 from backend.classes.user import User, _UNSET, _FORBIDDEN_USERNAMES
@@ -28,7 +28,7 @@ DEFAULT_PIC = "backend/static/uploads/profile_pics/default/profile.jpg"
 class DbError(Exception):
     """Custom exception carrying a user-facing message and HTTP status code."""
 
-    def __init__(self, message, status_code=400):
+    def __init__(self, message: str, status_code: int = 400) -> None:
         self.message = message
         self.status_code = status_code
 
@@ -36,14 +36,14 @@ class DbError(Exception):
 class Db_Management:
     """Data-access object that wraps all database operations."""
 
-    def __init__(self, db_url=None):
+    def __init__(self, db_url: str | None = None) -> None:
         if db_url is None:
             db_url = "mysql+mysqldb://emilien:1234@localhost/moCoach"
         self.engine = create_engine(db_url)
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
 
-    def _session(self):
+    def _session(self) -> Session:
         """Open a new database session."""
         return self.Session()
 
@@ -51,7 +51,7 @@ class Db_Management:
     # Helpers
     # ------------------------------------------------------------------
 
-    def _is_admin(self, user_id):
+    def _is_admin(self, user_id: int) -> bool:
         """Return True if *user_id* belongs to an admin."""
         session = self._session()
         try:
@@ -60,7 +60,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def _is_last_admin(self, user_id):
+    def _is_last_admin(self, user_id: int) -> bool:
         """Return True if *user_id* is the only admin left in the system."""
         session = self._session()
         try:
@@ -70,7 +70,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def get_user_by_id(self, user_id):
+    def get_user_by_id(self, user_id: int) -> dict | None:
         """Return a user dict with is_admin and is_coach, or None."""
         session = self._session()
         try:
@@ -86,7 +86,7 @@ class Db_Management:
     )
 
     @staticmethod
-    def save_profile_picture(user_id, image_bytes):
+    def save_profile_picture(user_id: int, image_bytes: bytes) -> str:
         """Validate, resize and save a profile picture.
 
         Verifies the bytes represent a valid image, resizes to a maximum
@@ -116,7 +116,7 @@ class Db_Management:
         return f"static/uploads/profile_pics/{user_id}/profile.jpg"
 
     @staticmethod
-    def remove_profile_picture(user_id):
+    def remove_profile_picture(user_id: int) -> None:
         """Delete the profile picture directory for *user_id*."""
         dest_dir = os.path.join(Db_Management.UPLOAD_BASE, str(user_id))
         if os.path.isdir(dest_dir):
@@ -124,7 +124,7 @@ class Db_Management:
             shutil.rmtree(dest_dir)
 
     @staticmethod
-    def get_profile_pic_path(user_id):
+    def get_profile_pic_path(user_id: int) -> str | None:
         """Return the relative URL to the user's profile picture, or ``None``."""
         candidate = f"static/uploads/profile_pics/{user_id}/profile.jpg"
         full = os.path.join(Db_Management.UPLOAD_BASE, str(user_id), "profile.jpg")
@@ -135,7 +135,7 @@ class Db_Management:
     )
 
     @staticmethod
-    def _save_image(image_bytes, dest_dir, filename):
+    def _save_image(image_bytes: bytes, dest_dir: str, filename: str) -> str:
         """Validate, resize (max 400×400, keep aspect ratio) and save a JPEG.
 
         :raises DbError: if the bytes do not represent a valid image
@@ -155,7 +155,7 @@ class Db_Management:
         return f"static/uploads/coach_pics/{os.path.basename(dest_dir)}/{filename}"
 
     @staticmethod
-    def save_coach_picture(user_id, numero, image_bytes):
+    def save_coach_picture(user_id: int, numero: int, image_bytes: bytes) -> str:
         """Save (or replace) one of a coach's up‑to‑7 pictures.
 
         *numero* must be between 1 and 7 (inclusive).
@@ -166,14 +166,14 @@ class Db_Management:
         return Db_Management._save_image(image_bytes, dest_dir, f"{numero}.jpg")
 
     @staticmethod
-    def remove_coach_picture(user_id, numero):
+    def remove_coach_picture(user_id: int, numero: int) -> None:
         """Remove a single coach picture (1‑7)."""
         path = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id), f"{numero}.jpg")
         if os.path.isfile(path):
             os.remove(path)
 
     @staticmethod
-    def remove_all_coach_pictures(user_id):
+    def remove_all_coach_pictures(user_id: int) -> None:
         """Remove the entire coach pictures directory for *user_id*."""
         dest_dir = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id))
         if os.path.isdir(dest_dir):
@@ -181,7 +181,7 @@ class Db_Management:
             shutil.rmtree(dest_dir)
 
     @staticmethod
-    def get_coach_picture_paths(user_id):
+    def get_coach_picture_paths(user_id: int) -> list:
         """Return a list of up to 7 relative URLs, one per existing picture."""
         paths = []
         for i in range(1, 8):
@@ -194,7 +194,7 @@ class Db_Management:
     # Availability checks
     # ------------------------------------------------------------------
 
-    def check_username_available(self, username):
+    def check_username_available(self, username: str) -> bool:
         """Return True if *username* is not taken and respects format rules."""
         session = self._session()
         try:
@@ -208,7 +208,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def check_email_available(self, email):
+    def check_email_available(self, email: str) -> bool:
         """Return True if *email* is not already registered."""
         session = self._session()
         try:
@@ -220,9 +220,9 @@ class Db_Management:
     # Registration / Authentication
     # ------------------------------------------------------------------
 
-    def register_user(self, username, email, password, is_coach, description,
-                      tags_data, phone, is_admin=False, first_name=None,
-                      last_name=None, city_id=None, price=None):
+    def register_user(self, username: str, email: str, password: str, is_coach: bool, description: str | None,
+                      tags_data: list, phone: str | None, is_admin: bool = False, first_name: str | None = None,
+                      last_name: str | None = None, city_id: int | None = None, price: int | None = None) -> dict:
         """Create a new user account.
 
         :param username: unique login identifier (required)
@@ -262,7 +262,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def authenticate(self, login, password):
+    def authenticate(self, login: str, password: str) -> User:
         """Authenticate a user by email or username and return the User object."""
         session = self._session()
         try:
@@ -279,10 +279,10 @@ class Db_Management:
     # Profile management
     # ------------------------------------------------------------------
 
-    def update_profile(self, user_id, first_name=_UNSET, last_name=_UNSET,
-                       description=None, tags_data=None, email=_UNSET,
-                       phone=_UNSET, username=_UNSET, city_id=None,
-                       price=None):
+    def update_profile(self, user_id: int, first_name: object = _UNSET, last_name: object = _UNSET,
+                       description: str | None = None, tags_data: list | None = None, email: object = _UNSET,
+                       phone: object = _UNSET, username: object = _UNSET, city_id: int | None = None,
+                       price: int | None = None) -> dict:
         """Update profile fields for the user identified by *user_id*."""
         session = self._session()
         try:
@@ -338,7 +338,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def change_password(self, user_id, old_pwd, new_pwd):
+    def change_password(self, user_id: int, old_pwd: str, new_pwd: str) -> None:
         """Change the password for *user_id* after verifying the old one."""
         session = self._session()
         try:
@@ -359,7 +359,7 @@ class Db_Management:
     # Coach queries
     # ------------------------------------------------------------------
 
-    def _coach_to_dict(self, coach):
+    def _coach_to_dict(self, coach: Coach) -> dict:
         """Serialize a coach record to a public-facing dictionary."""
         pic_url = Db_Management.get_profile_pic_path(coach.id)
         thumbs_up = 0
@@ -392,7 +392,7 @@ class Db_Management:
         }
         return d
 
-    def get_coach(self, coach_id):
+    def get_coach(self, coach_id: int) -> dict:
         """Return public coach details by coach id."""
         session = self._session()
         try:
@@ -403,7 +403,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def list_coaches(self):
+    def list_coaches(self) -> list:
         """Return a list of all coaches."""
         session = self._session()
         try:
@@ -412,7 +412,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def list_coaches_by_tag(self, tag_name):
+    def list_coaches_by_tag(self, tag_name: str) -> list:
         """Return coaches associated with the given tag name."""
         session = self._session()
         try:
@@ -426,13 +426,15 @@ class Db_Management:
         finally:
             session.close()
 
-    def search_coaches(self, query_string):
+    def search_coaches(self, query_string: str) -> list:
         """Return coaches matching the given search string.
 
-        Splits *query_string* into individual terms and matches each
-        term against the coach's description, first_name, last_name,
-        username, and tag names.  Only coaches matching ALL terms are
-        returned.
+        The full *query_string* is matched as a phrase against tag
+        names (to support multi-word tags).  Additionally, each
+        individual word from *query_string* must appear in at least
+        one of the coach's description, first_name, last_name,
+        username, or tag names.  A coach is returned if either
+        condition holds.
         """
         session = self._session()
         try:
@@ -440,20 +442,27 @@ class Db_Management:
             if not terms:
                 return []
 
-            filters = []
+            full_phrase = query_string.strip()
+
+            # Every word must match in at least one text field or tag name
+            per_word = []
             for term in terms:
                 like = f"%{term}%"
-                filters.append(or_(
+                per_word.append(or_(
                     Coach.description.ilike(like),
                     User.first_name.ilike(like),
                     User.last_name.ilike(like),
                     User.username.ilike(like),
-                    Tag.name.ilike(like),
+                    Coach.tags.any(Tag.name.ilike(like)),
                 ))
 
-            query = session.query(Coach).join(Coach.user).outerjoin(Coach.tags)
-            for f in filters:
-                query = query.filter(f)
+            query = session.query(Coach).join(Coach.user)
+            query = query.filter(
+                or_(
+                    Coach.tags.any(Tag.name.ilike(f"%{full_phrase}%")),
+                    and_(*per_word),
+                )
+            )
             coaches = query.distinct().all()
             return [self._coach_to_dict(c) for c in coaches]
         finally:
@@ -463,7 +472,7 @@ class Db_Management:
     # Ratings (thumbs up / down)
     # ------------------------------------------------------------------
 
-    def rate_coach(self, customer_id, coach_id, rating):
+    def rate_coach(self, customer_id: int, coach_id: int, rating: bool | None) -> dict:
         """Set or remove a customer's rating for a coach.
 
         *rating* can be:
@@ -509,7 +518,7 @@ class Db_Management:
     # Profile lookup (with visibility rules)
     # ------------------------------------------------------------------
 
-    def get_user_profile(self, profile_id, current_id):
+    def get_user_profile(self, profile_id: int, current_id: int) -> dict:
         """Return a user's profile enforcing visibility rules.
 
         Admins are invisible to non-admin users.
@@ -559,7 +568,7 @@ class Db_Management:
     # Chat / Messages
     # ------------------------------------------------------------------
 
-    def list_user_chats(self, user_id):
+    def list_user_chats(self, user_id: int) -> list:
         """Return chats for a user.
 
         Users (including admins) only see their own chats.
@@ -589,7 +598,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def list_user_chats_as_admin(self, admin_id, target_user_id):
+    def list_user_chats_as_admin(self, admin_id: int, target_user_id: int) -> list:
         """Return chats belonging to *target_user_id* (admin-only)."""
         session = self._session()
         try:
@@ -623,7 +632,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def get_chat_messages(self, chat_id, user_id):
+    def get_chat_messages(self, chat_id: int, user_id: int) -> list:
         """Return messages for *chat_id* with access control.
 
         Admins can access any chat and see hidden messages.
@@ -682,7 +691,7 @@ class Db_Management:
             session.close()
 
 
-    def send_message(self, sender_id, recipient_id, text):
+    def send_message(self, sender_id: int, recipient_id: int, text: str) -> dict:
         """Send a message from *sender_id* to *recipient_id*.
 
         Creates a new chat if none exists between the pair.
@@ -728,7 +737,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def hide_message(self, user_id, message_id):
+    def hide_message(self, user_id: int, message_id: str) -> dict:
         """Mark a message as hidden (soft-delete).
 
         Only the sender may hide their own message, and only if they are
@@ -767,7 +776,7 @@ class Db_Management:
     # Tag management (admin only)
     # ------------------------------------------------------------------
 
-    def create_tag(self, admin_id, name, description):
+    def create_tag(self, admin_id: int, name: str, description: str) -> dict:
         """Create a new tag (admin-only)."""
         session = self._session()
         try:
@@ -788,7 +797,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def list_tags(self):
+    def list_tags(self) -> list:
         """Return all tags."""
         session = self._session()
         try:
@@ -797,7 +806,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def edit_tag(self, admin_id, tag_id, name=None, description=None):
+    def edit_tag(self, admin_id: int, tag_id: int, name: str | None = None, description: str | None = None) -> dict:
         """Update a tag's name and/or description (admin-only)."""
         session = self._session()
         try:
@@ -830,7 +839,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def delete_tag(self, admin_id, tag_id):
+    def delete_tag(self, admin_id: int, tag_id: int) -> dict:
         """Delete a tag (admin-only)."""
         session = self._session()
         try:
@@ -852,7 +861,7 @@ class Db_Management:
     # City management (admin only)
     # ------------------------------------------------------------------
 
-    def add_city(self, admin_id, name):
+    def add_city(self, admin_id: int, name: str) -> dict:
         """Create a new city (admin-only)."""
         session = self._session()
         try:
@@ -874,7 +883,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def edit_city(self, admin_id, city_id, name):
+    def edit_city(self, admin_id: int, city_id: int, name: str) -> dict:
         """Update a city's name (admin-only)."""
         session = self._session()
         try:
@@ -901,7 +910,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def list_cities(self):
+    def list_cities(self) -> list:
         """Return all cities (public)."""
         session = self._session()
         try:
@@ -910,7 +919,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def get_city(self, city_id):
+    def get_city(self, city_id: int) -> dict:
         """Return a city by id (public)."""
         session = self._session()
         try:
@@ -925,7 +934,7 @@ class Db_Management:
     # Badge management
     # ------------------------------------------------------------------
 
-    def create_badge(self, admin_id, name, description, for_coach):
+    def create_badge(self, admin_id: int, name: str, description: str, for_coach: bool) -> dict:
         """Create a new badge (admin-only)."""
         session = self._session()
         try:
@@ -946,7 +955,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def list_all_badges(self):
+    def list_all_badges(self) -> list:
         """Return all badges (public)."""
         session = self._session()
         try:
@@ -955,7 +964,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def list_badges_by_role(self, for_coach):
+    def list_badges_by_role(self, for_coach: bool) -> list:
         """Return badges filtered by role (public).
 
         Args:
@@ -968,7 +977,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def edit_badge(self, admin_id, badge_id, name=None, description=None):
+    def edit_badge(self, admin_id: int, badge_id: int, name: str | None = None, description: str | None = None) -> dict:
         """Update a badge's name and/or description (admin-only). for_coach is immutable after creation."""
         session = self._session()
         try:
@@ -1001,7 +1010,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def delete_badge(self, admin_id, badge_id):
+    def delete_badge(self, admin_id: int, badge_id: int) -> dict:
         """Delete a badge (admin-only)."""
         session = self._session()
         try:
@@ -1019,7 +1028,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def give_badge(self, giver_id, user_id, badge_id):
+    def give_badge(self, giver_id: int, user_id: int, badge_id: int) -> dict:
         """Give a badge from *giver* to *user*.
 
         Validates that:
@@ -1070,7 +1079,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def get_user_badges(self, user_id):
+    def get_user_badges(self, user_id: int) -> dict:
         """Return badges received by *user*, grouped by badge id.
 
         Returns:
@@ -1102,7 +1111,7 @@ class Db_Management:
     # Admin user listing
     # ------------------------------------------------------------------
 
-    def list_users(self, admin_id):
+    def list_users(self, admin_id: int) -> list:
         """Return every non-admin user (admin-only)."""
         session = self._session()
         try:
@@ -1119,7 +1128,7 @@ class Db_Management:
     # Deletion
     # ------------------------------------------------------------------
 
-    def delete_user(self, admin_id, user_id):
+    def delete_user(self, admin_id: int, user_id: int) -> dict:
         """Delete a non-admin user (admin-only).
 
         The user's chats and messages are also removed via cascade.
@@ -1151,7 +1160,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def delete_own_profile(self, user_id, password):
+    def delete_own_profile(self, user_id: int, password: str) -> dict:
         """Delete the current user's own profile.
 
         The last remaining admin in the system cannot delete their
@@ -1184,7 +1193,7 @@ class Db_Management:
         finally:
             session.close()
 
-    def delete_message(self, admin_id, message_id):
+    def delete_message(self, admin_id: int, message_id: str) -> dict:
         """Permanently delete any message (admin-only)."""
         session = self._session()
         try:
@@ -1206,7 +1215,7 @@ class Db_Management:
     # Admin promotion
     # ------------------------------------------------------------------
 
-    def promote_to_admin(self, admin_id, target_user_id):
+    def promote_to_admin(self, admin_id: int, target_user_id: int) -> dict:
         """Promote a user to admin (admin-only, irreversible)."""
         session = self._session()
         try:

@@ -2,29 +2,31 @@
 
 import os
 
-from flask import jsonify, request, send_from_directory
+from typing import Any
+
+from flask import Flask, jsonify, request, send_from_directory
 from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity,
 )
 
-from backend.classes.manage_db import DbError
+from backend.classes.manage_db import DbError, Db_Management
 
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 
-def register_routes(app, db):
+def register_routes(app: Flask, db: Db_Management) -> None:
     # ------------------------------------------------------------------
     # Availability checks
     # ------------------------------------------------------------------
 
     @app.get("/api/v1/check-username/<username>")
-    def check_username(username):
+    def check_username(username: str) -> tuple:
         """Return whether a username is available."""
         return jsonify({"available": db.check_username_available(username)}), 200
 
     @app.get("/api/v1/check-email/<email>")
-    def check_email(email):
+    def check_email(email: str) -> tuple:
         """Return whether an email is available."""
         return jsonify({"available": db.check_email_available(email)}), 200
 
@@ -33,7 +35,7 @@ def register_routes(app, db):
     # ------------------------------------------------------------------
 
     @app.post("/api/v1/register")
-    def register():
+    def register() -> tuple:
         """Register a new user account."""
         data = request.get_json()
         if not data:
@@ -68,7 +70,7 @@ def register_routes(app, db):
             return jsonify({"msg": e.message}), e.status_code
 
     @app.post("/api/v1/login")
-    def login():
+    def login() -> tuple:
         """Authenticate via email or username and return a JWT access token."""
         data = request.get_json()
         if not data:
@@ -92,7 +94,7 @@ def register_routes(app, db):
 
     @app.put("/api/v1/profile")
     @jwt_required()
-    def edit_profile():
+    def edit_profile() -> tuple:
         """Update the authenticated user's profile."""
         data = request.get_json()
         if not data:
@@ -127,7 +129,7 @@ def register_routes(app, db):
             return jsonify({"msg": e.message}), e.status_code
 
     @app.get("/api/v1/profile/picture/<int:user_id>")
-    def serve_profile_picture(user_id):
+    def serve_profile_picture(user_id: int) -> tuple:
         """Serve a user's profile picture, falling back to the default."""
         pic_path = db.get_profile_pic_path(user_id)
         if pic_path:
@@ -149,10 +151,10 @@ def register_routes(app, db):
         return "", 204
 
     @app.get("/api/v1/coach/picture/<int:user_id>/<int:numero>")
-    def serve_coach_picture(user_id, numero):
+    def serve_coach_picture(user_id: int, numero: int) -> tuple:
         """Serve one of a coach's pictures (numero 1‑7), or 204 if absent."""
         pic_path = db.get_coach_picture_paths(user_id)
-        if f"static/uploads/api/v1/coach_pics/{user_id}/{numero}.jpg" in pic_path:
+        if f"static/uploads/coach_pics/{user_id}/{numero}.jpg" in pic_path:
             full_dir = os.path.join(
                 os.path.dirname(__file__), "static", "uploads", "coach_pics",
                 str(user_id)
@@ -162,7 +164,7 @@ def register_routes(app, db):
 
     @app.post("/api/v1/profile/picture")
     @jwt_required()
-    def upload_profile_picture():
+    def upload_profile_picture() -> tuple:
         """Upload or replace the authenticated user's profile picture.
 
         Expects a multipart form‑data field named ``file`` containing the
@@ -187,7 +189,7 @@ def register_routes(app, db):
 
     @app.post("/api/v1/coach/picture/<int:numero>")
     @jwt_required()
-    def upload_coach_picture(numero):
+    def upload_coach_picture(numero: int) -> tuple:
         """Upload or replace one of a coach's up‑to‑7 pictures (numero 1‑7).
 
         Expects a multipart form‑data field named ``file`` containing the
@@ -212,7 +214,7 @@ def register_routes(app, db):
 
     @app.put("/api/v1/password")
     @jwt_required()
-    def edit_password():
+    def edit_password() -> tuple:
         """Change the authenticated user's password."""
         data = request.get_json()
         if not data:
@@ -231,7 +233,7 @@ def register_routes(app, db):
 
     @app.get("/api/v1/profile/<int:profile_id>")
     @jwt_required()
-    def get_profile(profile_id):
+    def get_profile(profile_id: int) -> tuple:
         """View a user's profile (visibility rules enforced)."""
         try:
             return jsonify(db.get_user_profile(profile_id, get_jwt_identity())), 200
@@ -240,7 +242,7 @@ def register_routes(app, db):
 
     @app.delete("/api/v1/profile")
     @jwt_required()
-    def delete_own_profile():
+    def delete_own_profile() -> tuple:
         """Delete the authenticated user's own account.
 
         The last remaining admin cannot delete their profile.
@@ -262,7 +264,7 @@ def register_routes(app, db):
 
     @app.post("/api/v1/coach/<int:coach_id>/rate")
     @jwt_required()
-    def rate_coach(coach_id):
+    def rate_coach(coach_id: int) -> tuple:
         """Set a thumbs-up (1), thumbs-down (0), or remove (null) rating."""
         data = request.get_json()
         if not data or "rating" not in data:
@@ -283,7 +285,7 @@ def register_routes(app, db):
     # ------------------------------------------------------------------
 
     @app.get("/api/v1/coach/<int:coach_id>")
-    def get_coach(coach_id):
+    def get_coach(coach_id: int) -> tuple:
         """Return public details for a specific coach."""
         try:
             return jsonify(db.get_coach(coach_id)), 200
@@ -291,17 +293,17 @@ def register_routes(app, db):
             return jsonify({"msg": e.message}), e.status_code
 
     @app.get("/api/v1/coach")
-    def list_coaches():
+    def list_coaches() -> tuple:
         """Return all coaches."""
         return jsonify(db.list_coaches()), 200
 
     @app.get("/api/v1/coach/tag/<tag_name>")
-    def list_coaches_by_tag(tag_name):
+    def list_coaches_by_tag(tag_name: str) -> tuple:
         """Return coaches filtered by tag name."""
         return jsonify(db.list_coaches_by_tag(tag_name)), 200
 
     @app.get("/api/v1/coach/search")
-    def search_coaches():
+    def search_coaches() -> tuple:
         """Search coaches by description, name, username, or tag name.
 
         Accepts a ``q`` query parameter with one or more space-separated
@@ -318,7 +320,7 @@ def register_routes(app, db):
 
     @app.get("/api/v1/chat")
     @jwt_required()
-    def list_chats():
+    def list_chats() -> tuple:
         """Return chats for the authenticated user.
 
         Users only see their own chats.  Admins may consult another
@@ -328,7 +330,7 @@ def register_routes(app, db):
 
     @app.get("/api/v1/chat/<int:chat_id>")
     @jwt_required()
-    def get_chat_messages(chat_id):
+    def get_chat_messages(chat_id: int) -> tuple:
         """Return messages for a given chat.
 
         Admins see all messages including hidden ones.
@@ -341,7 +343,7 @@ def register_routes(app, db):
 
     @app.post("/api/v1/message")
     @jwt_required()
-    def send_message():
+    def send_message() -> tuple:
         """Send a message to another user."""
         data = request.get_json()
         if not data:
@@ -360,7 +362,7 @@ def register_routes(app, db):
 
     @app.put("/api/v1/message/<message_id>/hide")
     @jwt_required()
-    def hide_message(message_id):
+    def hide_message(message_id: str) -> tuple:
         """Hide (soft-delete) one of your own messages.
 
         Only available to non-admin users.  The hidden message becomes
@@ -374,7 +376,7 @@ def register_routes(app, db):
 
     @app.delete("/api/v1/message/<message_id>")
     @jwt_required()
-    def delete_message(message_id):
+    def delete_message(message_id: str) -> tuple:
         """Permanently delete any message (admin-only)."""
         try:
             result = db.delete_message(get_jwt_identity(), message_id)
@@ -387,13 +389,13 @@ def register_routes(app, db):
     # ------------------------------------------------------------------
 
     @app.get("/api/v1/tag")
-    def list_tags():
+    def list_tags() -> tuple:
         """Return all tags (public)."""
         return jsonify(db.list_tags()), 200
 
     @app.post("/api/v1/tag")
     @jwt_required()
-    def create_tag():
+    def create_tag() -> tuple:
         """Create a new tag (admin-only)."""
         data = request.get_json()
         if not data:
@@ -412,7 +414,7 @@ def register_routes(app, db):
 
     @app.put("/api/v1/tag/<int:tag_id>")
     @jwt_required()
-    def edit_tag(tag_id):
+    def edit_tag(tag_id: int) -> tuple:
         """Update a tag (admin-only)."""
         data = request.get_json()
         if not data:
@@ -429,7 +431,7 @@ def register_routes(app, db):
 
     @app.delete("/api/v1/tag/<int:tag_id>")
     @jwt_required()
-    def delete_tag(tag_id):
+    def delete_tag(tag_id: int) -> tuple:
         """Delete a tag (admin-only)."""
         try:
             result = db.delete_tag(get_jwt_identity(), tag_id)
@@ -443,7 +445,7 @@ def register_routes(app, db):
 
     @app.post("/api/v1/city")
     @jwt_required()
-    def create_city():
+    def create_city() -> tuple:
         """Create a new city (admin-only)."""
         data = request.get_json()
         if not data:
@@ -461,7 +463,7 @@ def register_routes(app, db):
 
     @app.put("/api/v1/city/<int:city_id>")
     @jwt_required()
-    def edit_city(city_id):
+    def edit_city(city_id: int) -> tuple:
         """Update a city's name (admin-only)."""
         data = request.get_json()
         if not data:
@@ -478,12 +480,12 @@ def register_routes(app, db):
             return jsonify({"msg": e.message}), e.status_code
 
     @app.get("/api/v1/city")
-    def list_cities():
+    def list_cities() -> tuple:
         """Return all cities (public)."""
         return jsonify(db.list_cities()), 200
 
     @app.get("/api/v1/city/<int:city_id>")
-    def get_city(city_id):
+    def get_city(city_id: int) -> tuple:
         """Return a city by id (public)."""
         try:
             return jsonify(db.get_city(city_id)), 200
@@ -496,7 +498,7 @@ def register_routes(app, db):
 
     @app.get("/api/v1/badge")
     @jwt_required()
-    def list_badges():
+    def list_badges() -> tuple:
         """Return the authenticated user's received badges, grouped by badge."""
         try:
             result = db.get_user_badges(get_jwt_identity())
@@ -506,7 +508,7 @@ def register_routes(app, db):
 
     @app.post("/api/v1/badge/give")
     @jwt_required()
-    def give_badge():
+    def give_badge() -> tuple:
         """Give a badge to another user."""
         data = request.get_json()
         if not data:
@@ -524,12 +526,12 @@ def register_routes(app, db):
             return jsonify({"msg": e.message}), e.status_code
 
     @app.get("/api/v1/badge/all")
-    def list_all_badges():
+    def list_all_badges() -> tuple:
         """Return all available badges (public)."""
         return jsonify(db.list_all_badges()), 200
 
     @app.get("/api/v1/badge/for/<string:role>")
-    def list_badges_by_role(role):
+    def list_badges_by_role(role: str) -> tuple:
         """Return badges for a specific role (public).
 
         Role must be 'coach' or 'customer'.
@@ -544,7 +546,7 @@ def register_routes(app, db):
 
     @app.post("/api/v1/badge")
     @jwt_required()
-    def create_badge():
+    def create_badge() -> tuple:
         """Create a new badge (admin-only)."""
         data = request.get_json()
         if not data:
@@ -564,7 +566,7 @@ def register_routes(app, db):
 
     @app.put("/api/v1/badge/<int:badge_id>")
     @jwt_required()
-    def edit_badge(badge_id):
+    def edit_badge(badge_id: int) -> tuple:
         """Update a badge (admin-only)."""
         data = request.get_json()
         if not data:
@@ -582,7 +584,7 @@ def register_routes(app, db):
 
     @app.delete("/api/v1/badge/<int:badge_id>")
     @jwt_required()
-    def delete_badge(badge_id):
+    def delete_badge(badge_id: int) -> tuple:
         """Delete a badge (admin-only)."""
         try:
             result = db.delete_badge(get_jwt_identity(), badge_id)
@@ -596,7 +598,7 @@ def register_routes(app, db):
 
     @app.get("/api/v1/users")
     @jwt_required()
-    def list_users():
+    def list_users() -> tuple:
         """List all non-admin users (admin-only)."""
         try:
             result = db.list_users(get_jwt_identity())
@@ -606,7 +608,7 @@ def register_routes(app, db):
 
     @app.delete("/api/v1/user/<int:user_id>")
     @jwt_required()
-    def delete_user(user_id):
+    def delete_user(user_id: int) -> tuple:
         """Delete a non-admin user (admin-only)."""
         try:
             result = db.delete_user(get_jwt_identity(), user_id)
@@ -616,7 +618,7 @@ def register_routes(app, db):
 
     @app.put("/api/v1/user/<int:user_id>/promote")
     @jwt_required()
-    def promote_user(user_id):
+    def promote_user(user_id: int) -> tuple:
         """Promote a user to admin (admin-only, irreversible)."""
         try:
             result = db.promote_to_admin(get_jwt_identity(), user_id)
@@ -626,7 +628,7 @@ def register_routes(app, db):
 
     @app.get("/api/v1/user/<int:user_id>/chats")
     @jwt_required()
-    def get_user_chats(user_id):
+    def get_user_chats(user_id: int) -> tuple:
         """Return a specific user's chats (admin-only consultation)."""
         try:
             result = db.list_user_chats_as_admin(get_jwt_identity(), user_id)

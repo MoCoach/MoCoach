@@ -12,7 +12,7 @@ class Tag(Base):
     name        = Column(String(25),  nullable=False, unique=True)
     description = Column(String(100), nullable=False)
 
-    def __init__(self, name, description):
+    def __init__(self, name: str, description: str) -> None:
         if not isinstance(name, str):
             raise TypeError("name must be a string")
         if not name.strip():
@@ -28,7 +28,7 @@ class Tag(Base):
         self.name = name
         self.description = description
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "name": self.name,

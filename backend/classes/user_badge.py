@@ -15,12 +15,12 @@ class UserBadge(Base):
                          name='uq_user_giver_badge'),
     )
 
-    def __init__(self, user_id, giver_id, badge_id):
+    def __init__(self, user_id: int, giver_id: int, badge_id: int) -> None:
         self.user_id = user_id
         self.giver_id = giver_id
         self.badge_id = badge_id
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "user_id": self.user_id,

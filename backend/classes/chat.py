@@ -21,12 +21,12 @@ class Chat(Base):
                             cascade="all, delete-orphan",
                             order_by="Message.timestamp")
 
-    def __init__(self, id_coach, id_cust):
+    def __init__(self, id_coach: int, id_cust: int) -> None:
         self.id_coach = id_coach
         self.id_cust  = id_cust
         self.msg_num  = 0
 
-    def new_msg(self, sender, text):
+    def new_msg(self, sender: int, text: str) -> Message:
         '''
         insert new message
         :return: the newly created Message
@@ -51,7 +51,7 @@ class Chat(Base):
         self.msg_num += 1
         return msg
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "id_coach": self.id_coach,

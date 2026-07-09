@@ -35,9 +35,9 @@ class User(Base):
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
-    def __init__(self, username, email, pwd, is_coach=False, description=None,
-                 tags=None, phone=None, is_admin=False, first_name=None,
-                 last_name=None, city_id=None, price=None):
+    def __init__(self, username: str, email: str, pwd: str, is_coach: bool = False, description: str | None = None,
+                 tags: list | None = None, phone: str | None = None, is_admin: bool = False, first_name: str | None = None,
+                 last_name: str | None = None, city_id: int | None = None, price: int | None = None) -> None:
         """Generates a new user profile.
 
         :param username: unique login identifier
@@ -71,7 +71,7 @@ class User(Base):
         if len(pwd) < 8:
             raise ValueError("password must be at least 8 characters")
 
-        def _validate_name(val, label):
+        def _validate_name(val: str | None, label: str) -> None:
             if val is not None:
                 if not isinstance(val, str):
                     raise TypeError(f"{label} must be a string")
@@ -105,7 +105,7 @@ class User(Base):
                 for tag in tags:
                     self.coach.add_tag(tag)
 
-    def verify_pwd(self, pwd):
+    def verify_pwd(self, pwd: str) -> bool:
         """Verify the password.
 
         :param pwd: password to be checked
@@ -113,9 +113,9 @@ class User(Base):
         """
         return check_password_hash(self.password, pwd)
 
-    def update_profile(self, first_name=_UNSET, last_name=_UNSET, email=_UNSET,
-                       pwd=None, description=None, tags=None, phone=_UNSET,
-                       username=_UNSET, city_id=None, price=None):
+    def update_profile(self, first_name: object = _UNSET, last_name: object = _UNSET, email: object = _UNSET,
+                       pwd: str | None = None, description: str | None = None, tags: list | None = None, phone: object = _UNSET,
+                       username: object = _UNSET, city_id: int | None = None, price: int | None = None) -> None:
         """Update the user profile fields.
 
         :param first_name: new first name (_UNSET = no change, None = clear)
@@ -138,7 +138,7 @@ class User(Base):
                 raise ValueError(f"username '{username}' is not allowed")
             self.username = username
 
-        def _validate_name(val, label):
+        def _validate_name(val: str | None, label: str) -> None:
             if val is not None:
                 if not isinstance(val, str):
                     raise TypeError(f"{label} must be a string")
@@ -192,7 +192,7 @@ class User(Base):
                     raise TypeError("price must be an integer")
                 self.coach.price = price
 
-    def _profile_pic_path(self):
+    def _profile_pic_path(self) -> str | None:
         """Return the relative URL to the profile picture, or ``None``."""
         import os
         path = os.path.join(
@@ -203,7 +203,7 @@ class User(Base):
             return f"static/uploads/profile_pics/{self.id}/profile.jpg"
         return None
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Serialize user data to a dictionary."""
         d = {
             "id": self.id,
