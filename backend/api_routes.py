@@ -84,7 +84,17 @@ def register_routes(app: Flask, db: Db_Management) -> None:
         try:
             user = db.authenticate(login, password)
             token = create_access_token(identity=user.id)
-            return jsonify(access_token=token), 200
+            return jsonify(access_token=token, user=user.to_dict()), 200
+        except DbError as e:
+            return jsonify({"msg": e.message}), e.status_code
+
+    @app.get("/api/v1/me")
+    @jwt_required()
+    def current_user():
+        """Return the authenticated user's profile data."""
+        user_id = get_jwt_identity()
+        try:
+            return jsonify(db.get_user_profile(user_id, user_id)), 200
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
@@ -285,10 +295,12 @@ def register_routes(app: Flask, db: Db_Management) -> None:
     # ------------------------------------------------------------------
 
     @app.get("/api/v1/coach/<int:coach_id>")
+    @jwt_required(optional=True)
     def get_coach(coach_id: int) -> tuple:
         """Return public details for a specific coach."""
         try:
-            return jsonify(db.get_coach(coach_id)), 200
+            current_id = get_jwt_identity()
+            return jsonify(db.get_coach(coach_id, current_id)), 200
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
@@ -525,6 +537,30 @@ def register_routes(app: Flask, db: Db_Management) -> None:
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
+    @app.post("/api/v1/badge/<int:badge_id>/toggle")
+    @jwt_required()
+    def toggle_badge(badge_id):
+        """Give or remove a badge toggle-style."""
+        data = request.get_json()
+        if not data:
+            return jsonify({"msg": "Missing JSON body"}), 400
+        user_id = data.get("user_id")
+        if not user_id:
+            return jsonify({"msg": "user_id is required"}), 400
+        try:
+            result = db.toggle_badge(get_jwt_identity(), user_id, badge_id)
+            return jsonify(result), 200
+        except DbError as e:
+            return jsonify({"msg": e.message}), e.status_code
+
+    @app.get("/api/v1/user/<int:user_id>/badges")
+    def public_user_badges(user_id):
+        """Return badge summary for a user (public)."""
+        try:
+            return jsonify(db.get_user_badges(user_id)), 200
+        except DbError as e:
+            return jsonify({"msg": e.message}), e.status_code
+
     @app.get("/api/v1/badge/all")
     def list_all_badges() -> tuple:
         """Return all available badges (public)."""
@@ -632,6 +668,40 @@ def register_routes(app: Flask, db: Db_Management) -> None:
         """Return a specific user's chats (admin-only consultation)."""
         try:
             result = db.list_user_chats_as_admin(get_jwt_identity(), user_id)
+            return jsonify(result), 200
+        except DbError as e:
+            return jsonify({"msg": e.message}), e.status_code
+
+    @app.put("/api/v1/user/<int:user_id>/block")
+    @jwt_required()
+    def toggle_block_user(user_id):
+        """Toggle a user's blocked status (admin-only)."""
+        data = request.get_json() or {}
+        try:
+            result = db.toggle_user_block(get_jwt_identity(), user_id, data)
+            return jsonify(result), 200
+        except DbError as e:
+            return jsonify({"msg": e.message}), e.status_code
+
+    @app.put("/api/v1/user/<int:user_id>/flag")
+    @jwt_required()
+    def flag_user(user_id):
+        """Set vetted/certified flags on a user (admin-only)."""
+        data = request.get_json()
+        if not data:
+            return jsonify({"msg": "Missing JSON body"}), 400
+        try:
+            result = db.flag_user(get_jwt_identity(), user_id, data)
+            return jsonify(result), 200
+        except DbError as e:
+            return jsonify({"msg": e.message}), e.status_code
+
+    @app.delete("/api/v1/user/<int:user_id>/pictures")
+    @jwt_required()
+    def remove_user_pictures(user_id):
+        """Remove all coach pictures for a user (admin-only)."""
+        try:
+            result = db.remove_all_coach_pictures_admin(get_jwt_identity(), user_id)
             return jsonify(result), 200
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code

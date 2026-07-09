@@ -8,7 +8,7 @@ import re
 from PIL import Image
 from sqlalchemy import create_engine, and_, or_
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import joinedload, selectinload, sessionmaker, Session
 
 from backend.classes import Base
 from backend.classes.user import User, _UNSET, _FORBIDDEN_USERNAMES
@@ -22,7 +22,7 @@ from backend.classes.user_badge import UserBadge
 from backend.classes.coach_rating import CoachRating
 
 
-DEFAULT_PIC = "backend/static/uploads/profile_pics/default/profile.jpg"
+DEFAULT_PIC = "static/uploads/profile_pics/default/profile.jpg"
 
 
 class DbError(Exception):
@@ -86,6 +86,14 @@ class Db_Management:
     )
 
     @staticmethod
+    def _cache_bust(url, filepath):
+        try:
+            mtime = int(os.path.getmtime(filepath))
+            return f"{url}?t={mtime}"
+        except OSError:
+            return url
+
+    @staticmethod
     def save_profile_picture(user_id: int, image_bytes: bytes) -> str:
         """Validate, resize and save a profile picture.
 
@@ -113,7 +121,8 @@ class Db_Management:
         dest_path = os.path.join(dest_dir, "profile.jpg")
         img.save(dest_path, "JPEG", quality=85)
 
-        return f"static/uploads/profile_pics/{user_id}/profile.jpg"
+        url = f"static/uploads/profile_pics/{user_id}/profile.jpg"
+        return Db_Management._cache_bust(url, dest_path)
 
     @staticmethod
     def remove_profile_picture(user_id: int) -> None:
@@ -128,7 +137,7 @@ class Db_Management:
         """Return the relative URL to the user's profile picture, or ``None``."""
         candidate = f"static/uploads/profile_pics/{user_id}/profile.jpg"
         full = os.path.join(Db_Management.UPLOAD_BASE, str(user_id), "profile.jpg")
-        return candidate if os.path.isfile(full) else None
+        return Db_Management._cache_bust(candidate, full) if os.path.isfile(full) else None
 
     COACH_PICS_BASE = os.path.join(
         os.path.dirname(__file__), '..', 'static', 'uploads', 'coach_pics'
@@ -152,7 +161,8 @@ class Db_Management:
         os.makedirs(dest_dir, exist_ok=True)
         dest_path = os.path.join(dest_dir, filename)
         img.save(dest_path, "JPEG", quality=85)
-        return f"static/uploads/coach_pics/{os.path.basename(dest_dir)}/{filename}"
+        url = f"static/uploads/coach_pics/{os.path.basename(dest_dir)}/{filename}"
+        return Db_Management._cache_bust(url, dest_path)
 
     @staticmethod
     def save_coach_picture(user_id: int, numero: int, image_bytes: bytes) -> str:
@@ -187,7 +197,8 @@ class Db_Management:
         for i in range(1, 8):
             full = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id), f"{i}.jpg")
             if os.path.isfile(full):
-                paths.append(f"static/uploads/coach_pics/{user_id}/{i}.jpg")
+                url = f"static/uploads/coach_pics/{user_id}/{i}.jpg"
+                paths.append(Db_Management._cache_bust(url, full))
         return paths
 
     # ------------------------------------------------------------------
@@ -240,11 +251,15 @@ class Db_Management:
                 raise DbError("Email already taken", 409)
 
             tags = []
-            if is_coach:
+            if is_coach and tags_data:
                 for t in tags_data:
-                    tag = session.query(Tag).filter_by(name=t["name"]).first()
+                    if isinstance(t, dict):
+                        name = t.get("name", str(t))
+                    else:
+                        name = str(t)
+                    tag = session.query(Tag).filter_by(name=name).first()
                     if not tag:
-                        tag = Tag(name=t["name"], description=t["description"])
+                        tag = Tag(name=name, description=name)
                         session.add(tag)
                     tags.append(tag)
 
@@ -266,9 +281,15 @@ class Db_Management:
         """Authenticate a user by email or username and return the User object."""
         session = self._session()
         try:
-            user = session.query(User).filter_by(email=login).first()
+            user = session.query(User).options(
+                joinedload(User.coach).joinedload(Coach.city),
+                joinedload(User.coach).selectinload(Coach.tags),
+            ).filter_by(email=login).first()
             if not user:
-                user = session.query(User).filter_by(username=login).first()
+                user = session.query(User).options(
+                    joinedload(User.coach).joinedload(Coach.city),
+                    joinedload(User.coach).selectinload(Coach.tags),
+                ).filter_by(username=login).first()
             if not user or not user.verify_pwd(password):
                 raise DbError("Bad credentials", 401)
             return user
@@ -308,9 +329,13 @@ class Db_Management:
             if tags_data is not None and user.is_coach:
                 tags = []
                 for t in tags_data:
-                    tag = session.query(Tag).filter_by(name=t["name"]).first()
+                    if isinstance(t, dict):
+                        name = t.get("name", str(t))
+                    else:
+                        name = str(t)
+                    tag = session.query(Tag).filter_by(name=name).first()
                     if not tag:
-                        tag = Tag(name=t["name"], description=t["description"])
+                        tag = Tag(name=name, description=name)
                         session.add(tag)
                     tags.append(tag)
 
@@ -383,23 +408,32 @@ class Db_Management:
             "price": coach.price,
             "city": coach.city.name if coach.city else None,
             "phone": coach.user.phone,
+            "email": coach.user.email,
             "tags": [{"name": t.name, "description": t.description}
                      for t in coach.tags],
             "profile_pic": pic_url or DEFAULT_PIC,
             "pictures": Db_Management.get_coach_picture_paths(coach.id),
             "thumbs_up": thumbs_up,
             "thumbs_down": thumbs_down,
+            "is_vetted": coach.user.is_vetted,
+            "is_certified": coach.user.is_certified,
         }
         return d
 
-    def get_coach(self, coach_id: int) -> dict:
+    def get_coach(self, coach_id: int, current_user_id: int | None = None) -> dict:
         """Return public coach details by coach id."""
         session = self._session()
         try:
             coach = session.query(Coach).filter_by(id=coach_id).first()
             if not coach:
                 raise DbError("Coach not found", 404)
-            return self._coach_to_dict(coach)
+            d = self._coach_to_dict(coach)
+            if current_user_id:
+                rating = session.query(CoachRating).filter_by(
+                    coach_id=coach_id, customer_id=current_user_id
+                ).first()
+                d["my_vote"] = rating.rating if rating else None
+            return d
         finally:
             session.close()
 
@@ -577,9 +611,20 @@ class Db_Management:
         """
         session = self._session()
         try:
+            from sqlalchemy import func
+
             chats = session.query(Chat).filter(
                 (Chat.id_coach == user_id) | (Chat.id_cust == user_id)
             ).all()
+
+            chat_ids = [c.id for c in chats]
+            max_ts_map = {}
+            if chat_ids:
+                rows = session.query(
+                    Message.chat_id,
+                    func.max(Message.timestamp).label('last_ts')
+                ).filter(Message.chat_id.in_(chat_ids)).group_by(Message.chat_id).all()
+                max_ts_map = {r.chat_id: r.last_ts for r in rows}
 
             result = []
             for chat in chats:
@@ -593,6 +638,7 @@ class Db_Management:
                     "id": chat.id,
                     "coach": {"id": coach.id, "username": coach.username, "first_name": coach.first_name, "last_name": coach.last_name},
                     "customer": {"id": customer.id, "username": customer.username, "first_name": customer.first_name, "last_name": customer.last_name},
+                    "last_message_time": max_ts_map.get(chat.id),
                 })
             return result
         finally:
@@ -675,6 +721,7 @@ class Db_Management:
                     continue
 
                 entry = {
+                    "id": msg.id,
                     "sender": {
                         "id": msg.sender_id,
                         **senders.get(msg.sender_id, {"first_name": None, "last_name": None, "username": None}),
@@ -727,6 +774,7 @@ class Db_Management:
 
             return {
                 "id": msg.id,
+                "chat_id": chat.id,
                 "sender": {"id": sender.id, "first_name": sender.first_name, "last_name": sender.last_name, "username": sender.username},
                 "timestamp": msg.timestamp,
                 "text": msg.text,
@@ -1079,6 +1127,47 @@ class Db_Management:
         finally:
             session.close()
 
+    def toggle_badge(self, giver_id, user_id, badge_id):
+        """Give or remove a badge (toggle)."""
+        session = self._session()
+        try:
+            giver = session.query(User).filter_by(id=giver_id).first()
+            if not giver:
+                raise DbError("Giver not found", 404)
+            user = session.query(User).filter_by(id=user_id).first()
+            if not user:
+                raise DbError("User not found", 404)
+            if giver_id == user_id:
+                raise DbError("Cannot give badge to yourself", 400)
+            if giver.is_admin or user.is_admin:
+                raise DbError("Admins cannot give or receive badges", 400)
+            if user.is_coach == giver.is_coach:
+                raise DbError("Cannot give badge to someone with the same role", 400)
+            badge = session.query(Badge).filter_by(id=badge_id).first()
+            if not badge:
+                raise DbError("Badge not found", 404)
+
+            existing = session.query(UserBadge).filter_by(
+                user_id=user_id, giver_id=giver_id, badge_id=badge_id,
+            ).first()
+            if existing:
+                session.delete(existing)
+                session.commit()
+                return {"msg": "Badge removed", "active": False}
+            else:
+                ub = UserBadge(user_id=user_id, giver_id=giver_id, badge_id=badge_id)
+                session.add(ub)
+                session.commit()
+                return {"msg": "Badge given", "active": True}
+        except DbError:
+            session.rollback()
+            raise
+        except Exception as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
     def get_user_badges(self, user_id: int) -> dict:
         """Return badges received by *user*, grouped by badge id.
 
@@ -1104,6 +1193,84 @@ class Db_Management:
                     "name": badge_name,
                 })
             return result
+        finally:
+            session.close()
+
+    # ------------------------------------------------------------------
+    # Admin user management
+    # ------------------------------------------------------------------
+
+    def toggle_user_block(self, admin_id, user_id, data):
+        """Toggle block and/or messaging_blocked flags on a user (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+            target = session.query(User).filter_by(id=user_id).first()
+            if not target:
+                raise DbError("User not found", 404)
+            if "is_blocked" in data:
+                target.is_blocked = bool(data["is_blocked"])
+            if "is_messaging_blocked" in data:
+                target.is_messaging_blocked = bool(data["is_messaging_blocked"])
+            if "email_blocked" in data:
+                target.email_blocked = bool(data["email_blocked"])
+            if "ip_blocked" in data:
+                target.ip_blocked = bool(data["ip_blocked"])
+            session.commit()
+            return target.to_dict()
+        except DbError:
+            session.rollback()
+            raise
+        except Exception as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
+    def flag_user(self, admin_id, user_id, data):
+        """Set vetted/certified flags on a user (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+            target = session.query(User).filter_by(id=user_id).first()
+            if not target:
+                raise DbError("User not found", 404)
+            if "is_vetted" in data:
+                target.is_vetted = bool(data["is_vetted"])
+            if "is_certified" in data:
+                target.is_certified = bool(data["is_certified"])
+            session.commit()
+            return target.to_dict()
+        except DbError:
+            session.rollback()
+            raise
+        except Exception as e:
+            session.rollback()
+            raise DbError(str(e), 400)
+        finally:
+            session.close()
+
+    def remove_all_coach_pictures_admin(self, admin_id, user_id):
+        """Remove all coach pictures for a user (admin-only)."""
+        session = self._session()
+        try:
+            admin = session.query(User).filter_by(id=admin_id).first()
+            if not admin or not admin.is_admin:
+                raise DbError("Admins only", 403)
+            target = session.query(User).filter_by(id=user_id).first()
+            if not target:
+                raise DbError("User not found", 404)
+            self.remove_profile_picture(user_id)
+            self.remove_all_coach_pictures(user_id)
+            return {"msg": "Pictures removed"}
+        except DbError:
+            raise
+        except Exception as e:
+            raise DbError(str(e), 400)
         finally:
             session.close()
 

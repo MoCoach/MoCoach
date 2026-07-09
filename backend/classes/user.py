@@ -32,12 +32,19 @@ class User(Base):
     phone      = Column(String(16),  nullable=True)
     is_coach   = Column(Boolean,     nullable=False)
     is_admin   = Column(Boolean,     nullable=False, default=False)
+    is_blocked = Column(Boolean,     nullable=False, default=False)
+    is_messaging_blocked = Column(Boolean, nullable=False, default=False)
+    is_vetted  = Column(Boolean,     nullable=False, default=False)
+    is_certified = Column(Boolean,   nullable=False, default=False)
+    email_blocked = Column(Boolean,  nullable=False, default=False)
+    ip_blocked    = Column(Boolean,  nullable=False, default=False)
+    ip_address    = Column(String(45), nullable=True)
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
     def __init__(self, username: str, email: str, pwd: str, is_coach: bool = False, description: str | None = None,
                  tags: list | None = None, phone: str | None = None, is_admin: bool = False, first_name: str | None = None,
-                 last_name: str | None = None, city_id: int | None = None, price: int | None = None) -> None:
+                 last_name: str | None = None, city_id: int | None = None, price: int | None = None, ip_address: str | None = None) -> None:
         """Generates a new user profile.
 
         :param username: unique login identifier
@@ -87,7 +94,7 @@ class User(Base):
         _validate_name(first_name, "first_name")
         _validate_name(last_name, "last_name")
 
-        self.password = generate_password_hash(pwd)
+        self.password = generate_password_hash(pwd, method='pbkdf2:sha256')
         self.username = username
         self.first_name = first_name
         self.last_name  = last_name
@@ -95,6 +102,7 @@ class User(Base):
         self.is_coach = is_coach
         self.phone    = phone
         self.is_admin = is_admin
+        self.ip_address = ip_address
 
         if is_coach:
             if city_id is None:
@@ -169,7 +177,7 @@ class User(Base):
                 raise TypeError("password must be a string")
             if len(pwd) < 8:
                 raise ValueError("password must be at least 8 characters")
-            self.password = generate_password_hash(pwd)
+            self.password = generate_password_hash(pwd, method='pbkdf2:sha256')
 
         if phone is not _UNSET:
             if phone is not None and not isinstance(phone, str):
@@ -200,7 +208,8 @@ class User(Base):
             'profile_pics', str(self.id), 'profile.jpg'
         )
         if os.path.isfile(path):
-            return f"static/uploads/profile_pics/{self.id}/profile.jpg"
+            mtime = int(os.path.getmtime(path))
+            return f"static/uploads/profile_pics/{self.id}/profile.jpg?t={mtime}"
         return None
 
     def to_dict(self) -> dict:
@@ -214,6 +223,13 @@ class User(Base):
             "is_coach": self.is_coach,
             "is_admin": self.is_admin,
             "phone": self.phone,
+            "is_blocked": self.is_blocked,
+            "is_messaging_blocked": self.is_messaging_blocked,
+            "is_vetted": self.is_vetted,
+            "is_certified": self.is_certified,
+            "email_blocked": self.email_blocked,
+            "ip_blocked": self.ip_blocked,
+            "ip_address": self.ip_address,
         }
         if self.coach:
             d["coach"] = self.coach.to_dict()

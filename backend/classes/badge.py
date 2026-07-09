@@ -6,7 +6,7 @@ from . import Base
 class Badge(Base):
     __tablename__ = 'badges'
     id          = Column(Integer,     primary_key=True)
-    name        = Column(String(25),  nullable=False, unique=True)
+    name        = Column(String(50),  nullable=False, unique=True)
     description = Column(String(100), nullable=False)
     for_coach   = Column(Boolean,     nullable=False, default=False)
 
@@ -15,7 +15,7 @@ class Badge(Base):
             raise TypeError("name must be a string")
         if not name.strip():
             raise ValueError("name must be a non-empty string")
-        if len(name) > 25:
+        if len(name) > 50:
             raise ValueError("name must be at most 25 characters")
         if not isinstance(description, str):
             raise TypeError("description must be a string")

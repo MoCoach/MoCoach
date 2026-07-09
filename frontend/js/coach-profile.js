@@ -1,11 +1,17 @@
-// COACH_PROFILES removed — data now loads from localStorage mocoach_coaches
 "use strict";
 const BADGE_CATEGORIES = [
-  { key: 'technical_coach', label: 'Technical Coach', icon: 'book-open', desc: 'Deep expertise in their discipline' },
-  { key: 'flexibility_adaptability', label: 'Flexibility & Adaptability', icon: 'shuffle', desc: 'Adjusts sessions to individual needs' },
-  { key: 'motivator', label: 'Motivator', icon: 'heart', desc: 'Inspires and pushes clients to excel' },
-  { key: 'champion_builder', label: 'Champion Builder', icon: 'trophy', desc: 'Helps clients achieve real results' },
+  { key: 'technical_coach', label: 'Technical Coach', image: 'assets/img/badges/technical-coach.png', desc: 'Deep expertise in their discipline' },
+  { key: 'flexibility_adaptability', label: 'Flexibility & Adaptability', image: 'assets/img/badges/flexibility-adaptability.png', desc: 'Adjusts sessions to individual needs' },
+  { key: 'motivator', label: 'Motivator', image: 'assets/img/badges/motivator.png', desc: 'Inspires and pushes clients to excel' },
+  { key: 'champion_builder', label: 'Champion Builder', image: 'assets/img/badges/champion-builder.png', desc: 'Helps clients achieve real results' },
 ];
+
+const BADGE_NAMES = {
+  technical_coach: 'Technical Coach',
+  flexibility_adaptability: 'Flexibility & Adaptability',
+  motivator: 'Motivator',
+  champion_builder: 'Champion Builder',
+};
 
 const TAG_COLORS = [
   'bg-teal-500/10 text-teal-400 border-teal-500/20',
@@ -70,61 +76,81 @@ const CoachProfileApp = {
   editing: false,
   isOwnProfile: false,
   MAX_GALLERY: 7,
+  _badgeMap: {},
+  _badgeCache: null,
 
-  init() {
+  async init() {
     if (!document.getElementById('coach-profile-view')) {
       setTimeout(() => this.init(), 50);
       return;
     }
+    await this._loadBadgeMap();
     this.bindEvents();
   },
 
-  open(coachId) {
+  async _loadBadgeMap() {
+    const res = await api.getAllBadges();
+    if (res.success) {
+      this._badgeCache = res.data;
+      const map = {};
+      (res.data || []).forEach(b => {
+        for (const [key, name] of Object.entries(BADGE_NAMES)) {
+          if (b.name === name) {
+            map[key] = b.id;
+          }
+        }
+      });
+      this._badgeMap = map;
+    }
+  },
+
+  async open(coachId) {
     const user = this._getAuthUser();
     this.isOwnProfile = user && user.role === 'coach' && user.userId === coachId;
 
-    const saved = this._getSavedCoach(coachId);
-    if (saved) {
-      const fullName = `${saved.firstName || ''} ${saved.lastName || ''}`.trim() || saved.username;
-      var galleryItems = (saved.gallery || []).map(item =>
-        typeof item === 'string' ? { type: 'image', src: item } : item
-      );
-      var avatarSrc = saved.avatar || '';
-      if (!avatarSrc && galleryItems.length > 0) {
-        avatarSrc = galleryItems[0].src;
-        galleryItems.shift();
-      }
-      this.currentData = {
-        id: coachId,
-        name: fullName,
-        firstName: saved.firstName || '',
-        lastName: saved.lastName || '',
-        username: saved.username || coachId,
-        email: saved.email || '',
-        discipline: saved.discipline || '',
-        rawPrice: saved.price || '',
-        price: saved.price ? `Rs ${saved.price} per session` : '',
-        city: saved.city || '',
-        photoUrl: avatarSrc,
-        avatarUrl: avatarSrc,
-        description: saved.bio || '',
-        tags: saved.tags || [],
-        gallery: galleryItems,
-      };
-    } else {
-      this.currentData = {
-        id: coachId, name: coachId, firstName: '', lastName: '', username: coachId, email: '',
-        discipline: '', rawPrice: '', price: '', city: '',
-        photoUrl: '', avatarUrl: '', description: '', tags: [], gallery: [],
-      };
+    const res = await api.getCoach(coachId);
+    if (!res.success) {
+      this.showToast('Coach not found', 'error');
+      return;
     }
+    const d = res.data;
+
+    var fullName = `${d.first_name || ''} ${d.last_name || ''}`.trim() || d.username;
+    var galleryItems = (d.pictures || []).map(src => ({ type: 'image', src }));
+    var avatarSrc = d.profile_pic || (galleryItems.length > 0 ? galleryItems.shift().src : '');
+
+    this.currentData = {
+      id: d.id,
+      name: fullName,
+      firstName: d.first_name || '',
+      lastName: d.last_name || '',
+      username: d.username || '',
+      email: d.email || '',
+      discipline: (d.tags && d.tags[0]) ? d.tags[0].name || '' : '',
+      rawPrice: d.price ? String(d.price) : '',
+      price: d.price ? `Rs ${d.price} per session` : '',
+      city: d.city || '',
+      photoUrl: avatarSrc,
+      avatarUrl: avatarSrc,
+      description: d.description || '',
+      tags: (d.tags || []).map(t => t.name || t),
+      gallery: galleryItems,
+      thumbsUp: d.thumbs_up || 0,
+      thumbsDown: d.thumbs_down || 0,
+      my_vote: d.my_vote,
+    };
+
+    this._coachData = d;
 
     const citySelect = document.getElementById('cp-city-edit');
     if (citySelect && citySelect.options.length === 0) {
-      CITIES.forEach(city => {
+      const citiesRes = await api.getCities();
+      const cities = citiesRes.success ? citiesRes.data : CITIES;
+      cities.forEach(city => {
+        const name = typeof city === 'string' ? city : (city.name || city);
         const opt = document.createElement('option');
-        opt.value = city;
-        opt.textContent = city;
+        opt.value = name;
+        opt.textContent = name;
         citySelect.appendChild(opt);
       });
     }
@@ -137,11 +163,6 @@ const CoachProfileApp = {
 
   _getAuthUser() {
     try { return JSON.parse(sessionStorage.getItem('mocoach_auth')); } catch { return null; }
-  },
-
-  _getSavedCoach(coachId) {
-    const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
-    return coaches.find(c => c.username === coachId) || null;
   },
 
   render() {
@@ -219,11 +240,7 @@ const CoachProfileApp = {
 
     const contactBtn = document.getElementById('cp-contact-btn');
     if (contactBtn) {
-      if (this.isOwnProfile) {
-        contactBtn.classList.add('hidden');
-      } else {
-        contactBtn.classList.remove('hidden');
-      }
+      contactBtn.classList.toggle('hidden', this.isOwnProfile);
     }
 
     const chatBtn = document.getElementById('cp-chat-btn');
@@ -317,7 +334,7 @@ const CoachProfileApp = {
     if (window.lucide) lucide.createIcons();
   },
 
-  handleGalleryUpload(e) {
+  async handleGalleryUpload(e) {
     const files = Array.from(e.target.files);
     if (!Array.isArray(this.currentData.gallery)) this.currentData.gallery = [];
     const gallery = this.currentData.gallery;
@@ -329,106 +346,53 @@ const CoachProfileApp = {
       return;
     }
 
-    let processed = 0;
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const type = file.type.startsWith('video/') ? 'video' : 'image';
-        let src = ev.target.result;
-        if (type === 'image') {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxWidth = 800;
-            const scale = maxWidth / img.width;
-            canvas.width = maxWidth;
-            canvas.height = img.height * scale;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            src = canvas.toDataURL('image/jpeg', 0.7);
-            this.currentData.gallery.push({ type: 'image', src });
-            processed++;
-            if (processed === files.length) this._syncAndRender();
-          };
-          img.src = src;
-        } else {
-          this.currentData.gallery.push({ type: 'video', src });
-          processed++;
-          if (processed === files.length) this._syncAndRender();
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const slot = gallery.length + i + 1;
+      const res = await api.uploadCoachPicture(slot, file);
+      if (res.success) {
+        gallery.push({ type: 'image', src: res.data.picture || '' });
+      } else {
+        this.showToast('Failed to upload gallery photo', 'error');
+      }
+    }
+
+    this._syncAndRender();
     e.target.value = '';
   },
 
-  deleteMedia(index) {
+  async deleteMedia(index) {
     if (!this.currentData.gallery) return;
     this.currentData.gallery.splice(index, 1);
     this._syncAndRender();
     this.showToast('Media removed', 'success');
   },
 
-  handleAvatarUpload(e) {
+  async handleAvatarUpload(e) {
     try {
       const file = e.target.files[0];
       if (!file || !file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        try {
-          this.currentData.avatarUrl = ev.target.result;
-          this._syncAndRender();
-          const avatarEl = document.getElementById('cp-avatar');
-          if (avatarEl) {
-            avatarEl.style.backgroundImage = `url(${this._esc(ev.target.result)})`;
-          }
-          if (window.updateHeaderProfilePic) window.updateHeaderProfilePic();
-          this.showToast('Profile photo updated!', 'success');
-        } catch (err) {
-          this.showToast('Failed to update profile photo', 'error');
+      const res = await api.uploadProfilePicture(file);
+      if (res.success) {
+        this.currentData.avatarUrl = res.data.profile_pic || '';
+        this._syncAndRender();
+        const avatarEl = document.getElementById('cp-avatar');
+        if (avatarEl) {
+          avatarEl.style.backgroundImage = `url(${this._esc(res.data.profile_pic || '')})`;
         }
-      };
-      reader.readAsDataURL(file);
-      e.target.value = '';
+        if (window.updateHeaderProfilePic) window.updateHeaderProfilePic();
+        this.showToast('Profile photo updated!', 'success');
+      } else {
+        this.showToast('Failed to update profile photo', 'error');
+      }
     } catch (err) {
       this.showToast('Failed to read file', 'error');
+    } finally {
+      e.target.value = '';
     }
   },
 
   _syncAndRender() {
-    const user = this._getAuthUser();
-    if (user && user.role === 'coach') {
-      const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
-      const idx = coaches.findIndex(c => c.username === user.userId);
-      if (idx >= 0) {
-        coaches[idx].firstName = this.currentData.firstName;
-        coaches[idx].lastName = this.currentData.lastName;
-        coaches[idx].username = this.currentData.username;
-        coaches[idx].email = this.currentData.email;
-        coaches[idx].gallery = (this.currentData.gallery || []).map(item =>
-          typeof item === 'string' ? { type: 'image', src: item } : item
-        );
-        coaches[idx].avatar = this.currentData.avatarUrl || coaches[idx].avatar;
-        coaches[idx].bio = this.currentData.description;
-        coaches[idx].tags = this.currentData.tags;
-        coaches[idx].price = this.currentData.rawPrice;
-        coaches[idx].city = this.currentData.city;
-        localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
-
-        const session = JSON.parse(sessionStorage.getItem('mocoach_auth') || '{}');
-        session.firstName = coaches[idx].firstName;
-        session.lastName = coaches[idx].lastName;
-        session.username = coaches[idx].username;
-        session.email = coaches[idx].email;
-        session.gallery = coaches[idx].gallery;
-        session.avatar = coaches[idx].avatar;
-        session.bio = coaches[idx].bio;
-        session.tags = coaches[idx].tags;
-        session.price = coaches[idx].price;
-        session.city = coaches[idx].city;
-        sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
-      }
-    }
     this.renderGallery();
     this.renderHeader();
   },
@@ -532,37 +496,48 @@ const CoachProfileApp = {
     }
   },
 
-  renderBadges() {
+  async renderBadges() {
     const grid = document.getElementById('cp-badges-grid');
     if (!grid) return;
-
-    const badgeVotes = this._getBadgeVotes();
-    const coachVotes = badgeVotes[this.currentId] || {};
-
-    const totalBadges = Object.values(coachVotes).reduce((sum, v) => typeof v === 'number' ? sum + v : sum, 0);
 
     const user = this._getAuthUser();
     const viewerIsCustomer = user && user.role === 'customer';
 
+    let badgeCounts = {};
+    if (this.currentId) {
+      const res = await api.getUserBadgeSummary(this.currentId);
+      if (res.success) {
+        badgeCounts = res.data;
+      }
+    }
+
+    const totalBadges = Object.values(badgeCounts).reduce((sum, v) => Array.isArray(v) ? sum + v.length : sum, 0);
+
     if (totalBadges === 0 && !viewerIsCustomer) {
       grid.innerHTML = '<p class="text-slate-500 text-sm col-span-full text-center py-8">No badges awarded yet.</p>';
+      if (window.lucide) lucide.createIcons();
       return;
     }
 
     grid.innerHTML = BADGE_CATEGORIES.map(cat => {
-      const count = coachVotes[cat.key] || 0;
+      const bid = this._badgeMap[cat.key];
+      const givers = bid && badgeCounts[bid] ? badgeCounts[bid] : [];
+      const count = Array.isArray(givers) ? givers.length : 0;
       const isActive = count > 0;
-      const viewerHasVoted = viewerIsCustomer && !!(coachVotes[cat.key] && coachVotes[cat.key] > 0 && coachVotes[cat.key + '_voters'] && coachVotes[cat.key + '_voters'].includes(user.userId));
+      const viewerHasVoted = viewerIsCustomer && Array.isArray(givers) && givers.some(g => g.giver_id === user.userId);
       return `
-        <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50 flex flex-col items-center text-center transition ${isActive ? 'badge-active' : 'opacity-50'} ${viewerIsCustomer ? 'cursor-pointer hover:border-amber-500/50 hover:bg-slate-800/80' : ''}"
-             ${viewerIsCustomer ? `onclick="CoachProfileApp.toggleBadge('${cat.key}')"` : ''}>
-          <div class="w-12 h-12 rounded-xl ${isActive ? 'bg-gradient-to-br from-amber-400/20 to-orange-500/20 border-amber-500/30' : 'bg-slate-800/80 border-slate-700/50'} flex items-center justify-center mb-2 border">
-            <i data-lucide="${cat.icon}" class="w-6 h-6 ${isActive ? 'text-amber-400' : 'text-slate-600'}"></i>
+        <div class="bg-slate-800/60 rounded-xl overflow-hidden border border-slate-700/50 flex flex-col transition ${isActive ? 'badge-active' : 'opacity-50'} cursor-pointer hover:border-amber-500/50 hover:bg-slate-800/80"
+             onclick="CoachProfileApp._handleBadgeClick('${cat.key}')">
+          <div class="aspect-[3/4] overflow-hidden">
+            <img src="${cat.image}" alt="${cat.label}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'">
           </div>
-          <p class="text-xs font-bold text-white">${cat.label}</p>
-          <p class="text-[10px] text-slate-400 mt-0.5 leading-tight">${cat.desc}</p>
-          <div class="mt-2 w-7 h-7 rounded-full ${isActive ? 'bg-amber-400/20 text-amber-400' : 'bg-slate-800 text-slate-600'} flex items-center justify-center text-xs font-bold">${count}</div>
-          ${viewerHasVoted ? '<span class="text-[10px] text-amber-400 font-bold mt-1">✓ You awarded this</span>' : ''}
+          <div class="p-2 flex items-center justify-between gap-1">
+            <p class="text-xs font-bold text-white truncate">${cat.label}</p>
+            <div class="flex items-center gap-1 flex-shrink-0">
+              <div class="w-6 h-6 rounded-full ${isActive ? 'bg-amber-400/20 text-amber-400' : 'bg-slate-800 text-slate-600'} flex items-center justify-center text-xs font-bold">${count}</div>
+              ${viewerHasVoted ? '<span class="text-[10px] text-amber-400 font-bold">✓</span>' : ''}
+            </div>
+          </div>
         </div>
       `;
     }).join('');
@@ -574,17 +549,11 @@ const CoachProfileApp = {
     const container = document.getElementById('cp-ratings');
     if (!container) return;
 
-    const ratings = this._getRatings();
-    const coachRatings = ratings[this.currentId] || {};
-    let upCount = 0, downCount = 0;
-    Object.values(coachRatings).forEach(v => {
-      if (v === 'up') upCount++;
-      if (v === 'down') downCount++;
-    });
+    const d = this.currentData;
+    let upCount = d.thumbsUp || 0, downCount = d.thumbsDown || 0;
 
     const user = this._getAuthUser();
     const viewerIsCustomer = user && user.role === 'customer';
-    const userVote = viewerIsCustomer ? (coachRatings[user.userId] || null) : null;
 
     container.innerHTML = `
       <div class="flex items-center space-x-3 mb-4">
@@ -597,24 +566,23 @@ const CoachProfileApp = {
         </div>
       </div>
       <div class="flex items-center justify-center gap-8 py-4">
-        <button onclick="CoachProfileApp.vote('up')" ${viewerIsCustomer ? '' : 'disabled'} class="flex flex-col items-center gap-2 px-6 py-4 rounded-2xl transition ${userVote === 'up' ? 'bg-amber-500/20 border-amber-500/50 border' : viewerIsCustomer ? 'bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/50 cursor-pointer' : 'bg-slate-800/40 border border-slate-700/30 opacity-60'}">
-          <i data-lucide="thumbs-up" class="w-8 h-8 ${userVote === 'up' ? 'text-amber-400' : 'text-slate-400'}"></i>
-          <span class="text-2xl font-black ${userVote === 'up' ? 'text-amber-400' : 'text-white'}">${upCount}</span>
+        <button onclick="CoachProfileApp.vote('up')" class="flex flex-col items-center gap-2 px-6 py-4 rounded-2xl transition bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/50 ${viewerIsCustomer ? 'cursor-pointer' : 'opacity-60'}">
+          <i data-lucide="thumbs-up" class="w-8 h-8 text-slate-400"></i>
+          <span class="text-2xl font-black text-white">${upCount}</span>
           <span class="text-xs text-slate-500 font-medium">Up</span>
         </button>
-        <button onclick="CoachProfileApp.vote('down')" ${viewerIsCustomer ? '' : 'disabled'} class="flex flex-col items-center gap-2 px-6 py-4 rounded-2xl transition ${userVote === 'down' ? 'bg-red-500/20 border-red-500/50 border' : viewerIsCustomer ? 'bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/50 cursor-pointer' : 'bg-slate-800/40 border border-slate-700/30 opacity-60'}">
-          <i data-lucide="thumbs-down" class="w-8 h-8 ${userVote === 'down' ? 'text-red-400' : 'text-slate-400'}"></i>
-          <span class="text-2xl font-black ${userVote === 'down' ? 'text-red-400' : 'text-white'}">${downCount}</span>
+        <button onclick="CoachProfileApp.vote('down')" class="flex flex-col items-center gap-2 px-6 py-4 rounded-2xl transition bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/50 ${viewerIsCustomer ? 'cursor-pointer' : 'opacity-60'}">
+          <i data-lucide="thumbs-down" class="w-8 h-8 text-slate-400"></i>
+          <span class="text-2xl font-black text-white">${downCount}</span>
           <span class="text-xs text-slate-500 font-medium">Down</span>
         </button>
       </div>
-      ${userVote ? `<p class="text-center text-xs text-slate-500">Click again to remove your vote</p>` : ''}
     `;
 
     if (window.lucide) lucide.createIcons();
   },
 
-  vote(type) {
+  async vote(type) {
     const user = this._getAuthUser();
     if (!user || user.role !== 'customer') {
       this.showToast('Only customers can vote', 'error');
@@ -622,24 +590,37 @@ const CoachProfileApp = {
     }
     if (!this.currentId) return;
 
-    const ratings = this._getRatings();
-    if (!ratings[this.currentId]) ratings[this.currentId] = {};
+    const newVote = type === 'up' ? true : false;
+    const currentVote = this.currentData.my_vote;
+    const body = (currentVote === newVote) ? null : newVote;
 
-    const currentVote = ratings[this.currentId][user.userId];
-
-    if (currentVote === type) {
-      delete ratings[this.currentId][user.userId];
-      this.showToast('Vote removed', 'success');
+    const res = await api.rateCoach(this.currentId, body);
+    if (res.success) {
+      await this._refreshCoachData();
+      if (body === null) {
+        this.showToast('Vote removed', 'success');
+      } else {
+        this.showToast(type === 'up' ? 'Thumbs up!' : 'Thumbs down', 'success');
+      }
     } else {
-      ratings[this.currentId][user.userId] = type;
-      this.showToast(type === 'up' ? 'Thumbs up! 👍' : 'Thumbs down 👎', 'success');
+      this.showToast(res.error || 'Failed to rate', 'error');
     }
-
-    localStorage.setItem('mocoach_ratings', JSON.stringify(ratings));
-    this.renderRatings();
   },
 
-  toggleBadge(categoryKey) {
+  _handleBadgeClick(categoryKey) {
+    const user = this._getAuthUser();
+    if (!user) {
+      this.showToast('Please log in to award badges', 'error');
+      return;
+    }
+    if (user.role !== 'customer') {
+      this.showToast('Only customers can award badges', 'error');
+      return;
+    }
+    this.toggleBadge(categoryKey);
+  },
+
+  async toggleBadge(categoryKey) {
     const user = this._getAuthUser();
     if (!user || user.role !== 'customer') {
       this.showToast('Only customers can award badges', 'error');
@@ -647,37 +628,31 @@ const CoachProfileApp = {
     }
     if (!this.currentId) return;
 
-    const badgeVotes = this._getBadgeVotes();
-    if (!badgeVotes[this.currentId]) badgeVotes[this.currentId] = {};
-
-    const coachBadges = badgeVotes[this.currentId];
-    const voterKey = categoryKey + '_voters';
-    if (!coachBadges[voterKey]) coachBadges[voterKey] = [];
-
-    const alreadyVoted = coachBadges[voterKey].includes(user.userId);
-
-    if (alreadyVoted) {
-      coachBadges[categoryKey] = Math.max(0, (coachBadges[categoryKey] || 0) - 1);
-      coachBadges[voterKey] = coachBadges[voterKey].filter(id => id !== user.userId);
-      this.showToast('Badge removed', 'success');
-    } else {
-      coachBadges[categoryKey] = (coachBadges[categoryKey] || 0) + 1;
-      coachBadges[voterKey].push(user.userId);
-      this.showToast('Badge awarded! ⭐', 'success');
+    const badgeId = this._badgeMap[categoryKey];
+    if (!badgeId) {
+      this.showToast('Badge not configured', 'error');
+      return;
     }
 
-    localStorage.setItem('mocoach_badge_votes', JSON.stringify(badgeVotes));
-    this.renderBadges();
+    const res = await api.toggleBadge(this.currentId, badgeId);
+    if (res.success) {
+      const msg = res.data.active ? 'Badge awarded!' : 'Badge removed';
+      this.showToast(msg, 'success');
+      await this.renderBadges();
+    } else {
+      this.showToast(res.error || 'Failed', 'error');
+    }
   },
 
-  _getRatings() {
-    try { return JSON.parse(localStorage.getItem('mocoach_ratings') || '{}'); }
-    catch { return {}; }
-  },
-
-  _getBadgeVotes() {
-    try { return JSON.parse(localStorage.getItem('mocoach_badge_votes') || '{}'); }
-    catch { return {}; }
+  async _refreshCoachData() {
+    if (!this.currentId) return;
+    const res = await api.getCoach(this.currentId);
+    if (res.success) {
+      this.currentData.thumbsUp = res.data.thumbs_up || 0;
+      this.currentData.thumbsDown = res.data.thumbs_down || 0;
+      this.currentData.my_vote = res.data.my_vote;
+      this.renderRatings();
+    }
   },
 
   startEdit() {
@@ -689,6 +664,8 @@ const CoachProfileApp = {
     if (priceEdit) priceEdit.value = d.rawPrice;
     const cityEdit = document.getElementById('cp-city-edit');
     if (cityEdit) cityEdit.value = d.city;
+    const curPw = document.getElementById('cp-current-password-edit');
+    if (curPw) curPw.value = '';
     const pw = document.getElementById('cp-password-edit');
     if (pw) pw.value = '';
     const cpw = document.getElementById('cp-confirm-password-edit');
@@ -701,7 +678,7 @@ const CoachProfileApp = {
     this.open(this.currentId);
   },
 
-  save() {
+  async save() {
     const user = this._getAuthUser();
     if (!user || user.role !== 'coach') return;
 
@@ -715,6 +692,7 @@ const CoachProfileApp = {
     var bioVal = (document.getElementById('cp-description-edit')?.value || '').trim();
     var password = document.getElementById('cp-password-edit')?.value || '';
     var confirmPassword = document.getElementById('cp-confirm-password-edit')?.value || '';
+    var currentPassword = document.getElementById('cp-current-password-edit')?.value || '';
 
     if (!firstNameVal) errors.push('First Name is required');
     if (!lastNameVal) errors.push('Last Name is required');
@@ -723,6 +701,7 @@ const CoachProfileApp = {
     if (!cityVal) errors.push('Location is required');
     if (!priceVal) errors.push('Price per session is required');
     if (!bioVal) errors.push('Bio is required');
+    if (password && !currentPassword) errors.push('Current password is required to set a new password');
     if (password && password !== confirmPassword) errors.push('Passwords do not match');
 
     var checkedTags = document.querySelectorAll('#cp-tag-checklist input[type="checkbox"]:checked');
@@ -734,6 +713,37 @@ const CoachProfileApp = {
       return;
     }
 
+    const checkedTagValues = [...checkedTags].map(cb => cb.value);
+    var payload = {
+      first_name: firstNameVal,
+      last_name: lastNameVal,
+      username: usernameVal,
+      email: emailVal,
+      city: cityVal,
+      price: parseInt(priceVal) || 0,
+      description: bioVal,
+      tags: checkedTagValues,
+    };
+
+    delete payload.city;
+
+    var cityId = await this._getCityId(cityVal);
+    if (cityId) payload.city_id = cityId;
+
+    const res = await api.updateProfile(payload);
+    if (!res.success) {
+      this.showToast(res.error || 'Failed to save profile', 'error');
+      return;
+    }
+
+    if (password) {
+      const pwRes = await api.changePassword(currentPassword, password);
+      if (!pwRes.success) {
+        this.showToast(pwRes.error || 'Profile saved but password change failed', 'warning');
+      }
+    }
+
+    var fullName = (firstNameVal + ' ' + lastNameVal).trim() || usernameVal;
     this.currentData.firstName = firstNameVal;
     this.currentData.lastName = lastNameVal;
     this.currentData.username = usernameVal;
@@ -742,54 +752,34 @@ const CoachProfileApp = {
     this.currentData.rawPrice = priceVal;
     this.currentData.price = priceVal ? `Rs ${priceVal} per session` : '';
     this.currentData.description = bioVal;
-
-    if (password) {
-      this.currentData.password = password;
-    }
-
-    const checkedTagValues = [...checkedTags].map(cb => cb.value);
     this.currentData.tags = checkedTagValues;
-
-    this.currentData.gallery = (this.currentData.gallery || []).map(item =>
-      typeof item === 'string' ? { type: 'image', src: item } : item
-    );
-
-    var fullName = (firstNameVal + ' ' + lastNameVal).trim() || usernameVal;
     this.currentData.name = fullName;
 
-    const coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]');
-    const idx = coaches.findIndex(c => c.username === user.userId);
-    if (idx >= 0) {
-      coaches[idx].firstName = this.currentData.firstName;
-      coaches[idx].lastName = this.currentData.lastName;
-      coaches[idx].username = this.currentData.username;
-      coaches[idx].email = this.currentData.email;
-      coaches[idx].bio = this.currentData.description;
-      coaches[idx].tags = this.currentData.tags;
-      coaches[idx].gallery = this.currentData.gallery;
-      coaches[idx].avatar = this.currentData.avatarUrl;
-      coaches[idx].price = this.currentData.rawPrice;
-      coaches[idx].city = this.currentData.city;
-      if (this.currentData.password) coaches[idx].password = this.currentData.password;
-      localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
-
-      const session = JSON.parse(sessionStorage.getItem('mocoach_auth') || '{}');
-      session.firstName = coaches[idx].firstName;
-      session.lastName = coaches[idx].lastName;
-      session.username = coaches[idx].username;
-      session.email = coaches[idx].email;
-      session.bio = coaches[idx].bio;
-      session.tags = coaches[idx].tags;
-      session.gallery = coaches[idx].gallery;
-      session.avatar = coaches[idx].avatar;
-      session.price = coaches[idx].price;
-      session.city = coaches[idx].city;
+    const session = this._getAuthUser();
+    if (session) {
+      session.firstName = firstNameVal;
+      session.lastName = lastNameVal;
+      session.username = usernameVal;
+      session.email = emailVal;
+      session.bio = bioVal;
+      session.tags = checkedTagValues;
+      session.price = priceVal;
+      session.city = cityVal;
       sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
     }
 
     this.editing = false;
     this.showToast('Profile saved!', 'success');
     this.render();
+  },
+
+  async _getCityId(cityName) {
+    const res = await api.getCities();
+    if (res.success && Array.isArray(res.data)) {
+      const match = res.data.find(c => c.name === cityName);
+      if (match) return match.id;
+    }
+    return null;
   },
 
   show() {

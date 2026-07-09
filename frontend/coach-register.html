@@ -140,20 +140,6 @@
   </main>
 
   <script>
-    const CITIES = [
-      'Port Louis', 'Beau Bassin', 'Rose Hill', 'Quatre Bornes', 'Vacoas',
-      'Phoenix', 'Curepipe', 'Ebene', 'Moka', 'Trianon', 'Pailles',
-      'Coromandel', 'Albion', 'Flic en Flac', 'Tamarin', 'Black River',
-      'Bambous', 'Cascavelle', 'Rivi\u00e8re Noire', 'Grand Baie',
-      'Pereybere', 'Cap Malheureux', 'Trou aux Biches',
-      'Pointe aux Canonniers', 'Mont Choisy', 'Goodlands', 'Grand Gaube',
-      'Pamplemousses', 'Triolet', 'Terre Rouge', 'Arsenal',
-      'Flacq (Centre de Flacq)', 'Belle Mare', 'Poste de Flacq',
-      "Trou d'Eau Douce", 'Mah\u00e9bourg', 'Blue Bay', "Pointe d'Esny",
-      'Plaine Magnien', 'Souillac', 'Chemin Grenier',
-      'Rivi\u00e8re des Anguilles', 'Bel Ombre', 'Chamarel'
-    ];
-
     const TAG_GROUPS = {
       'Sports': [
         'Football', 'Swimming', 'Hiking', 'Running', 'Yoga', 'Padel', 'Tennis',
@@ -188,40 +174,43 @@
       ]
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       const photoInput = document.getElementById('cr-photo');
       const photoPreview = document.getElementById('cr-photo-preview');
       const photoImg = document.getElementById('cr-photo-img');
+      let avatarFile = null;
 
       photoInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file || !file.type.startsWith('image/')) return;
-        compressImage(file, 800, 0.7, function (compressed) {
-          photoImg.src = compressed;
+        avatarFile = file;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          photoImg.src = ev.target.result;
           photoPreview.classList.remove('hidden');
-        });
+        };
+        reader.readAsDataURL(file);
       });
 
       const galleryInput = document.getElementById('cr-gallery');
       const galleryPreviews = document.getElementById('cr-gallery-previews');
-      const galleryLabel = document.querySelector('label[for="cr-gallery"]') || galleryInput.previousElementSibling;
-      let galleryDataUrls = [];
+      let galleryFiles = [];
 
       function renderGallery() {
         galleryPreviews.innerHTML = '';
-        galleryDataUrls.forEach((url, index) => {
+        galleryFiles.forEach((fileEntry, index) => {
           const div = document.createElement('div');
           div.className = 'relative w-full aspect-square rounded-xl overflow-hidden border border-slate-700 group';
           const img = document.createElement('img');
-          img.src = url;
+          img.src = fileEntry.url;
           img.className = 'w-full h-full object-cover';
           div.appendChild(img);
           const removeBtn = document.createElement('button');
           removeBtn.type = 'button';
-           removeBtn.className = 'absolute top-1 right-1 w-6 h-6 bg-red-600/80 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity';
+          removeBtn.className = 'absolute top-1 right-1 w-6 h-6 bg-red-600/80 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity';
           removeBtn.textContent = '\u00d7';
           removeBtn.addEventListener('click', () => {
-            galleryDataUrls.splice(index, 1);
+            galleryFiles.splice(index, 1);
             renderGallery();
           });
           div.appendChild(removeBtn);
@@ -231,7 +220,7 @@
 
       galleryInput.addEventListener('change', (e) => {
         const newFiles = [...e.target.files];
-        const remaining = 7 - galleryDataUrls.length;
+        const remaining = 7 - galleryFiles.length;
         if (remaining <= 0) {
           alert('Maximum 7 photos reached.');
           e.target.value = '';
@@ -241,26 +230,39 @@
           alert(`You can add only ${remaining} more photo(s).`);
         }
         const filesToAdd = newFiles.slice(0, remaining);
-        let pending = filesToAdd.length;
-        if (pending === 0) { e.target.value = ''; return; }
         filesToAdd.forEach(file => {
-          if (!file.type.startsWith('image/')) { pending--; if (pending === 0) renderGallery(); return; }
-          compressImage(file, 800, 0.7, function (compressed) {
-            galleryDataUrls.push(compressed);
-            pending--;
-            if (pending === 0) renderGallery();
-          });
+          if (!file.type.startsWith('image/')) return;
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            galleryFiles.push({ file, url: ev.target.result });
+            renderGallery();
+          };
+          reader.readAsDataURL(file);
         });
         e.target.value = '';
       });
 
       const citySelect = document.getElementById('cr-city');
-      CITIES.forEach(city => {
-        const opt = document.createElement('option');
-        opt.value = city;
-        opt.textContent = city;
-        citySelect.appendChild(opt);
-      });
+      const citiesRes = await api.getCities();
+      const cities = citiesRes.success && Array.isArray(citiesRes.data) ? citiesRes.data : [];
+      if (cities.length > 0) {
+        cities.forEach(city => {
+          const name = typeof city === 'string' ? city : city.name;
+          const opt = document.createElement('option');
+          opt.value = city.id || name;
+          opt.textContent = name;
+          opt.dataset.cityId = city.id;
+          citySelect.appendChild(opt);
+        });
+      } else {
+        const fallbackCities = ['Port Louis', 'Beau Bassin', 'Rose Hill', 'Quatre Bornes', 'Vacoas', 'Phoenix', 'Curepipe'];
+        fallbackCities.forEach(city => {
+          const opt = document.createElement('option');
+          opt.value = city;
+          opt.textContent = city;
+          citySelect.appendChild(opt);
+        });
+      }
 
       const tagChecklist = document.getElementById('cr-tag-checklist');
       const tagSearch = document.getElementById('cr-tag-search');
@@ -333,7 +335,20 @@
         if (el) { el.classList.add('hidden'); el.textContent = ''; }
       }
 
-      document.getElementById('coach-register-form').addEventListener('submit', (e) => {
+      async function getCityId(selectedOpt) {
+        if (!selectedOpt) return null;
+        const cityId = selectedOpt.dataset.cityId;
+        if (cityId) return parseInt(cityId, 10);
+        const name = selectedOpt.value;
+        const res = await api.getCities();
+        if (res.success && Array.isArray(res.data)) {
+          const match = res.data.find(c => c.name === name);
+          if (match) return match.id;
+        }
+        return null;
+      }
+
+      document.getElementById('coach-register-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         hideError();
 
@@ -342,7 +357,8 @@
         var lastNameVal = document.getElementById('cr-lastname').value.trim();
         var usernameVal = document.getElementById('cr-username').value.trim();
         var emailVal = document.getElementById('cr-email').value.trim();
-        var cityVal = citySelect.value;
+        var cityOpt = citySelect.options[citySelect.selectedIndex];
+        var cityId = cityOpt ? parseInt(cityOpt.dataset.cityId) || null : null;
         var pass = document.getElementById('cr-password').value;
         var confirmPass = document.getElementById('cr-confirm-password').value;
         var bioVal = document.getElementById('cr-bio').value.trim();
@@ -352,7 +368,7 @@
         if (!lastNameVal) errors.push('Last name is required.');
         if (!usernameVal) errors.push('Username is required.');
         if (!emailVal) errors.push('Email is required.');
-        if (!cityVal) errors.push('Please select your location.');
+        if (!cityId && !cityOpt) errors.push('Please select your location.');
         if (!pass) errors.push('Password is required.');
         if (pass !== confirmPass) errors.push('Passwords do not match.');
         if (!priceVal) errors.push('Price per session is required.');
@@ -364,60 +380,59 @@
           return;
         }
 
-        const coachData = {
-          firstName: firstNameVal,
-          lastName: lastNameVal,
+        const submitBtn = document.querySelector('#coach-register-form button[type="submit"]');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i data-lucide="loader" class="w-5 h-5 inline mr-2 animate-spin"></i> Registering...';
+          if (window.lucide) lucide.createIcons();
+        }
+
+        const payload = {
+          first_name: firstNameVal,
+          last_name: lastNameVal,
           username: usernameVal,
           email: emailVal,
-          city: cityVal,
           password: pass,
-          bio: bioVal,
+          description: bioVal,
+          price: parseInt(priceVal) || 0,
           tags: [...selectedTags],
-          price: priceVal,
-          role: 'coach',
-          avatar: photoImg.src || '',
-          gallery: galleryDataUrls,
+          is_coach: true,
+          city_id: cityId,
         };
 
-        var coaches = [];
-        try { coaches = JSON.parse(localStorage.getItem('mocoach_coaches') || '[]'); }
-        catch { coaches = []; }
-
-        if (coaches.some(c => c.username === coachData.username)) {
-          showError('Username already taken. Please choose another.');
-          return;
-        }
-        if (coaches.some(c => c.email === coachData.email)) {
-          showError('Email already registered. Please use another.');
+        const regRes = await api.register(payload);
+        if (!regRes.success) {
+          showError(regRes.error || 'Registration failed');
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i data-lucide="user-plus" class="w-5 h-5 inline mr-2"></i> Register as Coach';
+            if (window.lucide) lucide.createIcons();
+          }
           return;
         }
 
-        coaches.push(coachData);
-        try {
-          localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
-          sessionStorage.setItem('mocoach_auth', JSON.stringify({
-            role: 'coach',
-            username: coachData.username,
-            userId: coachData.username,
-            firstName: coachData.firstName,
-            lastName: coachData.lastName,
-            email: coachData.email,
-            city: coachData.city,
-            avatar: coachData.avatar,
-            bio: coachData.bio,
-            tags: coachData.tags,
-            price: coachData.price,
-            gallery: coachData.gallery,
-          }));
+        const loginRes = await api.login(usernameVal, pass);
+        if (!loginRes.success) {
+          showError('Account created but login failed. Please log in manually.');
           window.location.href = 'index.html';
-        } catch (storageErr) {
-          showError('Could not save data. Please check your browser storage settings.');
-          console.error('Coach registration storage error:', storageErr);
+          return;
         }
+
+        if (avatarFile) {
+          await api.uploadProfilePicture(avatarFile);
+        }
+
+        for (let i = 0; i < galleryFiles.length; i++) {
+          const slot = i + 1;
+          await api.uploadCoachPicture(slot, galleryFiles[i].file);
+        }
+
+        window.location.href = 'index.html';
       });
     });
   </script>
 
+  <script src="js/api.js?v=2"></script>
   <script src="js/app.js"></script>
   <script>
     if (window.lucide) lucide.createIcons();

@@ -16,6 +16,7 @@ from classes.city import City
 from classes.tag import Tag
 from classes.user import User
 from classes.coach import Coach
+from classes.badge import Badge
 
 _RAW_DB_URL = os.environ.get("MYSQL_URL", "mysql+mysqldb://emilien:1234@localhost/moCoach")
 DB_URL = _RAW_DB_URL.replace("mysql://", "mysql+pymysql://", 1) if _RAW_DB_URL.startswith("mysql://") else _RAW_DB_URL
@@ -277,6 +278,35 @@ def process_users(session, path):
     print(f"{ok}/{total} successful inserts, {errors} errors.")
 
 
+def process_badges(session, path):
+    csv_name = os.path.basename(path)
+    with open(path, newline='', encoding='utf-8') as f:
+        rows = list(csv.DictReader(f))
+    total = len(rows)
+    ok = 0
+    errors = 0
+    for i, row in enumerate(rows, start=2):
+        name = row.get("name", "").strip()
+        desc = row.get("description", "").strip()
+        for_coach = row.get("for_coach", "").strip().lower() == "true"
+        if not name:
+            warn(csv_name, i, "missing badge name")
+            errors += 1
+            continue
+        existing = session.query(Badge).filter_by(name=name).first()
+        if existing:
+            continue
+        try:
+            badge = Badge(name=name, description=desc, for_coach=for_coach)
+            session.add(badge)
+            session.flush()
+            ok += 1
+        except (TypeError, ValueError) as e:
+            warn(csv_name, i, str(e))
+            errors += 1
+    print(f"{ok}/{total} successful inserts, {errors} errors.")
+
+
 def main():
     engine = create_engine(DB_URL)
     Base.metadata.create_all(engine)
@@ -284,7 +314,7 @@ def main():
     session = Session()
 
     try:
-        csv_order = ["temp_cities.csv", "temp_tags.csv", "temp_users.csv"]
+        csv_order = ["temp_cities.csv", "temp_tags.csv", "temp_badges.csv", "temp_users.csv"]
         for filename in csv_order:
             path = os.path.join(DIR, filename)
             if not os.path.exists(path):
@@ -294,6 +324,8 @@ def main():
                 process_cities(session, path)
             elif filename == "temp_tags.csv":
                 process_tags(session, path)
+            elif filename == "temp_badges.csv":
+                process_badges(session, path)
             elif filename == "temp_users.csv":
                 process_users(session, path)
         session.commit()

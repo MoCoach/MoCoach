@@ -41,8 +41,10 @@
     <div id="admin-coaches-tab" class="admin-tab-content">
       <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-4 sm:p-6 backdrop-blur-md">
         <h2 class="text-lg sm:text-xl font-extrabold text-white mb-4">Coach Management</h2>
+        <input id="admin-coach-filter" type="text" placeholder="Filter by name, username or email..."
+          class="w-full mb-4 px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition">
         <div class="overflow-x-auto">
-          <table class="w-full text-sm min-w-[700px]">
+          <table class="w-full text-sm min-w-[900px]">
             <thead>
               <tr class="text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
                 <th class="text-left py-3 px-2">Name</th>
@@ -51,9 +53,10 @@
                 <th class="text-left py-3 px-2">City</th>
                 <th class="text-center py-3 px-2">Verified</th>
                 <th class="text-center py-3 px-2">Certified</th>
-                <th class="text-center py-3 px-2">Blocked</th>
-                <th class="text-center py-3 px-2">Msg Block</th>
-                <th class="text-center py-3 px-2">Photos</th>
+                <th class="text-center py-3 px-2">Profile</th>
+                <th class="text-center py-3 px-2">Email</th>
+                <th class="text-center py-3 px-2">IP</th>
+                <th class="text-center py-3 px-2">Msg</th>
               </tr>
             </thead>
             <tbody id="admin-coaches-body"></tbody>
@@ -67,14 +70,18 @@
     <div id="admin-customers-tab" class="admin-tab-content hidden">
       <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-4 sm:p-6 backdrop-blur-md">
         <h2 class="text-lg sm:text-xl font-extrabold text-white mb-4">Customer Management</h2>
+        <input id="admin-customer-filter" type="text" placeholder="Filter by username or email..."
+          class="w-full mb-4 px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition">
         <div class="overflow-x-auto">
           <table class="w-full text-sm min-w-[700px]">
             <thead>
               <tr class="text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
                 <th class="text-left py-3 px-2">Username</th>
                 <th class="text-left py-3 px-2">Email</th>
-                <th class="text-center py-3 px-2">Blocked</th>
-                <th class="text-center py-3 px-2">Msg Block</th>
+                <th class="text-center py-3 px-2">Profile</th>
+                <th class="text-center py-3 px-2">Email</th>
+                <th class="text-center py-3 px-2">IP</th>
+                <th class="text-center py-3 px-2">Msg</th>
               </tr>
             </thead>
             <tbody id="admin-customers-body"></tbody>
@@ -88,6 +95,8 @@
     <div id="admin-messages-tab" class="admin-tab-content hidden">
       <div class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-md">
         <h2 class="text-lg sm:text-xl font-extrabold text-white mb-4">Message Moderation</h2>
+        <input id="admin-message-filter" type="text" placeholder="Search by coach or customer username..."
+          class="w-full mb-4 px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition">
         <div id="admin-conversations-list" class="space-y-3">
           <!-- Filled by JS -->
         </div>
@@ -96,9 +105,15 @@
     </div>
   </div>
 
+  <script src="js/api.js?v=2"></script>
   <script>
     const AdminApp = {
-      init() {
+      _allUsers: [],
+      _coachFilter: '',
+      _customerFilter: '',
+      _messageFilter: '',
+
+      async init() {
         const auth = JSON.parse(sessionStorage.getItem('mocoach_auth') || 'null');
         if (!auth || auth.role !== 'admin') {
           window.location.href = 'index.html';
@@ -106,9 +121,18 @@
         }
         document.getElementById('admin-greeting').textContent = `Logged in as ${auth.username}`;
         this.bindEvents();
+        await this._loadUsers();
         this.renderCoaches();
         this.renderCustomers();
         this.renderConversations();
+        document.body.classList.add('loaded');
+      },
+
+      async _loadUsers() {
+        const res = await api.getUsers();
+        if (res.success) {
+          this._allUsers = res.data || [];
+        }
       },
 
       bindEvents() {
@@ -133,31 +157,47 @@
             if (tab) tab.classList.remove('hidden');
           });
         });
+
+        const filterDefs = [
+          { id: 'admin-coach-filter', stateKey: '_coachFilter', render: 'renderCoaches' },
+          { id: 'admin-customer-filter', stateKey: '_customerFilter', render: 'renderCustomers' },
+          { id: 'admin-message-filter', stateKey: '_messageFilter', render: 'renderConversations' },
+        ];
+        filterDefs.forEach(({ id, stateKey, render }) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') e.preventDefault();
+          });
+          el.addEventListener('input', (e) => {
+            this[stateKey] = e.target.value.toLowerCase();
+            this[render]();
+          });
+        });
       },
 
-      getAdminData() {
-        try { return JSON.parse(localStorage.getItem('mocoach_admin_data') || '{"coaches":{},"customers":{}}'); }
-        catch { return { coaches: {}, customers: {} }; }
+      _coachMatches(c, filter) {
+        if (!filter) return true;
+        const name = `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase();
+        return name.includes(filter)
+          || c.username.toLowerCase().includes(filter)
+          || c.email.toLowerCase().includes(filter);
       },
 
-      saveAdminData(data) {
-        localStorage.setItem('mocoach_admin_data', JSON.stringify(data));
+      _customerMatches(u, filter) {
+        if (!filter) return true;
+        return u.username.toLowerCase().includes(filter)
+          || u.email.toLowerCase().includes(filter);
       },
 
-      getCoaches() {
-        try { return JSON.parse(localStorage.getItem('mocoach_coaches') || '[]'); }
-        catch { return []; }
-      },
-
-      getUsers() {
-        try { return JSON.parse(localStorage.getItem('mocoach_users') || '[]'); }
-        catch { return []; }
+      _messageMatches(conv, filter) {
+        if (!filter) return true;
+        return conv._searchText.toLowerCase().includes(filter);
       },
 
       renderCoaches() {
         const tbody = document.getElementById('admin-coaches-body');
-        const coaches = this.getCoaches();
-        const admin = this.getAdminData();
+        const coaches = this._allUsers.filter(u => u.is_coach && this._coachMatches(u, this._coachFilter));
         const empty = document.getElementById('admin-coaches-empty');
 
         if (coaches.length === 0) {
@@ -167,157 +207,190 @@
         }
         empty.classList.add('hidden');
 
-        tbody.innerHTML = coaches.map((c, i) => {
-          const settings = admin.coaches[c.username] || {};
-          const isVetted = settings.is_vetted || false;
-          const isCertified = settings.is_certified || false;
-          const isBlocked = settings.is_blocked || false;
-          const msgBlocked = settings.messaging_blocked || false;
+        tbody.innerHTML = coaches.map(c => {
+          const isVetted = c.is_vetted || false;
+          const isCertified = c.is_certified || false;
+          const isBlocked = c.is_blocked || false;
+          const emailBlocked = c.email_blocked || false;
+          const ipBlocked = c.ip_blocked || false;
+          const msgBlocked = c.is_messaging_blocked || false;
           return `
             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-              <td class="py-3 px-2 text-white font-semibold">${this._esc(c.firstName)} ${this._esc(c.lastName)}</td>
+              <td class="py-3 px-2 text-white font-semibold">${this._esc(c.first_name || '')} ${this._esc(c.last_name || '')}</td>
               <td class="py-3 px-2 text-slate-300">${this._esc(c.username)}</td>
               <td class="py-3 px-2 text-slate-300">${this._esc(c.email)}</td>
-              <td class="py-3 px-2 text-slate-300">${this._esc(c.city)}</td>
+              <td class="py-3 px-2 text-slate-300">${this._esc(c.coach?.city || '')}</td>
               <td class="py-3 px-2 text-center">
-                <input type="checkbox" ${isVetted ? 'checked' : ''} onchange="AdminApp.toggleCoachFlag('${c.username}', 'is_vetted', this.checked)" class="w-4 h-4 rounded accent-teal-600">
+                <input type="checkbox" ${isVetted ? 'checked' : ''} onchange="AdminApp.toggleFlag(${c.id}, 'is_vetted', this.checked)" class="w-4 h-4 rounded accent-teal-600">
               </td>
               <td class="py-3 px-2 text-center">
-                <input type="checkbox" ${isCertified ? 'checked' : ''} onchange="AdminApp.toggleCoachFlag('${c.username}', 'is_certified', this.checked)" class="w-4 h-4 rounded accent-amber-600">
+                <input type="checkbox" ${isCertified ? 'checked' : ''} onchange="AdminApp.toggleFlag(${c.id}, 'is_certified', this.checked)" class="w-4 h-4 rounded accent-amber-600">
               </td>
               <td class="py-3 px-2 text-center">
-                <button onclick="AdminApp.toggleCoachFlag('${c.username}', 'is_blocked')" class="px-4 py-2 rounded-lg text-xs font-bold ${isBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${isBlocked ? 'Blocked' : 'Active'}</button>
+                <button onclick="AdminApp.toggleBlock(${c.id}, 'is_blocked')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${isBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}">${isBlocked ? 'Blocked' : 'Active'}</button>
               </td>
               <td class="py-3 px-2 text-center">
-                <button onclick="AdminApp.toggleCoachFlag('${c.username}', 'messaging_blocked')" class="px-4 py-2 rounded-lg text-xs font-bold ${msgBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${msgBlocked ? 'Blocked' : 'Active'}</button>
+                <button onclick="AdminApp.toggleBlock(${c.id}, 'email_blocked')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${emailBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}">${emailBlocked ? 'Blocked' : 'Active'}</button>
               </td>
               <td class="py-3 px-2 text-center">
-                <button onclick="AdminApp.removeCoachPhotos('${c.username}')" class="text-xs text-red-400 hover:text-red-300 font-semibold">Remove Photos</button>
+                <button onclick="AdminApp.toggleBlock(${c.id}, 'ip_blocked')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${ipBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}">${ipBlocked ? 'Blocked' : 'Active'}</button>
+              </td>
+              <td class="py-3 px-2 text-center">
+                <button onclick="AdminApp.toggleBlock(${c.id}, 'is_messaging_blocked')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${msgBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}">${msgBlocked ? 'Blocked' : 'Active'}</button>
               </td>
             </tr>
           `;
         }).join('');
       },
 
-      toggleCoachFlag(username, flag, value) {
-        const admin = this.getAdminData();
-        if (!admin.coaches[username]) admin.coaches[username] = {};
-        if (value !== undefined) {
-          admin.coaches[username][flag] = value;
-        } else {
-          admin.coaches[username][flag] = !admin.coaches[username][flag];
-        }
-        this.saveAdminData(admin);
-        this.renderCoaches();
-      },
-
-      removeCoachPhotos(username) {
-        if (!confirm(`Remove all photos for ${username}?`)) return;
-        const coaches = this.getCoaches();
-        const coach = coaches.find(c => c.username === username);
-        if (coach) {
-          coach.avatar = '';
-          coach.gallery = [];
-          localStorage.setItem('mocoach_coaches', JSON.stringify(coaches));
-          this.showToast('Photos removed', 'success');
-          this.renderCoaches();
-        }
-      },
-
       renderCustomers() {
         const tbody = document.getElementById('admin-customers-body');
-        const users = this.getUsers();
-        const admin = this.getAdminData();
+        const customers = this._allUsers.filter(u => !u.is_coach && this._customerMatches(u, this._customerFilter));
         const empty = document.getElementById('admin-customers-empty');
 
-        if (users.length === 0) {
+        if (customers.length === 0) {
           tbody.innerHTML = '';
           empty.classList.remove('hidden');
           return;
         }
         empty.classList.add('hidden');
 
-        tbody.innerHTML = users.map((u, i) => {
-          const settings = admin.customers[u.username] || {};
-          const isBlocked = settings.is_blocked || false;
-          const msgBlocked = settings.messaging_blocked || false;
+        tbody.innerHTML = customers.map(u => {
+          const isBlocked = u.is_blocked || false;
+          const emailBlocked = u.email_blocked || false;
+          const ipBlocked = u.ip_blocked || false;
+          const msgBlocked = u.is_messaging_blocked || false;
           return `
             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
               <td class="py-3 px-2 text-white font-semibold">${this._esc(u.username)}</td>
               <td class="py-3 px-2 text-slate-300">${this._esc(u.email)}</td>
               <td class="py-3 px-2 text-center">
-                <button onclick="AdminApp.toggleCustomerFlag('${u.username}', 'is_blocked')" class="px-4 py-2 rounded-lg text-xs font-bold ${isBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${isBlocked ? 'Blocked' : 'Active'}</button>
+                <button onclick="AdminApp.toggleBlock(${u.id}, 'is_blocked')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${isBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}">${isBlocked ? 'Blocked' : 'Active'}</button>
               </td>
               <td class="py-3 px-2 text-center">
-                <button onclick="AdminApp.toggleCustomerFlag('${u.username}', 'messaging_blocked')" class="px-4 py-2 rounded-lg text-xs font-bold ${msgBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'} transition">${msgBlocked ? 'Blocked' : 'Active'}</button>
+                <button onclick="AdminApp.toggleBlock(${u.id}, 'email_blocked')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${emailBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}">${emailBlocked ? 'Blocked' : 'Active'}</button>
+              </td>
+              <td class="py-3 px-2 text-center">
+                <button onclick="AdminApp.toggleBlock(${u.id}, 'ip_blocked')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${ipBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}">${ipBlocked ? 'Blocked' : 'Active'}</button>
+              </td>
+              <td class="py-3 px-2 text-center">
+                <button onclick="AdminApp.toggleBlock(${u.id}, 'is_messaging_blocked')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${msgBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}">${msgBlocked ? 'Blocked' : 'Active'}</button>
               </td>
             </tr>
           `;
         }).join('');
       },
 
-      toggleCustomerFlag(username, flag) {
-        const admin = this.getAdminData();
-        if (!admin.customers[username]) admin.customers[username] = {};
-        admin.customers[username][flag] = !admin.customers[username][flag];
-        this.saveAdminData(admin);
-        this.renderCustomers();
+      async toggleFlag(userId, flag, value) {
+        const body = {};
+        body[flag] = value;
+        const res = await api.flagUser(userId, body);
+        if (res.success) {
+          await this._loadUsers();
+          this.renderCoaches();
+          this.showToast(`${flag} updated`, 'success');
+        } else {
+          this.showToast(res.error || 'Failed', 'error');
+        }
       },
 
-      renderConversations() {
+      async toggleBlock(userId, flag) {
+        const user = this._allUsers.find(u => u.id === userId);
+        if (!user) return;
+        const currentVal = user[flag] || false;
+        const body = {};
+        body[flag] = !currentVal;
+        const res = await api.blockUser(userId, body);
+        if (res.success) {
+          await this._loadUsers();
+          this.renderCoaches();
+          this.renderCustomers();
+          this.showToast(`${flag} toggled`, 'success');
+        } else {
+          this.showToast(res.error || 'Failed', 'error');
+        }
+      },
+
+      async removePhotos(userId, username) {
+        if (!confirm(`Remove all photos for ${username}?`)) return;
+        const res = await api.deleteUserPictures(userId);
+        if (res.success) {
+          this.showToast('Photos removed', 'success');
+        } else {
+          this.showToast(res.error || 'Failed', 'error');
+        }
+      },
+
+      async renderConversations() {
         const container = document.getElementById('admin-conversations-list');
         const empty = document.getElementById('admin-messages-empty');
-        const raw = localStorage.getItem('mocoach_chats');
 
-        if (!raw) {
+        let allConvData = [];
+
+        for (const user of this._allUsers) {
+          const res = await api.getUserChats(user.id);
+          if (res.success && Array.isArray(res.data)) {
+            for (const chat of res.data) {
+              const msRes = await api.getChatMessages(chat.id);
+              const messages = msRes.success && Array.isArray(msRes.data) ? msRes.data : [];
+              const coachName = chat.coach ? `${chat.coach.first_name || ''} ${chat.coach.last_name || ''}`.trim() || chat.coach.username || 'Unknown' : 'Unknown';
+              const participants = [coachName.toLowerCase()];
+              if (chat.customer?.username) participants.push(chat.customer.username.toLowerCase());
+              if (chat.coach?.username) participants.push(chat.coach.username.toLowerCase());
+              allConvData.push({
+                id: chat.id,
+                coachName,
+                _searchText: participants.join(' '),
+                messages: messages.map(m => ({
+                  id: m.id,
+                  senderId: m.sender.id,
+                  senderName: m.sender.username || m.sender.first_name || 'Unknown',
+                  text: m.text,
+                  timestamp: m.timestamp * 1000,
+                })),
+              });
+            }
+          }
+        }
+
+        allConvData = allConvData.filter(c => this._messageMatches(c, this._messageFilter));
+
+        if (allConvData.length === 0) {
           container.innerHTML = '';
           empty.classList.remove('hidden');
           return;
         }
+        empty.classList.add('hidden');
 
-        try {
-          const conversations = JSON.parse(raw);
-          if (!conversations.length) {
-            container.innerHTML = '';
-            empty.classList.remove('hidden');
-            return;
-          }
-          empty.classList.add('hidden');
-
-          container.innerHTML = conversations.map(conv => {
-            const coachName = conv.coach?.name || 'Unknown Coach';
-            const msgCount = conv.messages?.length || 0;
-            const coachId = conv.coach?.id || conv.id?.replace('conv-', '') || '';
-            return `
-              <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden">
-                <button onclick="AdminApp.toggleConv('${conv.id}')" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-800/30 transition">
-                  <div class="flex items-center space-x-3">
-                    <i data-lucide="message-circle" class="w-5 h-5 text-teal-400"></i>
-                    <span class="font-semibold text-white">${this._esc(coachName)}</span>
-                    <span class="text-xs text-slate-500">(${msgCount} messages)</span>
-                  </div>
-                  <i id="chevron-${conv.id}" data-lucide="chevron-down" class="w-4 h-4 text-slate-500 transition-transform"></i>
-                </button>
-                <div id="conv-body-${conv.id}" class="hidden border-t border-slate-800/50 px-5 py-3 space-y-2 max-h-80 overflow-y-auto">
-                  ${(conv.messages || []).map(msg => `
-                    <div class="flex items-start justify-between gap-2 group">
-                      <div class="flex-1">
-                        <p class="text-xs text-slate-500">${msg.senderId === 'user' ? 'Customer' : this._esc(coachName)} <span class="text-slate-600">· ${new Date(msg.timestamp).toLocaleString()}</span></p>
-                        <p class="text-sm text-slate-200 mt-0.5">${this._esc(msg.text)}</p>
-                      </div>
-                      <button onclick="AdminApp.deleteMessage('${conv.id}', '${msg.id}')" class="opacity-100 sm:opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 p-1 transition flex-shrink-0" title="Delete message">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                      </button>
-                    </div>
-                  `).join('')}
+        container.innerHTML = allConvData.map(conv => {
+          const msgCount = conv.messages.length;
+          return `
+            <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden">
+              <button onclick="AdminApp.toggleConv(${conv.id})" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-800/30 transition">
+                <div class="flex items-center space-x-3">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-teal-400"></i>
+                  <span class="font-semibold text-white">${this._esc(conv.coachName)}</span>
+                  <span class="text-xs text-slate-500">(${msgCount} messages)</span>
                 </div>
+                <i id="chevron-${conv.id}" data-lucide="chevron-down" class="w-4 h-4 text-slate-500 transition-transform"></i>
+              </button>
+              <div id="conv-body-${conv.id}" class="hidden border-t border-slate-800/50 px-5 py-3 space-y-2 max-h-80 overflow-y-auto">
+                ${conv.messages.map(msg => `
+                  <div class="flex items-start justify-between gap-2 group">
+                    <div class="flex-1">
+                      <p class="text-xs text-slate-500">${this._esc(msg.senderName)} <span class="text-slate-600">· ${new Date(msg.timestamp).toLocaleString()}</span></p>
+                      <p class="text-sm text-slate-200 mt-0.5">${this._esc(msg.text)}</p>
+                    </div>
+                    <button onclick="AdminApp.deleteMessage(${conv.id}, ${JSON.stringify(msg.id)})" class="opacity-100 sm:opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 p-1 transition flex-shrink-0" title="Delete message">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                `).join('')}
               </div>
-            `;
-          }).join('');
-          if (window.lucide) lucide.createIcons();
-        } catch (e) {
-          container.innerHTML = '<p class="text-slate-500 text-center py-4">Error loading conversations.</p>';
-        }
+            </div>
+          `;
+        }).join('');
+        if (window.lucide) lucide.createIcons();
       },
 
       toggleConv(id) {
@@ -330,19 +403,14 @@
         }
       },
 
-      deleteMessage(convId, msgId) {
+      async deleteMessage(convId, msgId) {
         if (!confirm('Delete this message?')) return;
-        try {
-          const conversations = JSON.parse(localStorage.getItem('mocoach_chats') || '[]');
-          const conv = conversations.find(c => c.id === convId);
-          if (conv) {
-            conv.messages = conv.messages.filter(m => m.id !== msgId);
-            localStorage.setItem('mocoach_chats', JSON.stringify(conversations));
-          }
+        const res = await api.deleteMessage(msgId);
+        if (res.success) {
           this.renderConversations();
           this.showToast('Message deleted', 'success');
-        } catch (e) {
-          this.showToast('Error deleting message', 'error');
+        } else {
+          this.showToast(res.error || 'Failed to delete message', 'error');
         }
       },
 
