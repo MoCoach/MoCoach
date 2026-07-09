@@ -384,8 +384,12 @@ class Db_Management:
     # Coach queries
     # ------------------------------------------------------------------
 
-    def _coach_to_dict(self, coach: Coach) -> dict:
-        """Serialize a coach record to a public-facing dictionary."""
+    def _coach_to_dict(self, coach: Coach, current_user_id: int | None = None) -> dict:
+        """Serialize a coach record to a public-facing dictionary.
+
+        Email and phone are only included when the request is made by a
+        registered user (i.e. *current_user_id* is not ``None``).
+        """
         pic_url = Db_Management.get_profile_pic_path(coach.id)
         thumbs_up = 0
         thumbs_down = 0
@@ -407,8 +411,6 @@ class Db_Management:
             "description": coach.description,
             "price": coach.price,
             "city": coach.city.name if coach.city else None,
-            "phone": coach.user.phone,
-            "email": coach.user.email,
             "tags": [{"name": t.name, "description": t.description}
                      for t in coach.tags],
             "profile_pic": pic_url or DEFAULT_PIC,
@@ -418,6 +420,9 @@ class Db_Management:
             "is_vetted": coach.user.is_vetted,
             "is_certified": coach.user.is_certified,
         }
+        if current_user_id is not None:
+            d["phone"] = coach.user.phone
+            d["email"] = coach.user.email
         return d
 
     def get_coach(self, coach_id: int, current_user_id: int | None = None) -> dict:
@@ -427,7 +432,7 @@ class Db_Management:
             coach = session.query(Coach).filter_by(id=coach_id).first()
             if not coach:
                 raise DbError("Coach not found", 404)
-            d = self._coach_to_dict(coach)
+            d = self._coach_to_dict(coach, current_user_id)
             if current_user_id:
                 rating = session.query(CoachRating).filter_by(
                     coach_id=coach_id, customer_id=current_user_id
@@ -464,11 +469,11 @@ class Db_Management:
         """Return coaches matching the given search string.
 
         The full *query_string* is matched as a phrase against tag
-        names (to support multi-word tags).  Additionally, each
-        individual word from *query_string* must appear in at least
-        one of the coach's description, first_name, last_name,
-        username, or tag names.  A coach is returned if either
-        condition holds.
+        names and city names (to support multi-word tags/cities).
+        Additionally, each individual word from *query_string* must
+        appear in at least one of the coach's description, first_name,
+        last_name, username, city name, or tag names.  A coach is
+        returned if either condition holds.
         """
         session = self._session()
         try:
@@ -478,7 +483,7 @@ class Db_Management:
 
             full_phrase = query_string.strip()
 
-            # Every word must match in at least one text field or tag name
+            # Every word must match in at least one text field, tag name, or city name
             per_word = []
             for term in terms:
                 like = f"%{term}%"
@@ -488,12 +493,14 @@ class Db_Management:
                     User.last_name.ilike(like),
                     User.username.ilike(like),
                     Coach.tags.any(Tag.name.ilike(like)),
+                    City.name.ilike(like),
                 ))
 
-            query = session.query(Coach).join(Coach.user)
+            query = session.query(Coach).join(Coach.user).join(Coach.city)
             query = query.filter(
                 or_(
                     Coach.tags.any(Tag.name.ilike(f"%{full_phrase}%")),
+                    City.name.ilike(f"%{full_phrase}%"),
                     and_(*per_word),
                 )
             )

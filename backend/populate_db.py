@@ -264,6 +264,7 @@ def process_users(session, path):
                 is_admin=is_admin,
                 city_id=city_id,
                 price=price,
+                ip_address=None,
             )
             if is_coach and tag_objects:
                 for tag in tag_objects:
