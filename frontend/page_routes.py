@@ -37,6 +37,10 @@ def register_routes(app):
     def serve_css(filename):
         return send_from_directory(os.path.join(FRONTEND_DIR, "css"), filename)
 
+    @app.route("/assets/<path:filename>")
+    def serve_assets(filename):
+        return send_from_directory(os.path.join(FRONTEND_DIR, "assets"), filename)
+
     @app.route("/components/<path:filename>")
     def serve_components(filename):
         return send_from_directory(os.path.join(FRONTEND_DIR, "components"), filename)
