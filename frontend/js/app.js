@@ -89,15 +89,18 @@ function showMainView() {
     const main = document.querySelector('main');
     const profile = document.getElementById('profile-view');
     const coachView = document.getElementById('coach-profile-view');
-    const footer = document.getElementById('footer-placeholder');
 
     if (main) main.classList.remove('hidden');
     if (profile) profile.classList.add('hidden');
     if (coachView) coachView.classList.add('hidden');
-    if (footer) footer.classList.remove('hidden');
 
     document.body.classList.remove('overflow-hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (window.innerWidth <= 768) {
+        switchMobileView('home');
+        setActiveTab('home');
+    }
 }
 
 function showProfileView() {
@@ -317,6 +320,28 @@ function initMobileMenu() {
     }
 }
 
+// ── Mobile View Switching (app-like, no scroll) ──
+
+function switchMobileView(viewName) {
+    var isMobile = window.innerWidth <= 768;
+    if (!isMobile) return;
+
+    var isIndexPage = window.location.pathname.split('/').pop() === '' ||
+                      window.location.pathname.split('/').pop() === 'index.html';
+    if (!isIndexPage) return;
+
+    document.querySelectorAll('.mobile-view').forEach(function(v) {
+        v.classList.remove('view-active');
+    });
+
+    var target = document.getElementById('view-' + viewName);
+    if (target) {
+        target.classList.add('view-active');
+        var main = document.querySelector('main');
+        if (main) main.scrollTo(0, 0);
+    }
+}
+
 // ── Mobile Tab Bar ──
 
 function initMobileTabBar() {
@@ -333,19 +358,24 @@ function initMobileTabBar() {
     if (homeBtn) {
         homeBtn.addEventListener('click', () => {
             setActiveTab('home');
-            showMainView();
+            switchMobileView('home');
         });
     }
 
     if (exploreBtn) {
         exploreBtn.addEventListener('click', () => {
             setActiveTab('explore');
-            var path = window.location.pathname.split('/').pop();
-            if (path === '' || path === 'index.html') {
-                var el = document.getElementById('explore');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            var isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                switchMobileView('explore');
             } else {
-                window.location.href = 'index.html#explore';
+                var path = window.location.pathname.split('/').pop();
+                if (path === '' || path === 'index.html') {
+                    var el = document.getElementById('explore');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    window.location.href = 'index.html#explore';
+                }
             }
         });
     }

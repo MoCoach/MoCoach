@@ -1,20 +1,87 @@
 /* ============================================================
    MOBILE OVERRIDES (768px and down)
-   App-like experience: bottom tab bar, slide-in menu, overlays.
+   App-like experience: no scroll, bottom tab bar, slide-in menu.
    ============================================================ */
 
 @media (max-width: 768px) {
 
+  /* ── Lock body scroll (app-like) ── */
+  html, body {
+    overflow: hidden !important;
+    height: 100dvh !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── Hide header completely ── */
+  #header-placeholder {
+    display: none !important;
+  }
+
+  /* ── Main becomes the viewport container ── */
+  main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 64px; /* height of tab bar */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding-bottom: 0 !important;
+  }
+
+  /* ── View containers (index.html only) ── */
+  .mobile-view {
+    display: none;
+    min-height: 100%;
+  }
+  .mobile-view.view-active {
+    display: flex;
+    flex-direction: column;
+  }
+
   /* ── Bottom Tab Bar ── */
   #mobile-tab-bar {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 64px;
+    background: #020617;
+    border-top: 1px solid rgba(30, 41, 59, 0.8);
+  }
+
+  /* Safe area for iPhones with home indicator */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   .tab-bar-item {
     transition: color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    border: none;
+    background: none;
+    cursor: pointer;
   }
+
+  .tab-bar-item:active {
+    opacity: 0.7;
+  }
+
+  /* Active tab indicator */
   .tab-bar-item.active {
-    color: #0d9488; /* teal-500 */
+    color: #0d9488;
+  }
+  .tab-bar-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 2px;
+    background: #0d9488;
+    border-radius: 0 0 2px 2px;
   }
 
   /* Profile tab avatar when logged in */
@@ -24,14 +91,9 @@
     object-fit: cover;
   }
 
-  /* ── Main content padding for tab bar ── */
-  main {
-    padding-bottom: 4.5rem; /* ~72px for the fixed tab bar */
-  }
-
   /* ── Footer hidden on mobile ── */
   #footer-placeholder {
-    display: none;
+    display: none !important;
   }
 
   /* ── Burger menu: slide-in from right ── */
@@ -44,6 +106,7 @@
 
   #mobile-menu-panel {
     transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   #mobile-menu-overlay.open #mobile-menu-panel {
     transform: translateX(0);
@@ -53,6 +116,10 @@
   .mobile-menu-tile {
     display: block;
     text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-menu-tile:active {
+    opacity: 0.7;
   }
 
   /* ── Section overlays ── */
@@ -60,8 +127,6 @@
   #mobile-overlay-about {
     transition: opacity 0.3s ease;
   }
-
-  /* ── Hide profile btn on mobile (handled in HTML via hidden lg:flex) ── */
 
   /* ── Messaging panel adjustments ── */
   .messaging-panel {
@@ -71,13 +136,18 @@
   /* ── Prevent body scroll when overlay is open ── */
   body.menu-open,
   body.overlay-open {
-    overflow: hidden;
+    overflow: hidden !important;
   }
 
   /* ── Coach card adjustments for mobile ── */
   .coach-card,
   .coach-card-sm {
     transform: none !important;
+  }
+
+  /* ── Back to top hidden on mobile (not needed in app mode) ── */
+  #back-to-top {
+    display: none !important;
   }
 
 }

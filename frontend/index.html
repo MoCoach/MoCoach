@@ -60,8 +60,10 @@
   <div id="header-placeholder" class="sticky top-0 z-50"></div>
 
   <main>
+    <!-- VIEW: HOME (hero + categories) -->
+    <div id="view-home" class="mobile-view view-active">
     <!-- HERO SECTION -->
-    <section class="relative bg-slate-950 overflow-hidden min-h-[calc(100vh-121px)] flex flex-col justify-between py-6 lg:py-10">
+    <section class="relative bg-slate-950 overflow-hidden min-h-[100dvh] lg:min-h-[calc(100vh-121px)] flex flex-col justify-between py-6 lg:py-10">
       
       <!-- Video background -->
       <video id="hero-video" autoplay loop muted playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover z-10 opacity-50 pointer-events-none">
@@ -196,7 +198,10 @@
 
       </div>
     </section>
+    </div><!-- end view-home -->
 
+    <!-- VIEW: EXPLORE -->
+    <div id="view-explore" class="mobile-view">
     <!-- SECTION: EXPLORE (COMPLETE CAROUSEL - 18 COACHES) -->
     <section id="explore" class="py-20 bg-slate-950 relative border-y border-slate-900">
       <div class="max-w-[1600px] mx-auto px-8">
@@ -244,7 +249,10 @@
 
       </div>
     </section>
+    </div><!-- end view-explore -->
 
+    <!-- VIEW: HOW IT WORKS -->
+    <div id="view-how-it-works" class="mobile-view">
     <!-- SECTION: HOW IT WORKS -->
     <section id="how-it-works" class="py-16 md:py-24">
       <div class="max-w-[1600px] mx-auto px-8 relative z-10">
@@ -267,7 +275,10 @@
         </div>
       </div>
     </section>
+    </div><!-- end view-how-it-works -->
 
+    <!-- VIEW: FEATURES -->
+    <div id="view-features" class="mobile-view">
     <!-- SECTION: PLATFORM BENEFITS -->
     <section id="features" class="py-16 md:py-24 bg-slate-950">
       <div class="max-w-[1600px] mx-auto px-8">
@@ -326,7 +337,10 @@
         </div>
       </div>
     </section>
+    </div><!-- end view-features -->
 
+    <!-- VIEW: ABOUT -->
+    <div id="view-about" class="mobile-view">
     <!-- ABOUT SECTION -->
     <section id="about" class="py-16 md:py-24 bg-slate-900 relative">
       <div class="max-w-[1600px] mx-auto px-8">
@@ -369,6 +383,7 @@
         </div>
       </div>
     </section>
+    </div><!-- end view-about -->
   </main>
 
   <!-- The external Footer will be injected here by JS -->

@@ -1,27 +1,27 @@
 <!-- Mobile Bottom Tab Bar (visible only on mobile, fixed at bottom) -->
-<div id="mobile-tab-bar" class="lg:hidden fixed bottom-0 inset-x-0 z-[55] bg-slate-950/95 backdrop-blur-xl border-t border-slate-800">
-  <div class="flex items-center justify-around h-16 px-2">
+<div id="mobile-tab-bar" class="lg:hidden fixed bottom-0 inset-x-0 z-[55] bg-slate-950 border-t border-slate-800/80 safe-bottom">
+  <div class="grid grid-cols-4 h-16">
     <!-- Home -->
-    <button id="tab-bar-home" class="tab-bar-item flex flex-col items-center justify-center flex-1 h-full text-teal-400" aria-label="Home">
-      <i data-lucide="home" class="w-6 h-6 mb-0.5"></i>
-      <span class="text-[10px] font-bold">Home</span>
+    <button id="tab-bar-home" class="tab-bar-item active flex flex-col items-center justify-center gap-1 text-teal-400 relative" aria-label="Home">
+      <i data-lucide="home" class="w-6 h-6"></i>
+      <span class="text-[11px] font-semibold tracking-wide">Home</span>
     </button>
     <!-- Explore Coaches -->
-    <button id="tab-bar-explore" class="tab-bar-item flex flex-col items-center justify-center flex-1 h-full text-slate-500" aria-label="Explore Coaches">
-      <i data-lucide="compass" class="w-6 h-6 mb-0.5"></i>
-      <span class="text-[10px] font-bold">Explore</span>
+    <button id="tab-bar-explore" class="tab-bar-item flex flex-col items-center justify-center gap-1 text-slate-500 relative" aria-label="Explore Coaches">
+      <i data-lucide="compass" class="w-6 h-6"></i>
+      <span class="text-[11px] font-semibold tracking-wide">Explore</span>
     </button>
     <!-- Chat / Messages -->
-    <button id="tab-bar-chat" class="tab-bar-item flex flex-col items-center justify-center flex-1 h-full text-slate-500" aria-label="Messages">
-      <i data-lucide="message-circle" class="w-6 h-6 mb-0.5"></i>
-      <span class="text-[10px] font-bold">Chat</span>
+    <button id="tab-bar-chat" class="tab-bar-item flex flex-col items-center justify-center gap-1 text-slate-500 relative" aria-label="Messages">
+      <i data-lucide="message-circle" class="w-6 h-6"></i>
+      <span class="text-[11px] font-semibold tracking-wide">Chat</span>
     </button>
     <!-- Profile -->
-    <button id="tab-bar-profile" class="tab-bar-item flex flex-col items-center justify-center flex-1 h-full text-slate-500" aria-label="Profile">
-      <div id="tab-bar-avatar" class="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center mb-0.5 overflow-hidden">
+    <button id="tab-bar-profile" class="tab-bar-item flex flex-col items-center justify-center gap-1 text-slate-500 relative" aria-label="Profile">
+      <div id="tab-bar-avatar" class="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden">
         <i data-lucide="user" class="w-4 h-4"></i>
       </div>
-      <span id="tab-bar-username" class="text-[10px] font-bold">Profile</span>
+      <span id="tab-bar-username" class="text-[11px] font-semibold tracking-wide">Profile</span>
     </button>
   </div>
 </div>
