@@ -89,14 +89,15 @@
       <div class="max-w-[1600px] mx-auto px-8 relative z-30 w-full flex-1 flex flex-col justify-between">
         
         <div class="text-center max-w-5xl mx-auto my-auto pt-4 pb-8">
-          <h1 class="animate-title-punch text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-white tracking-tight mb-8 font-['Poppins']">
-            Find. Book. Train. <br>
-            Across <span class="animate-sweep">Mauritius</span>
+          <h1 class="animate-title-punch text-4xl sm:text-5xl lg:text-5xl font-extrabold leading-tight text-white tracking-tight mb-8 font-['Poppins']">
+            Find.Book.Train. <br>
+            <span class="text-[70%]">Across</span> <br>
+            <span class="animate-sweep">Mauritius</span>
           </h1>
           
-          <div class="animate-fade-delayed-1 flex flex-col sm:flex-row items-center justify-center gap-5">
+          <div class="animate-fade-delayed-1 flex flex-col sm:flex-row items-center justify-center gap-5 w-max sm:w-auto max-w-full mx-auto">
             <div class="role-group relative w-full sm:w-auto">
-               <button class="role-toggle-btn w-full sm:w-auto bg-[#0D9488] hover:bg-[#0F766E] text-white px-10 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(13,148,136,0.35)] hover:scale-[1.02] flex items-center justify-center space-x-3 text-base border border-teal-400/20" data-role="client" aria-expanded="false" aria-haspopup="true">
+               <button class="role-toggle-btn w-full sm:w-auto bg-[#0D9488] hover:bg-[#0F766E] text-white px-6 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(13,148,136,0.35)] hover:scale-[1.02] flex items-center justify-center space-x-3 text-base border border-teal-400/20" data-role="client" aria-expanded="false" aria-haspopup="true">
                 <i data-lucide="user" class="w-5.5 h-5.5"></i>
                 <span>I am a client</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
@@ -113,7 +114,7 @@
               </div>
             </div>
             <div class="role-group relative w-full sm:w-auto">
-              <button class="role-toggle-btn w-full sm:w-auto bg-[#030712]/50 hover:bg-[#030712]/95 backdrop-blur-md text-slate-100 px-10 py-4 rounded-full font-bold transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:scale-[1.02] flex items-center justify-center space-x-3 text-base shadow-sm" data-role="coach" aria-expanded="false" aria-haspopup="true">
+              <button class="role-toggle-btn w-full sm:w-auto bg-[#030712]/50 hover:bg-[#030712]/95 backdrop-blur-md text-slate-100 px-6 py-4 rounded-full font-bold transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:scale-[1.02] flex items-center justify-center space-x-3 text-base shadow-sm" data-role="coach" aria-expanded="false" aria-haspopup="true">
                 <i data-lucide="award" class="w-5.5 h-5.5 text-amber-400"></i>
                 <span>I am a coach</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
@@ -139,8 +140,8 @@
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-1">Explore Specialized Categories</h2>
           </div>
 
-          <div class="grid grid-cols-3 gap-6">
-            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-teal-500/50 shadow-lg">
+          <div class="categories-carousel flex lg:grid lg:grid-cols-3 gap-3 lg:gap-6 overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none scroll-smooth no-scrollbar pb-1 lg:pb-0">
+            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-teal-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 mb-4">
                 <i data-lucide="dumbbell" class="w-6 h-6"></i>
               </div>
@@ -148,7 +149,7 @@
               <p class="text-xs text-slate-300 leading-tight">Build strength and feel stronger</p>
             </a>
 
-            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
+            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
                 <i data-lucide="zap" class="w-6 h-6"></i>
               </div>
@@ -156,7 +157,7 @@
               <p class="text-xs text-slate-300 leading-tight">Improve your fitnes and energy</p>
             </a>
 
-            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
+            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
                 <i data-lucide="wind" class="w-6 h-6"></i>
               </div>
@@ -164,7 +165,7 @@
               <p class="text-xs text-slate-300 leading-tight">Flexibility, flow & mind wellness</p>
             </a>
 
-            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-purple-500/50 shadow-lg">
+            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-purple-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4">
                 <i data-lucide="accessibility" class="w-6 h-6"></i>
               </div>
@@ -172,7 +173,7 @@
               <p class="text-xs text-slate-300 leading-tight">Stiffness recovery & flexibility</p>
             </a>
 
-            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-orange-500/50 shadow-lg">
+            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-orange-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400 mb-4">
                 <i data-lucide="heart" class="w-6 h-6"></i>
               </div>
@@ -180,7 +181,7 @@
               <p class="text-xs text-slate-300 leading-tight">Safe maternal fitness paths</p>
             </a>
 
-            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-cyan-500/50 shadow-lg">
+            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-cyan-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 mb-4">
                 <i data-lucide="palmtree" class="w-6 h-6"></i>
               </div>
