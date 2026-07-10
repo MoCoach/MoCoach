@@ -43,6 +43,26 @@
       -webkit-text-fill-color: transparent;
       animation: sweep 7s ease-in-out infinite;
     }
+    .word-part {
+      display: inline-block;
+      opacity: 0;
+      animation: flyWord 0.6s ease-out forwards;
+      animation-delay: calc(2s + var(--d) * 0.5s);
+    }
+    .late-part {
+      display: inline-block;
+      opacity: 0;
+      animation: fadeUp 0.8s ease-out forwards;
+      animation-delay: 3.9s;
+    }
+    @keyframes flyWord {
+      from { opacity: 0; filter: blur(6px); }
+      to { opacity: 1; filter: blur(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); filter: blur(6px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
     #how-it-works::before {
       content: '';
       position: absolute;
@@ -89,10 +109,13 @@
       <div class="max-w-[1600px] mx-auto px-8 relative z-30 w-full flex-1 flex flex-col justify-between">
         
         <div class="text-center max-w-5xl mx-auto my-auto pt-4 pb-8">
-          <h1 class="animate-title-punch text-4xl sm:text-5xl lg:text-5xl font-extrabold leading-tight text-white tracking-tight mb-8 font-['Poppins']">
-            Find.Book.Train. <br>
-            <span class="text-[70%]">Across</span> <br>
-            <span class="animate-sweep">Mauritius</span>
+          <h1 class="text-4xl sm:text-5xl lg:text-5xl font-extrabold leading-tight text-white tracking-tight mb-8 font-['Poppins']">
+            <span class="word-part" style="--d: 0">Find.</span>
+            <span class="word-part" style="--d: 1">Book.</span>
+            <span class="word-part" style="--d: 2">Train.</span>
+            <br>
+            <span class="late-part text-[70%]">Across</span> <br>
+            <span class="late-part animate-sweep">Mauritius</span>
           </h1>
           
           <div class="animate-fade-delayed-1 flex flex-col sm:flex-row items-center justify-center gap-5 w-max sm:w-auto max-w-full mx-auto">
@@ -140,8 +163,8 @@
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-1">Explore Specialized Categories</h2>
           </div>
 
-          <div class="categories-carousel flex lg:grid lg:grid-cols-3 gap-3 lg:gap-6 overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none scroll-smooth no-scrollbar pb-1 lg:pb-0">
-            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-teal-500/50 shadow-lg">
+          <div class="grid grid-cols-3 gap-6">
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-teal-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 mb-4">
                 <i data-lucide="dumbbell" class="w-6 h-6"></i>
               </div>
@@ -149,7 +172,7 @@
               <p class="text-xs text-slate-300 leading-tight">Build strength and feel stronger</p>
             </a>
 
-            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
                 <i data-lucide="zap" class="w-6 h-6"></i>
               </div>
@@ -157,7 +180,7 @@
               <p class="text-xs text-slate-300 leading-tight">Improve your fitnes and energy</p>
             </a>
 
-            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
                 <i data-lucide="wind" class="w-6 h-6"></i>
               </div>
@@ -165,7 +188,7 @@
               <p class="text-xs text-slate-300 leading-tight">Flexibility, flow & mind wellness</p>
             </a>
 
-            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-purple-500/50 shadow-lg">
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-purple-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4">
                 <i data-lucide="accessibility" class="w-6 h-6"></i>
               </div>
@@ -173,7 +196,7 @@
               <p class="text-xs text-slate-300 leading-tight">Stiffness recovery & flexibility</p>
             </a>
 
-            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-orange-500/50 shadow-lg">
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-orange-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400 mb-4">
                 <i data-lucide="heart" class="w-6 h-6"></i>
               </div>
@@ -181,7 +204,7 @@
               <p class="text-xs text-slate-300 leading-tight">Safe maternal fitness paths</p>
             </a>
 
-            <a href="#explore" class="categories-card snap-center shrink-0 lg:shrink w-[80vw] lg:w-auto bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-5 lg:p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-cyan-500/50 shadow-lg">
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-cyan-500/50 shadow-lg">
               <div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 mb-4">
                 <i data-lucide="palmtree" class="w-6 h-6"></i>
               </div>

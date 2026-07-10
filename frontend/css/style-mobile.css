@@ -178,36 +178,37 @@
     padding: 0 16px !important;
   }
 
-  /* ── Categories: horizontal snap carousel on mobile ── */
-  .categories-carousel {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    scroll-padding-inline: 10vw;
+  /* ── Category cards: small, square, 3x2 grid ── */
+  .mobile-view.view-active .grid.grid-cols-3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+    padding: 0 !important;
   }
-  .categories-carousel::-webkit-scrollbar {
-    display: none;
+  .mobile-view.view-active .grid.grid-cols-3 > a {
+    padding: 8px 4px !important;
+    border-radius: 12px !important;
+    aspect-ratio: 1 / 1 !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
   }
-  .categories-card {
-    min-height: 140px;
-  }
-  .categories-card .rounded-full {
-    width: 36px !important;
-    height: 36px !important;
-    margin-bottom: 8px !important;
-  }
-  .categories-card .rounded-full i {
-    width: 18px !important;
-    height: 18px !important;
-  }
-  .categories-card h3 {
-    font-size: 13px !important;
+  .mobile-view.view-active .grid.grid-cols-3 > a .rounded-full {
+    width: 28px !important;
+    height: 28px !important;
     margin-bottom: 4px !important;
   }
-  .categories-card p {
-    display: block !important;
-    font-size: 10.5px !important;
-    line-height: 1.3 !important;
+  .mobile-view.view-active .grid.grid-cols-3 > a .rounded-full i {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .mobile-view.view-active .grid.grid-cols-3 > a h3 {
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0 !important;
+  }
+  .mobile-view.view-active .grid.grid-cols-3 > a p {
+    display: none !important;
   }
 
   /* ── Coach card adjustments for mobile ── */
