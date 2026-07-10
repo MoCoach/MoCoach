@@ -10,6 +10,7 @@ FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "fronten
 
 def register_routes(app):
     @app.route("/")
+    @app.route("/index.html")
     def home():
         return send_from_directory(FRONTEND_DIR, "index.html")
 
