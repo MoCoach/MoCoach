@@ -9,6 +9,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style-mobile.css">
+  <link rel="stylesheet" href="css/style-desktop.css" media="(min-width: 769px)">
   <style>
     .admin-tab { cursor: pointer; }
     .admin-tab.active { border-bottom-color: #0D9488; color: #fff; }
@@ -106,6 +108,7 @@
   </div>
 
   <script src="js/api.js?v=2"></script>
+  <div id="mobile-tab-bar-placeholder"></div>
   <script>
     const AdminApp = {
       _allUsers: [],

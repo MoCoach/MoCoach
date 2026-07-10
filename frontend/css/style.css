@@ -290,3 +290,10 @@ body.loaded { opacity: 1; }
   display: none;
 }
 #no-results.visible { display: flex; }
+
+/* Platform-specific visibility utilities */
+.desktop-only { display: none; }
+@media (min-width: 769px) { .desktop-only { display: initial; } }
+
+.mobile-only { display: initial; }
+@media (min-width: 769px) { .mobile-only { display: none; } }

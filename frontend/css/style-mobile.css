@@ -1,0 +1,83 @@
+/* ============================================================
+   MOBILE OVERRIDES (768px and down)
+   App-like experience: bottom tab bar, slide-in menu, overlays.
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ── Bottom Tab Bar ── */
+  #mobile-tab-bar {
+    display: flex;
+  }
+
+  .tab-bar-item {
+    transition: color 0.2s ease;
+  }
+  .tab-bar-item.active {
+    color: #0d9488; /* teal-500 */
+  }
+
+  /* Profile tab avatar when logged in */
+  #tab-bar-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ── Main content padding for tab bar ── */
+  main {
+    padding-bottom: 4.5rem; /* ~72px for the fixed tab bar */
+  }
+
+  /* ── Footer hidden on mobile ── */
+  #footer-placeholder {
+    display: none;
+  }
+
+  /* ── Burger menu: slide-in from right ── */
+  #mobile-menu-overlay {
+    transition: opacity 0.3s ease;
+  }
+  #mobile-menu-overlay.open {
+    display: block !important;
+  }
+
+  #mobile-menu-panel {
+    transform: translateX(100%);
+  }
+  #mobile-menu-overlay.open #mobile-menu-panel {
+    transform: translateX(0);
+  }
+
+  /* ── Mobile menu tiles ── */
+  .mobile-menu-tile {
+    display: block;
+    text-decoration: none;
+  }
+
+  /* ── Section overlays ── */
+  #mobile-overlay-how-it-works,
+  #mobile-overlay-about {
+    transition: opacity 0.3s ease;
+  }
+
+  /* ── Hide profile btn on mobile (handled in HTML via hidden lg:flex) ── */
+
+  /* ── Messaging panel adjustments ── */
+  .messaging-panel {
+    width: 100% !important;
+  }
+
+  /* ── Prevent body scroll when overlay is open ── */
+  body.menu-open,
+  body.overlay-open {
+    overflow: hidden;
+  }
+
+  /* ── Coach card adjustments for mobile ── */
+  .coach-card,
+  .coach-card-sm {
+    transform: none !important;
+  }
+
+}

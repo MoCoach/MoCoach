@@ -1,0 +1,23 @@
+/* ============================================================
+   DESKTOP OVERRIDES (769px and up)
+   Mobile is the base — this file only adds/modifies desktop.
+   ============================================================ */
+
+@media (min-width: 769px) {
+
+  /* Coach card hover — desktop */
+  .coach-card { cursor: pointer; }
+  .coach-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(13, 148, 136, 0.2);
+  }
+
+  .coach-card-sm {
+    transform: scale(0.9);
+    transform-origin: top center;
+  }
+  .coach-card-sm:hover {
+    transform: scale(0.9) translateY(-2px);
+  }
+
+}

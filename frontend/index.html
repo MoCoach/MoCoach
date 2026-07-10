@@ -20,8 +20,10 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
-  <!-- External CSS stylesheet link -->
-  <link class="rounded-full" rel="stylesheet" href="css/style.css">
+  <!-- External CSS stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style-mobile.css">
+  <link rel="stylesheet" href="css/style-desktop.css" media="(min-width: 769px)">
   <style>
     @keyframes sweep {
       0% { background-position: -200% center; }
@@ -40,12 +42,6 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: sweep 7s ease-in-out infinite;
-    }
-    .coach-card { cursor: pointer; }
-    .coach-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(13,148,136,0.2); }
-    .coach-card-sm { transform: scale(0.9); transform-origin: top center; }
-    @media (min-width: 640px) {
-      .coach-card-sm:hover { transform: scale(0.9) translateY(-2px); }
     }
     #how-it-works::before {
       content: '';
@@ -386,6 +382,9 @@
 
   <!-- Coach profile view (public & self-edit) -->
   <div id="coach-profile-placeholder"></div>
+
+  <!-- Mobile bottom tab bar -->
+  <div id="mobile-tab-bar-placeholder"></div>
 
   <!-- MODAL "APPLY AS A COACH" (Dual Register & Login Tabs) -->
   <div id="coach-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">

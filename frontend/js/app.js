@@ -15,6 +15,9 @@ async function loadComponent(id, url) {
                 updateHeaderProfilePic();
                 initMobileMenu();
             }
+            if (id === 'mobile-tab-bar-placeholder') {
+                initMobileTabBar();
+            }
         } catch (error) {
             console.error('Component loading error:', error);
         }
@@ -239,48 +242,190 @@ function updateHeaderProfilePic() {
             `;
         }
     }
+    updateMobileTabBarProfile();
 }
 window.updateHeaderProfilePic = updateHeaderProfilePic;
 
 function initMobileMenu() {
     const btn = document.getElementById('mobile-menu-btn');
-    const menu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    const panel = document.getElementById('mobile-menu-panel');
+    const backdrop = document.getElementById('mobile-menu-backdrop');
+    const closeBtn = document.getElementById('mobile-menu-close');
     const icon = btn?.querySelector('i[data-lucide]');
-    if (!btn || !menu) return;
+    if (!btn || !overlay || !panel) return;
+
+    function openMenu() {
+        overlay.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            overlay.classList.add('open');
+        });
+        document.body.classList.add('menu-open');
+        btn.setAttribute('aria-expanded', 'true');
+        if (icon) {
+            icon.setAttribute('data-lucide', 'x');
+            if (window.lucide) lucide.createIcons();
+        }
+    }
+
+    function closeMenu() {
+        overlay.classList.remove('open');
+        document.body.classList.remove('menu-open');
+        btn.setAttribute('aria-expanded', 'false');
+        if (icon) {
+            icon.setAttribute('data-lucide', 'menu');
+            if (window.lucide) lucide.createIcons();
+        }
+        setTimeout(() => {
+            if (!overlay.classList.contains('open')) {
+                overlay.classList.add('hidden');
+            }
+        }, 300);
+    }
 
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isOpen = !menu.classList.contains('hidden');
-        menu.classList.toggle('hidden');
-        btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-        if (icon) {
-            icon.setAttribute('data-lucide', isOpen ? 'menu' : 'x');
-            if (window.lucide) lucide.createIcons();
+        const isOpen = overlay.classList.contains('open');
+        if (isOpen) {
+            closeMenu();
+        } else {
+            openMenu();
         }
     });
 
-    document.addEventListener('click', (e) => {
-        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && !btn.contains(e.target)) {
-            menu.classList.add('hidden');
-            btn.setAttribute('aria-expanded', 'false');
-            if (icon) {
-                icon.setAttribute('data-lucide', 'menu');
-                if (window.lucide) lucide.createIcons();
-            }
-        }
+    if (backdrop) backdrop.addEventListener('click', closeMenu);
+    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+
+    overlay.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', closeMenu);
     });
 
-    menu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            menu.classList.add('hidden');
-            btn.setAttribute('aria-expanded', 'false');
-            if (icon) {
-                icon.setAttribute('data-lucide', 'menu');
-                if (window.lucide) lucide.createIcons();
-            }
+    overlay.querySelectorAll('[data-overlay]').forEach(tile => {
+        tile.addEventListener('click', () => {
+            closeMenu();
+            const target = tile.getAttribute('data-overlay');
+            setTimeout(() => openMobileOverlay(target), 350);
         });
     });
+
+    var paramsTile = overlay.querySelector('.mobile-menu-tile:nth-child(3)');
+    if (paramsTile) {
+        paramsTile.addEventListener('click', () => {
+            closeMenu();
+            setTimeout(() => showToast('Parameters coming soon!'), 350);
+        });
+    }
 }
+
+// ── Mobile Tab Bar ──
+
+function initMobileTabBar() {
+    const tabBar = document.getElementById('mobile-tab-bar');
+    if (!tabBar) return;
+
+    updateMobileTabBarProfile();
+
+    const homeBtn = document.getElementById('tab-bar-home');
+    const exploreBtn = document.getElementById('tab-bar-explore');
+    const chatBtn = document.getElementById('tab-bar-chat');
+    const profileBtn = document.getElementById('tab-bar-profile');
+
+    if (homeBtn) {
+        homeBtn.addEventListener('click', () => {
+            setActiveTab('home');
+            showMainView();
+        });
+    }
+
+    if (exploreBtn) {
+        exploreBtn.addEventListener('click', () => {
+            setActiveTab('explore');
+            var path = window.location.pathname.split('/').pop();
+            if (path === '' || path === 'index.html') {
+                var el = document.getElementById('explore');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                window.location.href = 'index.html#explore';
+            }
+        });
+    }
+
+    if (chatBtn) {
+        chatBtn.addEventListener('click', () => {
+            setActiveTab('chat');
+            if (window.ChatApp) ChatApp.open();
+        });
+    }
+
+    if (profileBtn) {
+        profileBtn.addEventListener('click', () => {
+            setActiveTab('profile');
+            var user = AuthService.getCurrentUser();
+            if (user) {
+                showProfileView();
+            } else {
+                showLoginModal();
+            }
+        });
+    }
+}
+
+function setActiveTab(tab) {
+    document.querySelectorAll('.tab-bar-item').forEach(item => {
+        item.classList.remove('active');
+        item.classList.add('text-slate-500');
+        item.classList.remove('text-teal-400');
+    });
+    var btn = document.getElementById('tab-bar-' + tab);
+    if (btn) {
+        btn.classList.add('active');
+        btn.classList.remove('text-slate-500');
+        btn.classList.add('text-teal-400');
+    }
+}
+
+function updateMobileTabBarProfile() {
+    var avatarEl = document.getElementById('tab-bar-avatar');
+    var nameEl = document.getElementById('tab-bar-username');
+    if (!avatarEl || !nameEl) return;
+
+    var user = AuthService.getCurrentUser();
+    if (user) {
+        var avatarUrl = user.avatar || '';
+        if (avatarUrl) {
+            avatarEl.innerHTML = '<img src="' + avatarUrl + '" alt="Profile">';
+        } else {
+            avatarEl.innerHTML = '<i data-lucide="user" class="w-4 h-4"></i>';
+            if (window.lucide) lucide.createIcons();
+        }
+        nameEl.textContent = user.username || 'Profile';
+        nameEl.classList.add('text-teal-400');
+        nameEl.classList.remove('text-slate-500');
+    } else {
+        avatarEl.innerHTML = '<i data-lucide="user" class="w-4 h-4"></i>';
+        if (window.lucide) lucide.createIcons();
+        nameEl.textContent = 'Profile';
+    }
+}
+
+// ── Mobile Overlays ──
+
+function openMobileOverlay(name) {
+    var overlay = document.getElementById('mobile-overlay-' + name);
+    if (!overlay) return;
+    overlay.classList.remove('hidden');
+    document.body.classList.add('overlay-open');
+    if (window.lucide) lucide.createIcons();
+}
+
+function closeMobileOverlay(name) {
+    var overlay = document.getElementById('mobile-overlay-' + name);
+    if (!overlay) return;
+    overlay.classList.add('hidden');
+    document.body.classList.remove('overlay-open');
+}
+
+// ── Toast ──
 
 function switchModalTab(tab) {
     const registerForm = document.getElementById('register-form');
@@ -355,6 +500,7 @@ const runAppInit = () => {
 
     loadComponent('header-placeholder', 'components/header.html');
     loadComponent('footer-placeholder', 'components/footer.html');
+    loadComponent('mobile-tab-bar-placeholder', 'components/mobile-tab-bar.html');
     loadComponent('messaging-placeholder', 'components/messaging.html');
     loadComponent('profile-placeholder', 'components/profile.html');
     loadComponent('coach-profile-placeholder', 'components/coach-profile.html');
@@ -672,6 +818,17 @@ const runAppInit = () => {
             if (coachId) {
                 e.preventDefault();
                 showCoachProfileView(parseInt(coachId));
+            }
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        const closeBtn = e.target.closest('.mobile-overlay-close');
+        if (closeBtn) {
+            const overlay = closeBtn.closest('[id^="mobile-overlay-"]');
+            if (overlay) {
+                var name = overlay.id.replace('mobile-overlay-', '');
+                closeMobileOverlay(name);
             }
         }
     });

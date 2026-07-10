@@ -7,7 +7,7 @@
         <img src="assets/img/mocoach-logo.png" alt="MoCoach Logo" class="w-auto object-contain h-16 sm:h-20 lg:h-24">
       </a>
 
-      <!-- Navigation (Shortcuts restored) -->
+      <!-- Navigation (Desktop only) -->
       <nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 text-base font-bold">
         <a href="#" class="text-teal-400 flex items-center space-x-1.5">
           <i data-lucide="home" class="w-5 h-5"></i>
@@ -24,21 +24,21 @@
       </nav>
     </div>
     
-    <!-- Bouton Profil avec Conteneur de Positionnement pour le menu au Clic -->
     <div class="flex items-center space-x-3">
       <!-- Hamburger menu (mobile only) -->
       <button id="mobile-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu" class="lg:hidden w-12 h-12 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 flex items-center justify-center text-slate-300 transition shadow-md focus:outline-none">
         <i data-lucide="menu" class="w-6 h-6"></i>
       </button>
 
-      <div class="flex items-center relative">
+      <!-- Profile button + dropdown (desktop only) -->
+      <div class="hidden lg:flex items-center relative">
         <button id="profile-btn" aria-label="User Profile" aria-expanded="false" aria-haspopup="true" class="w-12 h-12 rounded-full bg-slate-900 hover:bg-slate-850 border border-slate-800 flex items-center justify-center text-slate-300 transition shadow-md focus:outline-none">
           <i data-lucide="user" class="w-6 h-6"></i>
         </button>
         
-        <!-- Menu déroulant d'en-tête (Dropdown) - Masqué par défaut (hidden) et contrôlé uniquement au clic par app.js -->
+        <!-- Profile dropdown (desktop only) -->
         <div id="profile-dropdown" class="absolute right-0 top-full mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-2 hidden z-50">
-          <!-- Rempli dynamiquement par app.js -->
+          <!-- Filled dynamically by app.js -->
         </div>
       </div>
     </div>
@@ -46,20 +46,143 @@
   </div>
 </header>
 
-<!-- Mobile navigation panel -->
-<div id="mobile-menu" class="hidden fixed inset-x-0 top-[calc(72px+1px)] bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 shadow-2xl z-50 lg:hidden" aria-label="Navigation">
-  <nav class="flex flex-col py-4 px-6 space-y-1">
-    <a href="#" class="text-teal-400 flex items-center space-x-3 px-4 py-3 rounded-xl font-bold">
-      <i data-lucide="home" class="w-5 h-5"></i>
-      <span>Home</span>
-    </a>
-    <a href="#how-it-works" class="text-slate-300 hover:text-white hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition">How It Works</a>
-    <a href="#explore" class="text-slate-300 hover:text-white hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition">Explore Coaches</a>
-    <a href="#features" class="text-slate-300 hover:text-white hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition">Platform Benefits</a>
-    <a href="#about" class="text-slate-300 hover:text-white hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition">About Us</a>
-    <a href="coach-landing.html" class="text-amber-400 hover:text-amber-300 hover:bg-slate-900 px-4 py-3 rounded-xl font-semibold transition flex items-center space-x-2">
-      <i data-lucide="award" class="w-4 h-4"></i>
-      <span>For Coaches</span>
-    </a>
-  </nav>
+<!-- Mobile slide-in menu panel -->
+<div id="mobile-menu-overlay" class="hidden fixed inset-0 z-[60] lg:hidden" aria-label="Navigation">
+  <!-- Backdrop -->
+  <div id="mobile-menu-backdrop" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"></div>
+  
+  <!-- Panel (slides from right) -->
+  <div id="mobile-menu-panel" class="absolute top-0 right-0 h-full w-[75vw] max-w-[320px] bg-slate-950 border-l border-slate-800 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
+    <!-- Panel header -->
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+      <div class="flex items-center space-x-3">
+        <img src="assets/img/mocoach-logo.png" alt="MoCoach" class="h-8 w-auto">
+        <span class="text-lg font-bold text-white">Menu</span>
+      </div>
+      <button id="mobile-menu-close" class="text-slate-400 hover:text-white transition p-2 rounded-lg hover:bg-slate-800" aria-label="Close menu">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    
+    <!-- Tile grid -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-3">
+      <!-- For Coaches -->
+      <a href="coach-landing.html" class="mobile-menu-tile block bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-5 transition group">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500/20 transition">
+            <i data-lucide="award" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-base">For Coaches</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Register & grow your business</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- How It Works -->
+      <button data-overlay="how-it-works" class="mobile-menu-tile block w-full text-left bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-teal-500/40 rounded-2xl p-5 transition group">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center flex-shrink-0 group-hover:bg-teal-500/20 transition">
+            <i data-lucide="info" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-base">How It Works</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Simple coaching journey</p>
+          </div>
+        </div>
+      </button>
+
+      <!-- Parameters (cosmetic) -->
+      <button class="mobile-menu-tile block w-full text-left bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 transition group">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-slate-800/50 text-slate-400 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-800 transition">
+            <i data-lucide="settings" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-base">Parameters</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Settings & preferences</p>
+          </div>
+        </div>
+      </button>
+
+      <!-- About Us -->
+      <button data-overlay="about" class="mobile-menu-tile block w-full text-left bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-teal-500/40 rounded-2xl p-5 transition group">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center flex-shrink-0 group-hover:bg-teal-500/20 transition">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-base">About Us</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Our mission & story</p>
+          </div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile section overlays (How It Works, About Us) -->
+<div id="mobile-overlay-how-it-works" class="hidden fixed inset-0 z-[65] lg:hidden" role="dialog" aria-label="How It Works">
+  <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm"></div>
+  <div class="absolute inset-0 bg-slate-950 overflow-y-auto">
+    <div class="sticky top-0 z-10 flex items-center justify-between px-5 py-4 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800">
+      <h2 class="text-lg font-bold text-white">How It Works</h2>
+      <button class="mobile-overlay-close text-slate-400 hover:text-white transition p-2 rounded-lg hover:bg-slate-800" aria-label="Close">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div class="p-6 space-y-6">
+      <div class="text-center">
+        <span class="text-teal-500 text-xs font-bold uppercase tracking-widest">Simple Coaching Journey</span>
+        <h3 class="text-xl font-extrabold text-white mt-2">How MoCoach Simplifies Your Booking</h3>
+        <p class="text-slate-400 text-sm mt-2">From selection to training without standard social media friction.</p>
+      </div>
+      <div class="text-center bg-gradient-to-r from-slate-900/50 via-teal-950/30 to-slate-900/50 border border-slate-800/50 rounded-3xl p-6">
+        <i data-lucide="award" class="w-10 h-10 text-amber-400 mx-auto mb-4"></i>
+        <h4 class="text-lg font-extrabold text-white mb-2">Are You a Coach?</h4>
+        <p class="text-slate-300 text-sm mb-6">Grow your client base in Mauritius. Create your professional profile, set your schedule, and connect with clients.</p>
+        <a href="coach-landing.html" class="inline-flex items-center space-x-2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-full transition-all">
+          <i data-lucide="user-plus" class="w-5 h-5"></i>
+          <span>Register as a Coach</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="mobile-overlay-about" class="hidden fixed inset-0 z-[65] lg:hidden" role="dialog" aria-label="About Us">
+  <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm"></div>
+  <div class="absolute inset-0 bg-slate-950 overflow-y-auto">
+    <div class="sticky top-0 z-10 flex items-center justify-between px-5 py-4 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800">
+      <h2 class="text-lg font-bold text-white">About MoCoach</h2>
+      <button class="mobile-overlay-close text-slate-400 hover:text-white transition p-2 rounded-lg hover:bg-slate-800" aria-label="Close">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div class="p-6 space-y-6">
+      <div>
+        <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-6">
+          <i data-lucide="info" class="w-7 h-7"></i>
+        </div>
+        <h3 class="text-xl font-extrabold text-white mb-4">About MoCoach</h3>
+        <p class="text-slate-200 text-sm leading-relaxed mb-4">
+          <span class="text-teal-400 font-semibold">MoCoach represents Mauritius' first dedicated initiative to centralize and secure the sports, health, and wellness ecosystem.</span> For years, booking qualified local sports expertise has been fragmented across various social networks.
+        </p>
+        <p class="text-slate-200 text-sm leading-relaxed mb-4">
+          By offering unified profiles, central calendar checks, and client reviews, we help correct transparency imbalances. MoCoach elevates verified professional wellness coaches on the island while protecting clients.
+        </p>
+      </div>
+      <div class="flex items-center space-x-6">
+        <div class="text-left">
+          <span class="block text-2xl font-extrabold text-white">100%</span>
+          <span class="text-xs uppercase text-slate-500 tracking-wider">Vetted Instructors</span>
+        </div>
+        <div class="w-px h-10 bg-slate-800"></div>
+        <div class="text-left">
+          <span class="block text-2xl font-extrabold text-amber-400">Mauritius</span>
+          <span class="text-xs uppercase text-slate-500 tracking-wider">Islandwide</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
