@@ -44,6 +44,7 @@
   }
   main {
     top: 0;
+    z-index: 40;
   }
 
   /* ── View containers (index.html only) ── */
@@ -155,7 +156,7 @@
   }
 
   /* ── Hero section: video behind header, content below it ── */
-  .mobile-view.view-active section:first-child {
+  #view-home.mobile-view.view-active section:first-child {
     padding-top: 32px !important;
   }
 
@@ -165,10 +166,10 @@
   }
 
   /* ── Hero section: center entire content block as one unit ── */
-  .mobile-view.view-active section:first-child > div:last-child {
+  #view-home.mobile-view.view-active section:first-child > div:last-child {
     justify-content: center !important;
   }
-  .mobile-view.view-active section:first-child .max-w-5xl {
+  #view-home.mobile-view.view-active section:first-child .max-w-5xl {
     margin: 0 !important;
   }
 

@@ -700,7 +700,14 @@ const runAppInit = () => {
 
     if (searchInput) {
         searchInput.addEventListener('input', () => {
-            const query = searchInput.value.toLowerCase().trim();
+            const raw = searchInput.value.toLowerCase().trim();
+            if (raw.length > 0 && typeof activeCategoryFilter !== 'undefined') {
+                activeCategoryFilter = '';
+            }
+            const categoryKws = (typeof activeCategoryFilter !== 'undefined' && activeCategoryFilter) ? activeCategoryFilter : '';
+            const keywords = categoryKws.length > 0
+                ? categoryKws.split(/,\s*/).filter(Boolean)
+                : (raw.length > 0 ? raw.split(/,\s*/).filter(Boolean) : []);
             const grid = document.querySelector('#coach-carousel') || document.querySelector('#all-coaches-grid');
             if (!grid) return;
             var visibleCount = 0;
@@ -710,14 +717,16 @@ const runAppInit = () => {
                 const city = (card.getAttribute('data-city') || '').toLowerCase();
                 const bio = (card.getAttribute('data-bio') || '').toLowerCase();
                 const tags = (card.getAttribute('data-tags') || '').toLowerCase();
-                const match = name.includes(query) || discipline.includes(query) || city.includes(query) || bio.includes(query) || tags.includes(query);
+                const match = keywords.length === 0 || keywords.some(function(kw) {
+                    return name.includes(kw) || discipline.includes(kw) || city.includes(kw) || bio.includes(kw) || tags.includes(kw);
+                });
                 card.style.display = match ? 'flex' : 'none';
                 if (match) visibleCount++;
             });
             var noResults = document.getElementById('no-results');
             if (noResults) {
-                noResults.classList.toggle('visible', query.length > 0 && visibleCount === 0);
-                noResults.classList.toggle('hidden', !(query.length > 0 && visibleCount === 0));
+                noResults.classList.toggle('visible', keywords.length > 0 && visibleCount === 0);
+                noResults.classList.toggle('hidden', !(keywords.length > 0 && visibleCount === 0));
             }
         });
     }
@@ -818,8 +827,13 @@ const runAppInit = () => {
         });
 
         if (action === 'explore') {
-            var el = document.getElementById('explore');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
+            var isMobile = window.innerWidth <= 768;
+            if (isMobile && typeof switchMobileView === 'function') {
+                switchMobileView('explore');
+            } else {
+                var el = document.getElementById('explore');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }
         } else if (action === 'register') {
             showRegisterModal();
         } else if (action === 'how-it-works') {
