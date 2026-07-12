@@ -52,8 +52,12 @@
     .late-part {
       display: inline-block;
       opacity: 0;
-      animation: fadeUp 0.8s ease-out forwards;
-      animation-delay: 3.9s;
+      animation: fadeUp 0.8s ease-out 3.9s forwards;
+    }
+    .late-part.animate-sweep {
+      animation:
+        fadeUp 0.8s ease-out 3.95s forwards,
+        sweep 7s ease-in-out infinite;
     }
     @keyframes flyWord {
       from { opacity: 0; filter: blur(6px); }
@@ -83,7 +87,7 @@
     <!-- VIEW: HOME (hero + categories) -->
     <div id="view-home" class="mobile-view view-active">
     <!-- HERO SECTION -->
-    <section class="relative bg-slate-950 overflow-hidden min-h-[100dvh] lg:min-h-[calc(100vh-121px)] flex flex-col justify-between py-6 lg:py-10">
+    <section class="relative bg-slate-950 overflow-hidden min-h-[calc(100dvh-64px)] lg:min-h-[calc(100vh-121px)] flex flex-col justify-between py-6 lg:py-10">
       
       <!-- Video background -->
       <video id="hero-video" autoplay loop muted playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover z-10 opacity-50 pointer-events-none">
@@ -114,8 +118,7 @@
             <span class="word-part" style="--d: 1">Book.</span>
             <span class="word-part" style="--d: 2">Train.</span>
             <br>
-            <span class="late-part text-[70%]">Across</span> <br>
-            <span class="late-part animate-sweep">Mauritius</span>
+            <span class="late-part animate-sweep"><i data-lucide="map-pin" class="inline w-[0.8em] h-[0.8em] -translate-y-[0.05em] mr-1"></i>Mauritius</span>
           </h1>
           
           <div class="animate-fade-delayed-1 flex flex-col sm:flex-row items-center justify-center gap-5 w-max sm:w-auto max-w-full mx-auto">
@@ -184,16 +187,16 @@
               <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
                 <i data-lucide="wind" class="w-6 h-6"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Yoga</h3>
+              <h3 class="font-bold text-white text-sm mb-1">Yoga / Breathing</h3>
               <p class="text-xs text-slate-300 leading-tight">Flexibility, flow & mind wellness</p>
             </a>
 
-            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-purple-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4">
-                <i data-lucide="accessibility" class="w-6 h-6"></i>
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-green-500/50 shadow-lg">
+              <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 mb-4">
+                <i data-lucide="mountain" class="w-6 h-6"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Stretching</h3>
-              <p class="text-xs text-slate-300 leading-tight">Stiffness recovery & flexibility</p>
+              <h3 class="font-bold text-white text-sm mb-1">Hiking</h3>
+              <p class="text-xs text-slate-300 leading-tight">Explore trails & outdoor adventures</p>
             </a>
 
             <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-orange-500/50 shadow-lg">
@@ -210,6 +213,30 @@
               </div>
               <h3 class="font-bold text-white text-sm mb-1">Island Water</h3>
               <p class="text-xs text-slate-300 leading-tight">Swimming, SUP & coast routines</p>
+            </a>
+
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-purple-500/50 shadow-lg">
+              <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4">
+                <i data-lucide="move-horizontal" class="w-6 h-6"></i>
+              </div>
+              <h3 class="font-bold text-white text-sm mb-1">Stretching</h3>
+              <p class="text-xs text-slate-300 leading-tight">Stiffness recovery & flexibility</p>
+            </a>
+
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-pink-500/50 shadow-lg">
+              <div class="w-12 h-12 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-400 mb-4">
+                <i data-lucide="sparkles" class="w-6 h-6"></i>
+              </div>
+              <h3 class="font-bold text-white text-sm mb-1">Performative</h3>
+              <p class="text-xs text-slate-300 leading-tight">Performance & expressive movement</p>
+            </a>
+
+            <a href="#explore" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-green-500/50 shadow-lg">
+              <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 mb-4">
+                <i data-lucide="hand" class="w-6 h-6"></i>
+              </div>
+              <h3 class="font-bold text-white text-sm mb-1">Martial Arts</h3>
+              <p class="text-xs text-slate-300 leading-tight">Self-defense & combat discipline</p>
             </a>
           </div>
         </div>
