@@ -297,6 +297,9 @@ const CoachProfileApp = {
       saveBtn.classList.add('hidden');
       cancelBtn.classList.add('hidden');
     }
+
+    var accountSection = document.getElementById('cp-account-section');
+    if (accountSection) accountSection.classList.toggle('hidden', !this.isOwnProfile);
   },
 
   renderGallery() {

@@ -375,6 +375,14 @@ function initMobileTabBar() {
     if (homeBtn) {
         homeBtn.addEventListener('click', () => {
             setActiveTab('home');
+            if (currentView === 'coach-profile' || currentView === 'profile') {
+                var main = document.querySelector('main');
+                var coachView = document.getElementById('coach-profile-view');
+                var profileView = document.getElementById('profile-view');
+                if (main) main.classList.remove('hidden');
+                if (coachView) coachView.classList.add('hidden');
+                if (profileView) profileView.classList.add('hidden');
+            }
             if (isOnIndexPage()) {
                 switchMobileView('home');
             } else {
@@ -386,6 +394,14 @@ function initMobileTabBar() {
     if (exploreBtn) {
         exploreBtn.addEventListener('click', () => {
             setActiveTab('explore');
+            if (currentView === 'coach-profile' || currentView === 'profile') {
+                var main = document.querySelector('main');
+                var coachView = document.getElementById('coach-profile-view');
+                var profileView = document.getElementById('profile-view');
+                if (main) main.classList.remove('hidden');
+                if (coachView) coachView.classList.add('hidden');
+                if (profileView) profileView.classList.add('hidden');
+            }
             var isMobile = window.innerWidth <= 768;
             if (isMobile) {
                 if (isOnIndexPage()) {
