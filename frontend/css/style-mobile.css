@@ -219,7 +219,8 @@
   }
 
   /* ── Profile view: scrollable outside main ── */
-  #profile-view:not(.hidden) {
+  #profile-view:not(.hidden),
+  #coach-profile-view:not(.hidden) {
     position: fixed;
     top: 0;
     left: 0;

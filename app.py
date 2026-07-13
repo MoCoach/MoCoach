@@ -1,6 +1,7 @@
 """Single Flask application serving both the API and front-end."""
 
 import os
+from datetime import timedelta
 
 from flask import Flask
 from flask_jwt_extended import JWTManager
@@ -15,6 +16,7 @@ app = Flask(__name__,
     static_url_path="/static")
 
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "super-secret")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 JWTManager(app)
 
 db_url = os.environ.get("MYSQL_URL")
