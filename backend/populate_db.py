@@ -8,6 +8,7 @@ import sys
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from werkzeug.security import generate_password_hash
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -30,13 +31,24 @@ def warn(csv_name, line_num, msg):
     print(f"  {csv_name} : line {line_num} : {msg}")
 
 
+def _print_summary(csv_name, inserts, updates, unchanged, errors):
+    parts = []
+    if inserts:
+        parts.append(f"{inserts} insert{'s' if inserts != 1 else ''}")
+    if updates:
+        parts.append(f"{updates} update{'s' if updates != 1 else ''}")
+    if unchanged:
+        parts.append(f"{unchanged} unchanged")
+    if errors:
+        parts.append(f"{errors} error{'s' if errors != 1 else ''}")
+    print(f"  {csv_name}: {', '.join(parts) if parts else 'nothing to do'}")
+
+
 def process_cities(session, path):
     csv_name = os.path.basename(path)
     with open(path, newline='', encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
-    total = len(rows)
-    ok = 0
-    errors = 0
+    inserts = updates = unchanged = errors = 0
     for i, row in enumerate(rows, start=2):
         name = row.get("Name", "").strip()
         if not name:
@@ -45,26 +57,25 @@ def process_cities(session, path):
             continue
         existing = session.query(City).filter_by(name=name).first()
         if existing:
+            unchanged += 1
             continue
         try:
             city = City(name=name)
             session.add(city)
             session.flush()
-            ok += 1
+            inserts += 1
         except (TypeError, ValueError) as e:
             session.rollback()
             warn(csv_name, i, str(e))
             errors += 1
-    print(f"{ok}/{total} successful inserts, {errors} errors.")
+    _print_summary(csv_name, inserts, updates, unchanged, errors)
 
 
 def process_tags(session, path):
     csv_name = os.path.basename(path)
     with open(path, newline='', encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
-    total = len(rows)
-    ok = 0
-    errors = 0
+    inserts = updates = unchanged = errors = 0
     for i, row in enumerate(rows, start=2):
         name = row.get("name", "").strip()
         desc = row.get("description", "").strip()
@@ -78,22 +89,28 @@ def process_tags(session, path):
             continue
         existing = session.query(Tag).filter_by(name=name).first()
         if existing:
-            if existing.description == desc:
-                continue
+            if existing.description != desc:
+                try:
+                    existing.description = desc
+                    session.flush()
+                    updates += 1
+                except (TypeError, ValueError) as e:
+                    session.rollback()
+                    warn(csv_name, i, str(e))
+                    errors += 1
             else:
-                warn(csv_name, i, f"tag '{name}' already exists")
-                errors += 1
-                continue
+                unchanged += 1
+            continue
         try:
             tag = Tag(name=name, description=desc)
             session.add(tag)
             session.flush()
-            ok += 1
+            inserts += 1
         except (TypeError, ValueError) as e:
             session.rollback()
             warn(csv_name, i, str(e))
             errors += 1
-    print(f"{ok}/{total} successful inserts, {errors} errors.")
+    _print_summary(csv_name, inserts, updates, unchanged, errors)
 
 
 def _make_username(first, last):
@@ -102,21 +119,8 @@ def _make_username(first, last):
     return base.strip('.')
 
 
-def _user_unchanged(user, row, cities):
-    role = row.get("Role", "").strip().lower()
-    first = row.get("First Name (opt)", "").strip()
-    last = row.get("Last Name (opt)", "").strip()
-    email = row.get("Email", "").strip()
-    password = row.get("Password", "").strip()
-    phone = row.get("Phone (opt)", "").strip()
-    tags_str = row.get("Tags (opt, 5 max)", "").strip()
-    city_name = row.get("City", "").strip()
-    description = row.get("Description", "").strip()
-    price_str = row.get("Price (opt)", "").strip()
-
-    is_coach = role == "coach"
-    is_admin = role == "admin"
-
+def _user_unchanged(user, email, password, is_coach, is_admin, first, last,
+                     phone, description, city_id, price, tag_objects):
     if user.email != email:
         return False
     if not user.verify_pwd(password):
@@ -131,29 +135,21 @@ def _user_unchanged(user, row, cities):
         return False
     if user.phone != (phone or None):
         return False
-
     if is_coach:
         if not user.coach:
             return False
         if user.coach.description != description:
             return False
-        expected_city = cities.get(city_name)
-        if expected_city and user.coach.city_id != expected_city.id:
+        if user.coach.city_id != city_id:
             return False
-        if price_str:
-            try:
-                expected_price = int(price_str)
-            except ValueError:
-                return False
-            if user.coach.price != expected_price:
-                return False
-        expected_tag_names = set(
-            t.strip() for t in tags_str.split(",") if t.strip()
-        ) if tags_str else set()
+        if user.coach.price != price:
+            return False
         actual_tag_names = set(t.name for t in user.coach.tags)
-        if expected_tag_names != actual_tag_names:
+        expected_tag_names = set(t.name for t in tag_objects)
+        if actual_tag_names != expected_tag_names:
             return False
-
+    elif user.coach is not None:
+        return False
     return True
 
 
@@ -165,9 +161,7 @@ def process_users(session, path):
 
     with open(path, newline='', encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
-    total = len(rows)
-    ok = 0
-    errors = 0
+    inserts = updates = unchanged = errors = 0
 
     for i, row in enumerate(rows, start=2):
         role = row.get("Role", "").strip().lower()
@@ -206,15 +200,6 @@ def process_users(session, path):
             warn(csv_name, i, "missing password")
             errors += 1
             continue
-
-        existing = session.query(User).filter_by(username=username).first()
-        if existing:
-            if _user_unchanged(existing, row, cities):
-                continue
-            else:
-                warn(csv_name, i, f"username '{username}' already exists")
-                errors += 1
-                continue
 
         city_id = None
         tag_objects = []
@@ -257,6 +242,44 @@ def process_users(session, path):
                     errors += 1
                     continue
 
+        existing = session.query(User).filter_by(username=username).first()
+        if existing:
+            email_owner = session.query(User).filter_by(email=email).first()
+            if email_owner and email_owner.id != existing.id:
+                warn(csv_name, i, f"email '{email}' is already used by another account")
+                errors += 1
+                continue
+            if _user_unchanged(existing, email, password, is_coach, is_admin,
+                               first, last, phone, description, city_id,
+                               price, tag_objects):
+                unchanged += 1
+                continue
+            try:
+                with session.begin_nested():
+                    existing.email = email
+                    existing.password = generate_password_hash(password, method='pbkdf2:sha256')
+                    existing.first_name = first or None
+                    existing.last_name = last or None
+                    existing.phone = phone or None
+                    existing.is_coach = is_coach
+                    existing.is_admin = is_admin
+                    if is_coach:
+                        if existing.coach is None:
+                            existing.coach = Coach(description=description,
+                                                   city_id=city_id, price=price)
+                        else:
+                            existing.coach.description = description
+                            existing.coach.city_id = city_id
+                            existing.coach.price = price
+                        existing.coach.set_tags(tag_objects)
+                    elif existing.coach is not None:
+                        session.delete(existing.coach)
+                updates += 1
+            except (TypeError, ValueError) as e:
+                warn(csv_name, i, str(e))
+                errors += 1
+            continue
+
         try:
             with session.begin_nested():
                 user = User(
@@ -278,20 +301,18 @@ def process_users(session, path):
                         user.coach.add_tag(tag)
                 session.add(user)
                 session.flush()
-            ok += 1
+            inserts += 1
         except (TypeError, ValueError) as e:
             warn(csv_name, i, str(e))
             errors += 1
-    print(f"{ok}/{total} successful inserts, {errors} errors.")
+    _print_summary(csv_name, inserts, updates, unchanged, errors)
 
 
 def process_badges(session, path):
     csv_name = os.path.basename(path)
     with open(path, newline='', encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
-    total = len(rows)
-    ok = 0
-    errors = 0
+    inserts = updates = unchanged = errors = 0
     for i, row in enumerate(rows, start=2):
         name = row.get("name", "").strip()
         desc = row.get("description", "").strip()
@@ -302,16 +323,33 @@ def process_badges(session, path):
             continue
         existing = session.query(Badge).filter_by(name=name).first()
         if existing:
+            changed = False
+            if existing.description != desc:
+                existing.description = desc
+                changed = True
+            if existing.for_coach != for_coach:
+                existing.for_coach = for_coach
+                changed = True
+            if changed:
+                try:
+                    session.flush()
+                    updates += 1
+                except (TypeError, ValueError) as e:
+                    session.rollback()
+                    warn(csv_name, i, str(e))
+                    errors += 1
+            else:
+                unchanged += 1
             continue
         try:
             badge = Badge(name=name, description=desc, for_coach=for_coach)
             session.add(badge)
             session.flush()
-            ok += 1
+            inserts += 1
         except (TypeError, ValueError) as e:
             warn(csv_name, i, str(e))
             errors += 1
-    print(f"{ok}/{total} successful inserts, {errors} errors.")
+    _print_summary(csv_name, inserts, updates, unchanged, errors)
 
 
 def main():
