@@ -95,6 +95,37 @@ const ProfileApp = {
     window.location.reload();
   },
 
+  showDeleteConfirm() {
+    var el = document.getElementById('pf-delete-confirm');
+    if (el) el.classList.remove('hidden');
+  },
+
+  hideDeleteConfirm() {
+    var el = document.getElementById('pf-delete-confirm');
+    if (el) el.classList.add('hidden');
+    var err = document.getElementById('pf-delete-error');
+    if (err) { err.classList.add('hidden'); err.textContent = ''; }
+    var pw = document.getElementById('pf-delete-password');
+    if (pw) pw.value = '';
+  },
+
+  async deleteProfile() {
+    var pw = document.getElementById('pf-delete-password');
+    var err = document.getElementById('pf-delete-error');
+    var password = pw ? pw.value.trim() : '';
+    if (!password) {
+      if (err) { err.textContent = 'Please enter your password.'; err.classList.remove('hidden'); }
+      return;
+    }
+    var res = await api.deleteOwnProfile(password);
+    if (!res.success) {
+      if (err) { err.textContent = res.error || 'Deletion failed.'; err.classList.remove('hidden'); }
+      return;
+    }
+    sessionStorage.removeItem('mocoach_auth');
+    window.location.href = 'index.html';
+  },
+
   renderHeader() {
     const el = document.getElementById('profile-header-card');
     if (!el) return;

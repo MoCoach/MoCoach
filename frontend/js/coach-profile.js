@@ -88,6 +88,37 @@ const CoachProfileApp = {
     this.bindEvents();
   },
 
+  showDeleteConfirm() {
+    var el = document.getElementById('cp-delete-confirm');
+    if (el) el.classList.remove('hidden');
+  },
+
+  hideDeleteConfirm() {
+    var el = document.getElementById('cp-delete-confirm');
+    if (el) el.classList.add('hidden');
+    var err = document.getElementById('cp-delete-error');
+    if (err) { err.classList.add('hidden'); err.textContent = ''; }
+    var pw = document.getElementById('cp-delete-password');
+    if (pw) pw.value = '';
+  },
+
+  async deleteProfile() {
+    var pw = document.getElementById('cp-delete-password');
+    var err = document.getElementById('cp-delete-error');
+    var password = pw ? pw.value.trim() : '';
+    if (!password) {
+      if (err) { err.textContent = 'Please enter your password.'; err.classList.remove('hidden'); }
+      return;
+    }
+    var res = await api.deleteOwnProfile(password);
+    if (!res.success) {
+      if (err) { err.textContent = res.error || 'Deletion failed.'; err.classList.remove('hidden'); }
+      return;
+    }
+    sessionStorage.removeItem('mocoach_auth');
+    window.location.href = 'index.html';
+  },
+
   async _loadBadgeMap() {
     const res = await api.getAllBadges();
     if (res.success) {

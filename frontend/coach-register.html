@@ -92,6 +92,7 @@
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Tags / Specialties * <span class="text-slate-500 font-normal">(min 1, max 3)</span></label>
+            <div id="cr-tag-selected" class="flex flex-wrap gap-2 mb-3"></div>
             <input type="text" id="cr-tag-search" placeholder="Search by specialty..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition mb-3">
             <div id="cr-tag-count" class="text-xs text-slate-500 mb-2">0 of 3 selected</div>
             <div id="cr-tag-checklist" class="max-h-64 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-1.5"></div>
@@ -267,9 +268,26 @@
       }
 
       const tagChecklist = document.getElementById('cr-tag-checklist');
+      const tagSelected = document.getElementById('cr-tag-selected');
       const tagSearch = document.getElementById('cr-tag-search');
       const tagCount = document.getElementById('cr-tag-count');
       const selectedTags = new Set();
+
+      function renderSelectedTags() {
+        tagSelected.innerHTML = '';
+        selectedTags.forEach(tag => {
+          const chip = document.createElement('span');
+          chip.className = 'inline-flex items-center gap-1 bg-amber-500/20 text-amber-300 text-sm font-medium px-3 py-1 rounded-full border border-amber-500/30';
+          chip.innerHTML = tag + ' <button type="button" class="ml-0.5 hover:text-white transition" aria-label="Remove">&times;</button>';
+          chip.querySelector('button').addEventListener('click', () => {
+            selectedTags.delete(tag);
+            tagCount.textContent = `${selectedTags.size} of 3 selected`;
+            renderSelectedTags();
+            renderTags(tagSearch.value);
+          });
+          tagSelected.appendChild(chip);
+        });
+      }
 
       function renderTags(filter = '') {
         tagChecklist.innerHTML = '';
@@ -287,7 +305,7 @@
 
           filtered.forEach(tag => {
             const label = document.createElement('label');
-            label.className = 'flex items-center space-x-2.5 py-1 px-2 rounded-lg hover:bg-slate-900 cursor-pointer transition';
+            label.className = 'flex items-center space-x-2.5 py-1 px-2 rounded-lg hover:bg-slate-900 cursor-pointer transition' + (selectedTags.has(tag) ? ' bg-amber-500/10' : '');
 
             const cb = document.createElement('input');
             cb.type = 'checkbox';
@@ -307,6 +325,8 @@
                 selectedTags.delete(tag);
               }
               tagCount.textContent = `${selectedTags.size} of 3 selected`;
+              renderSelectedTags();
+              renderTags(tagSearch.value);
             });
 
             const span = document.createElement('span');
@@ -419,6 +439,28 @@
           window.location.href = 'index.html';
           return;
         }
+
+        const u = loginRes.data.user;
+        const session = {
+          token: api.getToken(),
+          user: u,
+          role: u.is_admin ? 'admin' : (u.is_coach ? 'coach' : 'customer'),
+          userId: u.id,
+          username: u.username,
+          email: u.email,
+          avatar: u.profile_pic || '',
+          firstName: u.first_name || '',
+          lastName: u.last_name || '',
+        };
+        if (u.coach) {
+          session.city = u.coach.city || '';
+          session.bio = u.coach.description || '';
+          session.tags = (u.coach.tags || []).map(t => t.name || t);
+          session.price = u.coach.price || '';
+          session.gallery = u.coach.pictures || [];
+          session.discipline = (u.coach.tags && u.coach.tags[0]) ? u.coach.tags[0].name || u.coach.tags[0] : '';
+        }
+        sessionStorage.setItem('mocoach_auth', JSON.stringify(session));
 
         if (avatarFile) {
           await api.uploadProfilePicture(avatarFile);

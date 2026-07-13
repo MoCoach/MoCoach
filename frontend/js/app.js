@@ -236,6 +236,8 @@ function updateHeaderProfilePic() {
                 <a href="#" id="dropdown-logout-link" class="block px-4 py-2 text-sm text-red-400 hover:bg-red-950/30 hover:text-red-300 transition font-bold">Logout</a>
             `;
         }
+        var mobileLogout = document.getElementById('mobile-menu-logout');
+        if (mobileLogout) mobileLogout.classList.remove('hidden');
     } else {
         btn.innerHTML = `<i data-lucide="user" class="w-6 h-6"></i>`;
         if (window.lucide) lucide.createIcons();
@@ -244,6 +246,8 @@ function updateHeaderProfilePic() {
                 <a href="#" id="dropdown-login-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-850 hover:text-white transition font-semibold">Login / Register</a>
             `;
         }
+        var mobileLogout = document.getElementById('mobile-menu-logout');
+        if (mobileLogout) mobileLogout.classList.add('hidden');
     }
     updateMobileTabBarProfile();
 }
@@ -318,6 +322,14 @@ function initMobileMenu() {
             setTimeout(() => showToast('Parameters coming soon!'), 350);
         });
     }
+
+    var mobileLogoutBtn = document.getElementById('mobile-menu-logout');
+    if (mobileLogoutBtn) {
+        mobileLogoutBtn.addEventListener('click', () => {
+            closeMenu();
+            AuthService.logout();
+        });
+    }
 }
 
 // ── Mobile View Switching (app-like, no scroll) ──
@@ -344,6 +356,11 @@ function switchMobileView(viewName) {
 
 // ── Mobile Tab Bar ──
 
+function isOnIndexPage() {
+    var path = window.location.pathname.split('/').pop();
+    return path === '' || path === 'index.html';
+}
+
 function initMobileTabBar() {
     const tabBar = document.getElementById('mobile-tab-bar');
     if (!tabBar) return;
@@ -358,7 +375,11 @@ function initMobileTabBar() {
     if (homeBtn) {
         homeBtn.addEventListener('click', () => {
             setActiveTab('home');
-            switchMobileView('home');
+            if (isOnIndexPage()) {
+                switchMobileView('home');
+            } else {
+                window.location.href = 'index.html';
+            }
         });
     }
 
@@ -367,10 +388,13 @@ function initMobileTabBar() {
             setActiveTab('explore');
             var isMobile = window.innerWidth <= 768;
             if (isMobile) {
-                switchMobileView('explore');
+                if (isOnIndexPage()) {
+                    switchMobileView('explore');
+                } else {
+                    window.location.href = 'index.html?view=explore';
+                }
             } else {
-                var path = window.location.pathname.split('/').pop();
-                if (path === '' || path === 'index.html') {
+                if (isOnIndexPage()) {
                     var el = document.getElementById('explore');
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                 } else {
@@ -383,7 +407,12 @@ function initMobileTabBar() {
     if (chatBtn) {
         chatBtn.addEventListener('click', () => {
             setActiveTab('chat');
-            if (window.ChatApp) ChatApp.open();
+            var user = AuthService.getCurrentUser();
+            if (user) {
+                if (window.ChatApp) ChatApp.open();
+            } else {
+                showLoginModal();
+            }
         });
     }
 
@@ -534,6 +563,12 @@ const runAppInit = () => {
     loadComponent('messaging-placeholder', 'components/messaging.html');
     loadComponent('profile-placeholder', 'components/profile.html');
     loadComponent('coach-profile-placeholder', 'components/coach-profile.html');
+
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('view') === 'explore') {
+        window.history.replaceState({}, '', window.location.pathname);
+        setTimeout(() => { switchMobileView('explore'); setActiveTab('explore'); }, 500);
+    }
 
     document.addEventListener('click', (e) => {
         if (e.target.id === 'tab-register-btn') {

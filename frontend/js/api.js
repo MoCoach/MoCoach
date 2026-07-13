@@ -127,6 +127,10 @@ const api = {
     return res;
   },
 
+  async deleteOwnProfile(password) {
+    return this.del('/profile', { password });
+  },
+
   async register(data) {
     const res = await this.post('/register', data);
     if (!res.success) return res;
