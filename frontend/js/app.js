@@ -591,6 +591,7 @@ const runAppInit = () => {
 
             var previewImg = document.querySelector('#modal-previews-container img');
             var avatarSrc = previewImg ? previewImg.src : '';
+            var avatarBlob = null;
 
             var regData = {
                 username: nickname,
@@ -600,8 +601,7 @@ const runAppInit = () => {
             };
 
             if (avatarSrc && avatarSrc.startsWith('data:')) {
-                var blob = dataURItoBlob(avatarSrc);
-                regData.avatar_blob = blob;
+                avatarBlob = dataURItoBlob(avatarSrc);
             }
 
             try {
@@ -625,6 +625,14 @@ const runAppInit = () => {
             try {
                 var loginResult = await AuthService.login(nickname, pass);
                 if (loginResult && loginResult.success) {
+                    if (avatarBlob) {
+                        var picRes = await api.uploadProfilePicture(avatarBlob);
+                        if (picRes.success) {
+                            var auth = JSON.parse(sessionStorage.getItem('mocoach_auth'));
+                            auth.avatar = picRes.data.profile_pic || '';
+                            sessionStorage.setItem('mocoach_auth', JSON.stringify(auth));
+                        }
+                    }
                     updateHeaderProfilePic();
                     if (window.ProfileApp) window.ProfileApp.init();
                     showProfileView();

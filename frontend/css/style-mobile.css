@@ -218,6 +218,18 @@
     transform: none !important;
   }
 
+  /* ── Profile view: scrollable outside main ── */
+  #profile-view:not(.hidden) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 64px;
+    overflow-y: auto;
+    z-index: 1;
+    padding-top: 80px;
+  }
+
   /* ── Back to top hidden on mobile (not needed in app mode) ── */
   #back-to-top {
     display: none !important;
