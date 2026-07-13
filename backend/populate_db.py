@@ -237,11 +237,17 @@ def process_users(session, path):
                 continue
 
             if tags_str:
+                cont = False
                 for tn in (t.strip() for t in tags_str.split(",") if t.strip()):
                     if tn in tags_map:
                         tag_objects.append(tags_map[tn])
                     else:
                         warn(csv_name, i, f"tag '{tn}' not found in database")
+                        cont = True
+                        errors += 1
+                        continue
+                if cont:
+                    continue
 
             if price_str:
                 try:
@@ -252,28 +258,28 @@ def process_users(session, path):
                     continue
 
         try:
-            user = User(
-                username=username,
-                email=email,
-                pwd=password,
-                is_coach=is_coach,
-                description=description if is_coach else None,
-                first_name=first or None,
-                last_name=last or None,
-                phone=phone or None,
-                is_admin=is_admin,
-                city_id=city_id,
-                price=price,
-                ip_address=None,
-            )
-            if is_coach and tag_objects:
-                for tag in tag_objects:
-                    user.coach.add_tag(tag)
-            session.add(user)
-            session.flush()
+            with session.begin_nested():
+                user = User(
+                    username=username,
+                    email=email,
+                    pwd=password,
+                    is_coach=is_coach,
+                    description=description if is_coach else None,
+                    first_name=first or None,
+                    last_name=last or None,
+                    phone=phone or None,
+                    is_admin=is_admin,
+                    city_id=city_id,
+                    price=price,
+                    ip_address=None,
+                )
+                if is_coach and tag_objects:
+                    for tag in tag_objects:
+                        user.coach.add_tag(tag)
+                session.add(user)
+                session.flush()
             ok += 1
         except (TypeError, ValueError) as e:
-            session.rollback()
             warn(csv_name, i, str(e))
             errors += 1
     print(f"{ok}/{total} successful inserts, {errors} errors.")
