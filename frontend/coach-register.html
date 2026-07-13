@@ -52,22 +52,22 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name *</label>
-              <input type="text" id="cr-firstname" required placeholder="ex: Jean" autocomplete="given-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+              <input type="text" id="cr-firstname" required placeholder="e.g. Jean" autocomplete="given-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
             <div>
               <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name *</label>
-              <input type="text" id="cr-lastname" required placeholder="ex: Dupont" autocomplete="family-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+              <input type="text" id="cr-lastname" required placeholder="e.g. Dupont" autocomplete="family-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
           </div>
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username *</label>
-            <input type="text" id="cr-username" required placeholder="ex: jeandupont" autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+            <input type="text" id="cr-username" required placeholder="Choose a unique username" autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
           </div>
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Email Address *</label>
-            <input type="email" id="cr-email" required placeholder="ex: jean@example.com" autocomplete="email" inputmode="email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+            <input type="email" id="cr-email" required placeholder="you@example.com" autocomplete="email" inputmode="email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
           </div>
 
           <div>
@@ -80,11 +80,11 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
-              <input type="password" id="cr-password" required placeholder="••••••••••••" autocomplete="new-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+              <input type="password" id="cr-password" required placeholder="Min. 8 characters" autocomplete="new-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
             <div>
               <label class="block text-sm font-semibold text-slate-400 mb-1.5">Confirm Password *</label>
-              <input type="password" id="cr-confirm-password" required placeholder="••••••••••••" autocomplete="new-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+              <input type="password" id="cr-confirm-password" required placeholder="Re-enter your password" autocomplete="new-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
             </div>
           </div>
 
@@ -92,21 +92,21 @@
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Tags / Specialties * <span class="text-slate-500 font-normal">(min 1, max 3)</span></label>
-            <input type="text" id="cr-tag-search" placeholder="Search tags..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition mb-3">
+            <input type="text" id="cr-tag-search" placeholder="Search by specialty..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition mb-3">
             <div id="cr-tag-count" class="text-xs text-slate-500 mb-2">0 of 3 selected</div>
             <div id="cr-tag-checklist" class="max-h-64 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-1.5"></div>
           </div>
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Price per Session (Rs) *</label>
-            <input type="number" id="cr-price" min="0" required placeholder="ex: 500" inputmode="numeric" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+            <input type="number" id="cr-price" min="0" required placeholder="e.g. 500" inputmode="numeric" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
           </div>
 
           <hr class="border-slate-800">
 
           <div>
             <label class="block text-sm font-semibold text-slate-400 mb-1.5">Bio *</label>
-            <textarea id="cr-bio" rows="3" required placeholder="Tell potential clients about yourself, your experience, and coaching philosophy..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition resize-none"></textarea>
+            <textarea id="cr-bio" rows="3" required placeholder="Share your experience, certifications, and coaching philosophy..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition resize-none"></textarea>
           </div>
 
           <div>

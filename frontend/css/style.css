@@ -194,7 +194,7 @@ body.loaded { opacity: 1; }
   background: #1e293b;
 }
 
-/* Animation de scintillement des étoiles régulières */
+/* Twinkling animation for regular stars */
 @keyframes twinkle {
   0%, 100% {
     opacity: 0.15;
@@ -207,7 +207,7 @@ body.loaded { opacity: 1; }
   }
 }
 
-/* Style de base des étoiles */
+/* Base star styles */
 .star {
   position: absolute;
   background-color: #ffffff;

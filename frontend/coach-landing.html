@@ -376,27 +376,27 @@
       <form id="register-form" novalidate class="flex flex-col gap-5 text-left">
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username (Pseudo) *</label>
-          <input type="text" id="reg-nickname" placeholder="ex: pseudo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="text" id="reg-nickname" placeholder="Choose a unique display name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">First Name</label>
-          <input type="text" id="reg-firstname" placeholder="ex: yourname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="text" id="reg-firstname" placeholder="e.g. Jean" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Last Name</label>
-          <input type="text" id="reg-lastname" placeholder="ex: yourlastname" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="text" id="reg-lastname" placeholder="e.g. Dupont" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Email Address *</label>
-          <input type="email" id="reg-email" placeholder="ex: @example.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="email" id="reg-email" placeholder="you@example.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
-          <input type="password" id="reg-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="password" id="reg-password" placeholder="Min. 8 characters" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Confirm Password *</label>
-          <input type="password" id="reg-confirm-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="password" id="reg-confirm-password" placeholder="Re-enter your password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Profile Picture <span class="text-slate-500 font-normal">(optional)</span></label>
@@ -412,11 +412,11 @@
       <form id="login-form" class="hidden flex flex-col gap-5 text-left">
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Username or Email *</label>
-          <input type="text" id="login-identity" placeholder="ex: pseudo or yourname@email.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="text" id="login-identity" placeholder="Username or email address" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-400 mb-1.5">Password *</label>
-          <input type="password" id="login-password" placeholder="••••••••••••" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
+          <input type="password" id="login-password" placeholder="Enter your password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 transition">
         </div>
         <div id="login-error-feedback" class="hidden text-red-400 text-sm font-medium"></div>
         <div class="mt-2">

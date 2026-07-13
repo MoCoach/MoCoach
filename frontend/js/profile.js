@@ -214,7 +214,7 @@ const ProfileApp = {
         <div>
           <label for="pf-currentPw" class="block text-base font-semibold text-slate-200 mb-2">Current Password</label>
           <div class="relative">
-            <input id="pf-currentPw" type="password" placeholder="Enter current password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-teal-500 transition text-base">
+            <input id="pf-currentPw" type="password" placeholder="Enter your current password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-teal-500 transition text-base">
             <button onclick="ProfileApp.togglePassword('pf-currentPw', 'pw-toggle-current')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-current" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
@@ -223,7 +223,7 @@ const ProfileApp = {
         <div>
           <label for="pf-newPw" class="block text-base font-semibold text-slate-200 mb-2">New Password</label>
           <div class="relative">
-            <input id="pf-newPw" type="password" placeholder="Enter new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-teal-500 transition text-base">
+            <input id="pf-newPw" type="password" placeholder="Enter a new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-teal-500 transition text-base">
             <button onclick="ProfileApp.togglePassword('pf-newPw', 'pw-toggle-new')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-new" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>
@@ -232,7 +232,7 @@ const ProfileApp = {
         <div>
           <label for="pf-confirmPw" class="block text-base font-semibold text-slate-200 mb-2">Confirm New Password</label>
           <div class="relative">
-            <input id="pf-confirmPw" type="password" placeholder="Confirm new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-teal-500 transition text-base">
+            <input id="pf-confirmPw" type="password" placeholder="Re-enter your new password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 pr-11 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-teal-500 transition text-base">
             <button onclick="ProfileApp.togglePassword('pf-confirmPw', 'pw-toggle-confirm')" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" tabindex="-1">
               <i id="pw-toggle-confirm" data-lucide="eye-off" class="w-4 h-4"></i>
             </button>

@@ -1,20 +1,20 @@
 <div id="profile-view" class="relative bg-[#020617] min-h-screen py-12 overflow-hidden hidden">
   
-  <!-- Conteneur pour générer les étoiles scintillantes en arrière-plan -->
+  <!-- Container for generating twinkling stars in the background -->
   <div id="stars-container" class="absolute inset-0 pointer-events-none overflow-hidden z-0"></div>
 
   <div class="max-w-4xl mx-auto px-6 relative z-10">
     
-    <!-- Bouton de retour -->
+    <!-- Back button -->
     <a href="#" id="profile-back-btn" class="inline-flex items-center space-x-2 text-slate-400 hover:text-white mb-8 text-base transition group">
       <i data-lucide="arrow-left" class="w-5 h-5 transition-transform group-hover:-translate-x-1"></i>
       <span>Back to Home</span>
     </a>
 
-    <!-- En-tête profil (Avatar, Pseudo et Bio) -->
+    <!-- Profile header (Avatar, Username, and Bio) -->
     <div id="profile-header-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-5 md:p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
       
-      <!-- Schéma tactique d'arrière-plan 1 -->
+      <!-- Background tactical layout 1 -->
       <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-44 h-44 text-teal-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <path d="M 15 25 L 25 35 M 25 25 L 15 35" />
         <path d="M 45 15 L 55 25 M 55 15 L 45 25" />
@@ -27,13 +27,13 @@
         <line x1="5" y1="50" x2="95" y2="50" stroke-dasharray="4,4" />
       </svg>
       
-      <!-- Rempli dynamiquement par profile.js -->
+      <!-- Dynamically populated by profile.js -->
     </div>
 
-    <!-- Informations personnelles -->
+    <!-- Personal information -->
     <div id="profile-personal-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-5 md:p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
       
-      <!-- Schéma tactique d'arrière-plan 2 -->
+      <!-- Background tactical layout 2 -->
       <svg class="absolute right-6 bottom-6 w-36 h-36 text-amber-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <path d="M 10 80 A 70 70 0 0 1 80 10" stroke-dasharray="3,3" />
         <path d="M 75 15 L 85 25 M 85 15 L 75 25" />
@@ -58,14 +58,14 @@
         </div>
       </div>
       <div id="profile-personal-form" class="relative z-10">
-        <!-- Rempli dynamiquement par profile.js -->
+        <!-- Dynamically populated by profile.js -->
       </div>
     </div>
 
-    <!-- Sécurité et mot de passe -->
+    <!-- Security and password -->
     <div id="profile-security-card" class="bg-[#151d30]/90 border border-slate-800/80 rounded-3xl p-5 md:p-8 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.15)] mb-6 relative overflow-hidden">
       
-      <!-- Schéma tactique d'arrière-plan 3 -->
+      <!-- Background tactical layout 3 -->
       <svg class="absolute right-6 bottom-6 w-32 h-32 text-amber-500/5 pointer-events-none hidden md:block" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
         <circle cx="50" cy="50" r="40" />
         <circle cx="50" cy="50" r="25" stroke-dasharray="2,2" />
@@ -85,7 +85,7 @@
         </div>
       </div>
       <div id="profile-security-form" class="relative z-10">
-        <!-- Rempli dynamiquement par profile.js -->
+        <!-- Dynamically populated by profile.js -->
       </div>
     </div>
 
@@ -93,6 +93,6 @@
 
   </div>
 
-  <!-- Toasts de notification -->
+  <!-- Notification toasts -->
   <div id="profile-toast-container" class="fixed top-24 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
 </div>
