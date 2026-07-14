@@ -639,6 +639,7 @@ const runAppInit = () => {
             if (!nickname) { showRegError('Username is required.'); return; }
             if (!email) { showRegError('Email is required.'); return; }
             if (!pass) { showRegError('Password is required.'); return; }
+            if (pass.length < 8) { showRegError('Password must be at least 8 characters.'); return; }
 
             var previewImg = document.querySelector('#modal-previews-container img');
             var avatarSrc = previewImg ? previewImg.src : '';

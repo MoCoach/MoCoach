@@ -306,8 +306,8 @@ const ProfileApp = {
       return;
     }
 
-    if (newPw.length < 6) {
-      this._showPwFeedback('New password must be at least 6 characters', 'error');
+    if (newPw.length < 8) {
+      this._showPwFeedback('New password must be at least 8 characters', 'error');
       return;
     }
 

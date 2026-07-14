@@ -328,32 +328,55 @@
         const container = document.getElementById('admin-conversations-list');
         const empty = document.getElementById('admin-messages-empty');
 
-        let allConvData = [];
+        // 1) Fetch chats for ALL users in parallel
+        const chatResults = await Promise.all(
+          this._allUsers.map(user => api.getUserChats(user.id))
+        );
 
-        for (const user of this._allUsers) {
-          const res = await api.getUserChats(user.id);
+        // 2) Flatten into a single list of chats, deduplicated by chat id
+        const chatMap = new Map();
+        for (const res of chatResults) {
           if (res.success && Array.isArray(res.data)) {
             for (const chat of res.data) {
-              const msRes = await api.getChatMessages(chat.id);
-              const messages = msRes.success && Array.isArray(msRes.data) ? msRes.data : [];
-              const coachName = chat.coach ? `${chat.coach.first_name || ''} ${chat.coach.last_name || ''}`.trim() || chat.coach.username || 'Unknown' : 'Unknown';
-              const participants = [coachName.toLowerCase()];
-              if (chat.customer?.username) participants.push(chat.customer.username.toLowerCase());
-              if (chat.coach?.username) participants.push(chat.coach.username.toLowerCase());
-              allConvData.push({
-                id: chat.id,
-                coachName,
-                _searchText: participants.join(' '),
-                messages: messages.map(m => ({
-                  id: m.id,
-                  senderId: m.sender.id,
-                  senderName: m.sender.username || m.sender.first_name || 'Unknown',
-                  text: m.text,
-                  timestamp: m.timestamp * 1000,
-                })),
-              });
+              chatMap.set(chat.id, chat);
             }
           }
+        }
+
+        // 3) Fetch messages for ALL chats in parallel
+        const chatIds = [...chatMap.keys()];
+        const msgResults = await Promise.all(
+          chatIds.map(id => api.getChatMessages(id))
+        );
+
+        // 4) Build a map of chatId -> messages
+        const msgMap = new Map();
+        for (let i = 0; i < chatIds.length; i++) {
+          const res = msgResults[i];
+          msgMap.set(chatIds[i], res.success && Array.isArray(res.data) ? res.data : []);
+        }
+
+        // 5) Assemble the conversation data
+        let allConvData = [];
+        for (const [chatId, chat] of chatMap) {
+          const coachName = chat.coach
+            ? `${chat.coach.first_name || ''} ${chat.coach.last_name || ''}`.trim() || chat.coach.username || 'Unknown'
+            : 'Unknown';
+          const participants = [coachName.toLowerCase()];
+          if (chat.customer?.username) participants.push(chat.customer.username.toLowerCase());
+          if (chat.coach?.username) participants.push(chat.coach.username.toLowerCase());
+          allConvData.push({
+            id: chatId,
+            coachName,
+            _searchText: participants.join(' '),
+            messages: (msgMap.get(chatId) || []).map(m => ({
+              id: m.id,
+              senderId: m.sender.id,
+              senderName: m.sender.username || m.sender.first_name || 'Unknown',
+              text: m.text,
+              timestamp: m.timestamp * 1000,
+            })),
+          });
         }
 
         allConvData = allConvData.filter(c => this._messageMatches(c, this._messageFilter));

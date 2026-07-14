@@ -182,6 +182,9 @@ const CoachProfileApp = {
         const opt = document.createElement('option');
         opt.value = name;
         opt.textContent = name;
+        if (typeof city === 'object' && city.id != null) {
+          opt.dataset.cityId = city.id;
+        }
         citySelect.appendChild(opt);
       });
     }
@@ -399,6 +402,10 @@ const CoachProfileApp = {
     if (!this.currentData.gallery) return;
     this.currentData.gallery.splice(index, 1);
     this._syncAndRender();
+    if (this.currentId) {
+      const res = await api.getCoach(this.currentId);
+      if (res.success) this._coachData = res.data;
+    }
     this.showToast('Media removed', 'success');
   },
 
@@ -722,6 +729,9 @@ const CoachProfileApp = {
     var usernameVal = (document.getElementById('cp-username-edit')?.value || '').trim();
     var emailVal = (document.getElementById('cp-email-edit')?.value || '').trim();
     var cityVal = document.getElementById('cp-city-edit')?.value || '';
+    var citySelect = document.getElementById('cp-city-edit');
+    var cityOpt = citySelect ? citySelect.options[citySelect.selectedIndex] : null;
+    var cityId = cityOpt ? parseInt(cityOpt.dataset.cityId) || null : null;
     var priceVal = document.getElementById('cp-price-edit')?.value || '';
     var bioVal = (document.getElementById('cp-description-edit')?.value || '').trim();
     var password = document.getElementById('cp-password-edit')?.value || '';
@@ -753,15 +763,11 @@ const CoachProfileApp = {
       last_name: lastNameVal,
       username: usernameVal,
       email: emailVal,
-      city: cityVal,
       price: parseInt(priceVal) || 0,
       description: bioVal,
       tags: checkedTagValues,
     };
 
-    delete payload.city;
-
-    var cityId = await this._getCityId(cityVal);
     if (cityId) payload.city_id = cityId;
 
     const res = await api.updateProfile(payload);
@@ -805,15 +811,6 @@ const CoachProfileApp = {
     this.editing = false;
     this.showToast('Profile saved!', 'success');
     this.render();
-  },
-
-  async _getCityId(cityName) {
-    const res = await api.getCities();
-    if (res.success && Array.isArray(res.data)) {
-      const match = res.data.find(c => c.name === cityName);
-      if (match) return match.id;
-    }
-    return null;
   },
 
   show() {

@@ -4,6 +4,8 @@ const ChatApp = {
   conversations: [],
   activeChatId: null,
   isOpen: false,
+  _lastSeenTimes: {},
+  _pollInterval: null,
 
   async init() {
     if (!document.getElementById('msg-conversation-list')) {
@@ -18,6 +20,54 @@ const ChatApp = {
     this._setupKeyboardHandler();
     window.addEventListener('resize', () => this.updateMobileView());
     if (this.isOpen) await this._loadConversations();
+    this._startPolling();
+  },
+
+  _startPolling() {
+    if (this._pollInterval) return;
+    this._pollInterval = setInterval(() => this._checkForNewMessages(), 20000);
+  },
+
+  _stopPolling() {
+    if (this._pollInterval) {
+      clearInterval(this._pollInterval);
+      this._pollInterval = null;
+    }
+  },
+
+  async _checkForNewMessages() {
+    const user = this._getAuthUser();
+    if (!user || this.isOpen) return;
+    const res = await api.getChats();
+    if (!res.success || !Array.isArray(res.data)) return;
+    let hasNew = false;
+    for (const chat of res.data) {
+      const lastSeen = this._lastSeenTimes[chat.id] || 0;
+      const latest = chat.last_message_time || 0;
+      if (latest > lastSeen && lastSeen > 0) {
+        hasNew = true;
+        break;
+      }
+    }
+    if (hasNew) this._showBadge();
+  },
+
+  _showBadge() {
+    const badge = document.getElementById('chat-unread-badge');
+    if (badge) badge.classList.remove('hidden');
+  },
+
+  _hideBadge() {
+    const badge = document.getElementById('chat-unread-badge');
+    if (badge) badge.classList.add('hidden');
+  },
+
+  _updateLastSeenTimes() {
+    for (const conv of this.conversations) {
+      if (conv.lastActivity) {
+        this._lastSeenTimes[conv.id] = conv.lastActivity;
+      }
+    }
   },
 
   _setupKeyboardHandler() {
@@ -66,6 +116,9 @@ const ChatApp = {
         return this._toConv(chat);
       });
       this.renderConversations();
+      if (Object.keys(this._lastSeenTimes).length === 0) {
+        this._updateLastSeenTimes();
+      }
     }
   },
 
@@ -110,10 +163,7 @@ const ChatApp = {
         showToast("As a coach, you can't message other coaches.");
         return;
       }
-      if (!coachId) {
-        showToast("As a coach, you can't message other coaches.");
-        return;
-      }
+      coachId = null;
     }
 
     if (user.is_blocked) {
@@ -122,10 +172,12 @@ const ChatApp = {
     }
 
     this._syncCurrentUser();
+    this._hideBadge();
 
     if (this.conversations.length === 0) {
       await this._loadConversations();
     }
+    this._updateLastSeenTimes();
 
     this.isOpen = true;
     const overlay = document.getElementById('messaging-overlay');
@@ -186,7 +238,7 @@ const ChatApp = {
       const res = await api.getChatMessages(id);
       if (res.success && Array.isArray(res.data)) {
         conv.messages = res.data.map(msg => ({
-          id: msg.sender.id + '-' + msg.timestamp,
+          id: msg.id,
           senderId: msg.sender.id,
           text: msg.text,
           timestamp: msg.timestamp,

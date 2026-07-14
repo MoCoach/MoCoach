@@ -392,6 +392,7 @@
         if (!emailVal) errors.push('Email is required.');
         if (!cityId && !cityOpt) errors.push('Please select your location.');
         if (!pass) errors.push('Password is required.');
+        if (pass.length < 8) errors.push('Password must be at least 8 characters.');
         if (pass !== confirmPass) errors.push('Passwords do not match.');
         if (!priceVal) errors.push('Price per session is required.');
         if (!bioVal) errors.push('Please write a short bio.');
