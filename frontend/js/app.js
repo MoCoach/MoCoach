@@ -761,7 +761,9 @@ const runAppInit = () => {
     if (searchInput) {
         searchInput.addEventListener('input', () => {
             const raw = searchInput.value.toLowerCase().trim();
-            if (raw.length > 0 && typeof activeCategoryFilter !== 'undefined') {
+            if (typeof categoryPrefill !== 'undefined' && categoryPrefill) {
+                categoryPrefill = false;
+            } else if (raw.length > 0 && typeof activeCategoryFilter !== 'undefined') {
                 activeCategoryFilter = '';
             }
             const categoryKws = (typeof activeCategoryFilter !== 'undefined' && activeCategoryFilter) ? activeCategoryFilter : '';

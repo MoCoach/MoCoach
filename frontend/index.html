@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoCoach - Centralized Sports & Wellness Marketplace in Mauritius</title>
-  <meta name="description" content="Find verified sports and wellness coaches across Mauritius. Book personal training, yoga, swimming, and more. Join Mauritius' first dedicated coaching marketplace.">
-  <meta property="og:title" content="MoCoach - Find Your Coach in Mauritius">
-  <meta property="og:description" content="Book verified sports and wellness coaches across Mauritius. Personal training, yoga, HIIT, swimming and more.">
+  <title>One to One - Centralized Sports & Wellness Marketplace in Mauritius</title>
+  <meta name="description" content="Find vetted sports and wellness coaches across Mauritius. Book personal training, yoga, swimming, and more. Join Mauritius' first dedicated coaching marketplace.">
+  <meta property="og:title" content="One to One - Find Your Coach in Mauritius">
+  <meta property="og:description" content="Book vetted sports and wellness coaches across Mauritius. Personal training, yoga, HIIT, swimming and more.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mocoach.mu">
   <meta property="og:image" content="https://mocoach.mu/assets/img/mocoach-og.png">
@@ -87,7 +87,7 @@
     <!-- VIEW: HOME (hero + categories) -->
     <div id="view-home" class="mobile-view view-active">
     <!-- HERO SECTION -->
-    <section class="relative bg-slate-950 overflow-hidden min-h-[calc(100dvh-64px)] lg:min-h-[calc(100vh-121px)] flex flex-col justify-between py-6 lg:py-10">
+    <section class="relative bg-slate-950 overflow-hidden min-h-[calc(100dvh-64px)] lg:min-h-[calc(100vh-121px)] flex flex-col py-6 lg:py-10">
       
       <!-- Video background -->
       <video id="hero-video" autoplay loop muted playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover z-10 opacity-50 pointer-events-none">
@@ -110,133 +110,109 @@
       </div>
 
       <!-- Main content -->
-      <div class="max-w-[1600px] mx-auto px-8 relative z-30 w-full flex-1 flex flex-col justify-between">
+      <div class="max-w-[1600px] mx-auto px-8 relative z-30 w-full flex-1 flex flex-col">
         
-        <div class="text-center max-w-5xl mx-auto my-auto pt-4 pb-8">
-          <h1 class="text-4xl sm:text-5xl lg:text-5xl font-extrabold leading-tight text-white tracking-tight mb-8 font-['Poppins']">
-            <span class="word-part" style="--d: 0">Find.</span>
-            <span class="word-part" style="--d: 1">Book.</span>
-            <span class="word-part" style="--d: 2">Train.</span>
-            <br>
-            <span class="late-part animate-sweep"><i data-lucide="map-pin" class="inline w-[0.8em] h-[0.8em] -translate-y-[0.05em] mr-1"></i>Mauritius</span>
-          </h1>
-          
-          <div class="animate-fade-delayed-1 flex flex-col sm:flex-row items-center justify-center gap-5 w-max sm:w-auto max-w-full mx-auto">
-            <div class="role-group relative w-full sm:w-auto">
-               <button class="role-toggle-btn w-full sm:w-auto bg-[#0D9488] hover:bg-[#0F766E] text-white px-6 py-4 rounded-full font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(13,148,136,0.35)] hover:scale-[1.02] flex items-center justify-center space-x-3 text-base border border-teal-400/20" data-role="client" aria-expanded="false" aria-haspopup="true">
-                <i data-lucide="user" class="w-5.5 h-5.5"></i>
-                <span>I am a client</span>
-                <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-              </button>
-              <div class="role-submenu hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl z-40" data-role="client" role="menu">
-                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="explore" role="menuitem">
-                  <i data-lucide="search" class="w-4 h-4 text-teal-400"></i>
-                  <span>Find a Coach Now</span>
-                </button>
-                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="register" role="menuitem">
-                  <i data-lucide="log-in" class="w-4 h-4 text-teal-400"></i>
-                  <span>Sign Up / Login</span>
-                </button>
+        <!-- Hero search (vertically centered) -->
+        <div class="flex-1 flex items-center justify-center">
+          <div class="text-center max-w-3xl mx-auto pt-4 pb-6">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white tracking-tight mb-6 font-['Poppins']">
+              Your Next Coach
+              <span class="text-teal-400">Awaits</span>
+            </h1>
+            <p class="text-slate-400 text-sm sm:text-base mb-8">Find vetted sports & wellness coaches across Mauritius</p>
+
+            <form id="hero-search-form" class="relative max-w-4xl mx-auto group" onsubmit="return handleHeroSearch(event)">
+              <div class="absolute inset-0 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 pointer-events-none shadow-2xl shadow-teal-500/5 transition-all duration-300 group-focus-within:border-teal-400/50 group-focus-within:bg-white/10"></div>
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-6">
+                <i data-lucide="search" class="w-7 h-7 text-teal-400"></i>
               </div>
-            </div>
-            <div class="role-group relative w-full sm:w-auto">
-              <button class="role-toggle-btn w-full sm:w-auto bg-[#030712]/50 hover:bg-[#030712]/95 backdrop-blur-md text-slate-100 px-6 py-4 rounded-full font-bold transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:scale-[1.02] flex items-center justify-center space-x-3 text-base shadow-sm" data-role="coach" aria-expanded="false" aria-haspopup="true">
-                <i data-lucide="award" class="w-5.5 h-5.5 text-amber-400"></i>
-                <span>I am a coach</span>
-                <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
+              <input
+                id="hero-search-input"
+                type="text"
+                placeholder=" Search by name, activity or location .."
+                aria-label="Search coaches"
+                class="relative w-full bg-transparent py-5 sm:py-6 pl-14 sm:pl-16 pr-14 sm:pr-40 text-sm sm:text-xl text-white placeholder-white/40 focus:outline-none rounded-2xl"
+              >
+              <button type="submit" class="absolute inset-y-2 right-1.5 sm:inset-y-2.5 sm:right-2.5 bg-teal-600 hover:bg-teal-500 text-white text-xs sm:text-base font-bold px-3 sm:px-7 py-2.5 rounded-xl transition active:scale-95">
+                Search
               </button>
-              <div class="role-submenu hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl z-40" data-role="coach" role="menu">
-                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="how-it-works" role="menuitem">
-                  <i data-lucide="info" class="w-4 h-4 text-amber-400"></i>
-                  <span>How It Works</span>
-                </button>
-                <button class="sub-option w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition" data-action="coach-register" role="menuitem">
-                  <i data-lucide="user-plus" class="w-4 h-4 text-amber-400"></i>
-                  <span>Sign Up as a Coach</span>
-                </button>
-              </div>
-            </div>
+            </form>
           </div>
         </div>
 
         <!-- Categories -->
-        <div class="pt-8 mt-auto">
-          <div class="text-center mb-8">
-            <span class="text-teal-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">Explore Coaches</span>
-            <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-1">Explore Specialized Categories</h2>
-          </div>
+        <div class="mt-auto">
+          <p class="text-center text-slate-500 text-xs uppercase tracking-widest font-semibold mb-4">or browse by category</p>
 
-          <div class="grid grid-cols-3 gap-6">
-            <a href="#explore" onclick="filterByCategory('strength, weightlifting, resistance, muscle, gym')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-teal-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 mb-4">
-                <i data-lucide="dumbbell" class="w-6 h-6"></i>
+          <div class="grid grid-cols-5 gap-3 sm:gap-4">
+            <a href="#explore" onclick="filterByCategory('strength, weightlifting, resistance, muscle, gym', 'Strength')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-teal-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 mb-2">
+                <i data-lucide="dumbbell" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Strength</h3>
-              <p class="text-xs text-slate-300 leading-tight">Build strength and feel stronger</p>
+              <h3 class="font-bold text-white text-xs">Strength</h3>
             </a>
 
-            <a href="#explore" onclick="filterByCategory('cardio, hiit, endurance, running, sprinting, interval, conditioning')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
-                <i data-lucide="zap" class="w-6 h-6"></i>
+            <a href="#explore" onclick="filterByCategory('tennis, badminton, squash, pickleball, court, racquet', 'Court Games')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-purple-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 mb-2">
+                <i data-lucide="circle-dot" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Cardio & HIIT</h3>
-              <p class="text-xs text-slate-300 leading-tight">Improve your fitnes and energy</p>
+              <h3 class="font-bold text-white text-xs">Court Games</h3>
             </a>
 
-            <a href="#explore" onclick="filterByCategory('yoga, breathing, meditation, mindfulness, pranayama, pilates')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
-                <i data-lucide="wind" class="w-6 h-6"></i>
+            <a href="#explore" onclick="filterByCategory('yoga, breathing, meditation, mindfulness, pranayama, pilates', 'Yoga')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-2">
+                <i data-lucide="wind" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Yoga / Breathing</h3>
-              <p class="text-xs text-slate-300 leading-tight">Flexibility, flow & mind wellness</p>
+              <h3 class="font-bold text-white text-xs">Yoga</h3>
             </a>
 
-            <a href="#explore" onclick="filterByCategory('hiking, trekking, trail, outdoor, walking')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-green-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 mb-4">
-                <i data-lucide="mountain" class="w-6 h-6"></i>
+            <a href="#explore" onclick="filterByCategory('hiking, trekking, trail, outdoor, walking', 'Hiking')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-green-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 mb-2">
+                <i data-lucide="mountain" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Hiking</h3>
-              <p class="text-xs text-slate-300 leading-tight">Explore trails & outdoor adventures</p>
+              <h3 class="font-bold text-white text-xs">Hiking</h3>
             </a>
 
-            <a href="#explore" onclick="filterByCategory('prenatal, pregnancy, maternity, postnatal')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-orange-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400 mb-4">
-                <i data-lucide="heart" class="w-6 h-6"></i>
+            <a href="#explore" onclick="filterByCategory('prenatal, pregnancy, maternity, postnatal', 'Prenatal')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-orange-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400 mb-2">
+                <i data-lucide="heart" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Prenatal</h3>
-              <p class="text-xs text-slate-300 leading-tight">Safe maternal fitness paths</p>
+              <h3 class="font-bold text-white text-xs">Prenatal</h3>
             </a>
 
-            <a href="#explore" onclick="filterByCategory('swimming, water, sup, paddleboard, aqua, surf, ocean')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-cyan-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 mb-4">
-                <i data-lucide="palmtree" class="w-6 h-6"></i>
+            <a href="#explore" onclick="filterByCategory('swimming, water, sup, paddleboard, aqua, surf, ocean', 'Island Water')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-cyan-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 mb-2">
+                <i data-lucide="palmtree" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Island Water</h3>
-              <p class="text-xs text-slate-300 leading-tight">Swimming, SUP & coast routines</p>
+              <h3 class="font-bold text-white text-xs">Island Water</h3>
             </a>
 
-            <a href="#explore" onclick="filterByCategory('stretching, mobility, flexibility, recovery, warm-up, cool-down')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-purple-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4">
-                <i data-lucide="move-horizontal" class="w-6 h-6"></i>
+            <a href="#explore" onclick="filterByCategory('cardio, hiit, endurance, running, sprinting, interval, conditioning', 'Cardio & HIIT')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-amber-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-2">
+                <i data-lucide="zap" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Stretching</h3>
-              <p class="text-xs text-slate-300 leading-tight">Stiffness recovery & flexibility</p>
+              <h3 class="font-bold text-white text-xs">Cardio & HIIT</h3>
             </a>
 
-            <a href="#explore" onclick="filterByCategory('performative, dance, choreography, performance, expressive')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-pink-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-400 mb-4">
-                <i data-lucide="sparkles" class="w-6 h-6"></i>
+            <a href="#explore" onclick="filterByCategory('performative, dance, choreography, performance, expressive', 'Performative')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-pink-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-400 mb-2">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Performative</h3>
-              <p class="text-xs text-slate-300 leading-tight">Performance & expressive movement</p>
+              <h3 class="font-bold text-white text-xs">Performative</h3>
             </a>
 
-            <a href="#explore" onclick="filterByCategory('martial arts, self-defense, karate, judo, kickboxing, muay thai, boxing')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-2xl p-6 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-green-500/50 shadow-lg">
-              <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 mb-4">
-                <i data-lucide="hand" class="w-6 h-6"></i>
+            <a href="#explore" onclick="filterByCategory('martial arts, self-defense, karate, judo, kickboxing, muay thai, boxing', 'Martial Arts')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-green-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 mb-2">
+                <i data-lucide="hand" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-white text-sm mb-1">Martial Arts</h3>
-              <p class="text-xs text-slate-300 leading-tight">Self-defense & combat discipline</p>
+              <h3 class="font-bold text-white text-xs">Martial Arts</h3>
+            </a>
+
+            <a href="#explore" onclick="filterByCategory('football, basketball, volleyball, rugby, cricket, netball', 'Ball Games')" class="bg-slate-900/85 hover:bg-slate-900/95 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center transition duration-300 border border-slate-800 hover:border-sky-500/50 shadow-lg">
+              <div class="w-10 h-10 rounded-full bg-sky-500/10 flex items-center justify-center text-sky-400 mb-2">
+                <i data-lucide="circle" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-xs">Ball Games</h3>
             </a>
           </div>
         </div>
@@ -309,7 +285,7 @@
       <div class="max-w-[1600px] mx-auto px-8 relative z-10">
         <div class="text-center max-w-2xl mx-auto mb-10 md:mb-16">
           <span class="text-teal-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider">Simple Coaching Journey</span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">How MoCoach Simplifies Your Booking ?</h2>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">How One to One Simplifies Your Booking ?</h2>
           <p class="text-slate-400 text-sm sm:text-base mt-3">From selection to training without standard social media friction.</p>
         </div>
 
@@ -335,7 +311,7 @@
       <div class="max-w-[1600px] mx-auto px-8">
         <div class="text-center max-w-2xl mx-auto mb-10 md:mb-16">
           <span class="text-teal-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider">Engineered For Quality</span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">Why MoCoach Benefits Everyone</h2>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">Why One to One Benefits Everyone</h2>
           <p class="text-slate-400 text-sm sm:text-base mt-3">A transparent ecosystem developed to serve clients and professional trainers alike.</p>
         </div>
 
@@ -400,12 +376,12 @@
             <div class="w-14 h-14 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-8">
               <i data-lucide="info" class="w-7 h-7"></i>
             </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-6">About MoCoach</h2>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-6">About One to One</h2>
 <p class="text-slate-200 text-base leading-relaxed mb-6">
-  <span class="text-teal-400 font-semibold">MoCoach represents Mauritius' first dedicated initiative to centralize and secure the sports, health, and wellness ecosystem.</span> For years, booking qualified local sports expertise has been fragmented across various social networks, leaving both local residents and visiting tourists struggling with timing sync and verification.
+  <span class="text-teal-400 font-semibold">One to One represents Mauritius' first dedicated initiative to centralize and secure the sports, health, and wellness ecosystem.</span> For years, booking qualified local sports expertise has been fragmented across various social networks, leaving both local residents and visiting tourists struggling with timing sync and verification.
 </p>
 <p class="text-slate-200 text-base leading-relaxed mb-6">
-  By offering unified profiles, central calendar checks, and client reviews, we help correct transparency imbalances. MoCoach elevates verified professional wellness coaches on the island while protecting clients seeking stable wellness habits.
+  By offering unified profiles, central calendar checks, and client reviews, we help correct transparency imbalances. One to One elevates vetted professional wellness coaches on the island while protecting clients seeking stable wellness habits.
 </p>
             <div class="pt-6 flex items-center space-x-8">
               <div class="text-left">
@@ -606,15 +582,35 @@
   <script src="js/coach-profile.js"></script>
   <!-- Render coach cards from API -->
   <script>
+    function handleHeroSearch(e) {
+      e.preventDefault();
+      var query = (document.getElementById('hero-search-input').value || '').trim();
+      if (!query) return false;
+      activeCategoryFilter = '';
+      var input = document.getElementById('search-input');
+      if (input) {
+        input.value = query;
+        input.dispatchEvent(new Event('input'));
+      }
+      if (window.innerWidth <= 768 && typeof switchMobileView === 'function') {
+        switchMobileView('explore');
+      } else {
+        var explore = document.getElementById('explore');
+        if (explore) explore.scrollIntoView({ behavior: 'smooth' });
+      }
+      return false;
+    }
     var activeCategoryFilter = '';
-    function filterByCategory(keywords) {
+    var categoryPrefill = false;
+    function filterByCategory(keywords, displayName) {
       activeCategoryFilter = keywords;
+      categoryPrefill = true;
       if (window.innerWidth <= 768 && typeof switchMobileView === 'function') {
         switchMobileView('explore');
       }
       var input = document.getElementById('search-input');
       if (input) {
-        input.value = '';
+        input.value = displayName || '';
         input.dispatchEvent(new Event('input'));
       }
     }
