@@ -15,7 +15,10 @@ app = Flask(__name__,
     static_folder="backend/static",
     static_url_path="/static")
 
-app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "super-secret")
+jwt_secret = os.environ.get("JWT_SECRET_KEY")
+if not jwt_secret:
+    raise RuntimeError("JWT_SECRET_KEY environment variable is required")
+app.config["JWT_SECRET_KEY"] = jwt_secret
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 JWTManager(app)
 
@@ -30,4 +33,4 @@ register_pages(app)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5678))
-    app.run(debug=True, port=port)
+    app.run(debug=os.environ.get("FLASK_DEBUG", "0") == "1", port=port)
