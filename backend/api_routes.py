@@ -15,7 +15,7 @@ from backend.classes.manage_db import DbError, Db_Management
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 
-def register_routes(app: Flask, db: Db_Management) -> None:
+def register_routes(app: Flask, db: Db_Management, limiter) -> None:
     # ------------------------------------------------------------------
     # Availability checks
     # ------------------------------------------------------------------
@@ -35,6 +35,7 @@ def register_routes(app: Flask, db: Db_Management) -> None:
     # ------------------------------------------------------------------
 
     @app.post("/api/v1/register")
+    @limiter.limit("5/minute")
     def register() -> tuple:
         """Register a new user account."""
         data = request.get_json()
@@ -70,6 +71,7 @@ def register_routes(app: Flask, db: Db_Management) -> None:
             return jsonify({"msg": e.message}), e.status_code
 
     @app.post("/api/v1/login")
+    @limiter.limit("10/minute")
     def login() -> tuple:
         """Authenticate via email or username and return a JWT access token."""
         data = request.get_json()
@@ -331,6 +333,7 @@ def register_routes(app: Flask, db: Db_Management) -> None:
     # ------------------------------------------------------------------
 
     @app.get("/api/v1/chat")
+    @limiter.exempt
     @jwt_required()
     def list_chats() -> tuple:
         """Return chats for the authenticated user.

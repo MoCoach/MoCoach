@@ -5,6 +5,8 @@ from datetime import timedelta
 
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from backend.classes.manage_db import Db_Management
 from backend.api_routes import register_routes as register_api
@@ -27,7 +29,13 @@ if db_url:
     db_url = db_url.replace("mysql://", "mysql+pymysql://", 1)
 db = Db_Management(db_url)
 
-register_api(app, db)
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["300 per day", "75 per hour"],
+    app=app,
+)
+
+register_api(app, db, limiter)
 register_pages(app)
 
 

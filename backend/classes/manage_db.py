@@ -292,6 +292,8 @@ class Db_Management:
                 ).filter_by(username=login).first()
             if not user or not user.verify_pwd(password):
                 raise DbError("Bad credentials", 401)
+            if user.is_blocked:
+                raise DbError("Account is blocked. Contact support.", 403)
             return user
         finally:
             session.close()

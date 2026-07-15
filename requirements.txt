@@ -6,4 +6,5 @@ SQLAlchemy==2.0.48
 PyMySQL==1.2.0
 Pillow==12.3.0
 Werkzeug==3.1.6
+Flask-Limiter==3.12
 gunicorn==23.0.0
