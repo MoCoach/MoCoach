@@ -169,6 +169,8 @@ const CoachProfileApp = {
       thumbsUp: d.thumbs_up || 0,
       thumbsDown: d.thumbs_down || 0,
       my_vote: d.my_vote,
+      isVetted: d.is_vetted || false,
+      isCertified: d.is_certified || false,
     };
 
     this._coachData = d;
@@ -227,6 +229,15 @@ const CoachProfileApp = {
       } else {
         discEl.classList.add('hidden');
       }
+    }
+
+    const vettedBadge = document.getElementById('cp-vetted-badge');
+    if (vettedBadge) {
+      vettedBadge.classList.toggle('hidden', !d.isVetted);
+    }
+    const certBadge = document.getElementById('cp-certified-badge');
+    if (certBadge) {
+      certBadge.classList.toggle('hidden', !d.isCertified);
     }
 
     const priceView = document.getElementById('cp-price-view');

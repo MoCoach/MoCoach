@@ -6,10 +6,11 @@
 @media (min-width: 769px) {
 
   /* Coach card hover — desktop */
-  .coach-card { cursor: pointer; }
+  .coach-card { cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
   .coach-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(13, 148, 136, 0.2);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(13, 148, 136, 0.25), 0 0 0 1px rgba(13, 148, 136, 0.1);
+    border-color: rgba(13, 148, 136, 0.2);
   }
 
   .coach-card-sm {
@@ -17,7 +18,7 @@
     transform-origin: top center;
   }
   .coach-card-sm:hover {
-    transform: scale(0.9) translateY(-2px);
+    transform: scale(0.9) translateY(-4px);
   }
 
 }
