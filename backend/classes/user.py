@@ -245,7 +245,7 @@ class User(Base):
         }
         if self.coach:
             d["coach"] = self.coach.to_dict()
-        pic = self._profile_pic_path()
+        pic = self.profile_pic_url or self._profile_pic_path()
         if pic:
             d["profile_pic"] = pic
         return d

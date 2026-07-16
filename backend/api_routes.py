@@ -86,7 +86,9 @@ def register_routes(app: Flask, db: Db_Management, limiter) -> None:
         try:
             user = db.authenticate(login, password)
             token = create_access_token(identity=user.id)
-            return jsonify(access_token=token, user=user.to_dict()), 200
+            user_dict = user.to_dict()
+            user_dict["profile_pic"] = db.get_profile_pic_path(user.id)
+            return jsonify(access_token=token, user=user_dict), 200
         except DbError as e:
             return jsonify({"msg": e.message}), e.status_code
 
