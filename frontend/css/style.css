@@ -7,6 +7,15 @@ body {
 }
 body.loaded { opacity: 1; }
 
+@keyframes textGlow {
+  0%, 100% { text-shadow: 0 0 8px rgba(45, 212, 191, 0.3), 0 0 24px rgba(45, 212, 191, 0.15); }
+  50% { text-shadow: 0 0 16px rgba(45, 212, 191, 0.6), 0 0 48px rgba(45, 212, 191, 0.3); }
+}
+
+.animate-glow {
+  animation: textGlow 2.5s ease-in-out infinite;
+}
+
 @keyframes titlePunch {
   0% { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(12px); }
   65% { opacity: 1; transform: translateY(-5px) scale(1.01); filter: blur(0px); }
@@ -220,6 +229,7 @@ body.loaded { opacity: 1; }
   .animate-fade-delayed-1,
   .animate-sweep,
   .animate-mauritius-flag,
+  .animate-glow,
   .star,
   .msg-unread-pulse,
   .animate-toast-in,
