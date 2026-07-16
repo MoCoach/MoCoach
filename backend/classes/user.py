@@ -39,6 +39,7 @@ class User(Base):
     email_blocked        = Column(Boolean,     nullable=False, default=False)
     ip_blocked           = Column(Boolean,     nullable=False, default=False)
     ip_address           = Column(String(45),  nullable=True)
+    profile_pic_url      = Column(String(500), nullable=True)
 
     coach = relationship("Coach", back_populates="user", uselist=False, cascade="all, delete-orphan")
 

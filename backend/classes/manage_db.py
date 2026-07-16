@@ -2,9 +2,12 @@
 
 import base64
 import io
+import json
+import logging
 import os
 import re
 
+import cloudinary.uploader
 from PIL import Image
 from sqlalchemy import create_engine, and_, or_
 from sqlalchemy.exc import IntegrityError
@@ -21,6 +24,7 @@ from backend.classes.badge import Badge
 from backend.classes.user_badge import UserBadge
 from backend.classes.coach_rating import CoachRating
 
+log = logging.getLogger(__name__)
 
 DEFAULT_PIC = "/static/uploads/profile_pics/default/profile.jpg"
 
@@ -81,125 +85,178 @@ class Db_Management:
         finally:
             session.close()
 
-    UPLOAD_BASE = os.path.join(
-        os.path.dirname(__file__), '..', 'static', 'uploads', 'profile_pics'
+    UPLOAD_BASE = os.environ.get(
+        'UPLOAD_DIR',
+        os.path.join(os.path.dirname(__file__), '..', 'static', 'uploads', 'profile_pics')
+    )
+
+    COACH_PICS_BASE = os.environ.get(
+        'COACH_PICS_DIR',
+        os.path.join(os.path.dirname(__file__), '..', 'static', 'uploads', 'coach_pics')
     )
 
     @staticmethod
-    def _cache_bust(url, filepath):
-        try:
-            mtime = int(os.path.getmtime(filepath))
-            return f"{url}?t={mtime}"
-        except OSError:
-            return url
-
-    @staticmethod
-    def save_profile_picture(user_id: int, image_bytes: bytes) -> str:
-        """Validate, resize and save a profile picture.
-
-        Verifies the bytes represent a valid image, resizes to a maximum
-        of 400×400 pixels while preserving the original aspect ratio,
-        converts to JPEG, and writes the result to
-        ``static/uploads/profile_pics/<user_id>/profile.jpg``.
-
-        :param user_id: user identifier
-        :param image_bytes: raw file bytes of the uploaded image
-        :return: the relative URL path to the saved file
-        :raises DbError: if the bytes do not represent a valid image
-        """
+    def _validate_image(image_bytes: bytes) -> Image.Image:
+        """Validate image bytes and return a resized RGB PIL Image."""
         try:
             img = Image.open(io.BytesIO(image_bytes))
         except Exception:
             raise DbError("Invalid or unreadable image file", 400)
-
         img = img.convert("RGB")
         img.thumbnail((400, 400), Image.LANCZOS)
-
-        dest_dir = os.path.join(Db_Management.UPLOAD_BASE, str(user_id))
-        os.makedirs(dest_dir, exist_ok=True)
-
-        dest_path = os.path.join(dest_dir, "profile.jpg")
-        img.save(dest_path, "JPEG", quality=85)
-
-        url = f"/static/uploads/profile_pics/{user_id}/profile.jpg"
-        return Db_Management._cache_bust(url, dest_path)
+        return img
 
     @staticmethod
-    def remove_profile_picture(user_id: int) -> None:
-        """Delete the profile picture directory for *user_id*."""
-        dest_dir = os.path.join(Db_Management.UPLOAD_BASE, str(user_id))
-        if os.path.isdir(dest_dir):
-            import shutil
-            shutil.rmtree(dest_dir)
+    def _upload_to_cloudinary(img: Image.Image, folder: str, public_id: str) -> str:
+        """Upload a PIL Image to Cloudinary and return the secure URL."""
+        if not os.environ.get("CLOUDINARY_URL"):
+            raise DbError("Cloudinary not configured", 500)
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=85)
+        buf.seek(0)
+        result = cloudinary.uploader.upload(
+            buf,
+            folder=folder,
+            public_id=public_id,
+            overwrite=True,
+            resource_type="image",
+        )
+        return result["secure_url"]
 
     @staticmethod
-    def get_profile_pic_path(user_id: int) -> str | None:
-        """Return the relative URL to the user's profile picture, or ``None``."""
-        candidate = f"/static/uploads/profile_pics/{user_id}/profile.jpg"
-        full = os.path.join(Db_Management.UPLOAD_BASE, str(user_id), "profile.jpg")
-        return Db_Management._cache_bust(candidate, full) if os.path.isfile(full) else None
-
-    COACH_PICS_BASE = os.path.join(
-        os.path.dirname(__file__), '..', 'static', 'uploads', 'coach_pics'
-    )
-
-    @staticmethod
-    def _save_image(image_bytes: bytes, dest_dir: str, filename: str) -> str:
-        """Validate, resize (max 400×400, keep aspect ratio) and save a JPEG.
-
-        :raises DbError: if the bytes do not represent a valid image
-        :return: the relative URL path
-        """
+    def _extract_public_id(url: str) -> str | None:
+        """Extract the Cloudinary public_id from a secure URL."""
+        if not url or "cloudinary.com" not in url:
+            return None
         try:
-            img = Image.open(io.BytesIO(image_bytes))
+            parts = url.split("/upload/")
+            if len(parts) < 2:
+                return None
+            path = parts[1]
+            path = re.sub(r"\.\w+$", "", path)
+            path = re.sub(r"\?t=\d+$", "", path)
+            return path
         except Exception:
-            raise DbError("Invalid or unreadable image file", 400)
+            return None
 
-        img = img.convert("RGB")
-        img.thumbnail((400, 400), Image.LANCZOS)
+    def save_profile_picture(self, user_id: int, image_bytes: bytes) -> str:
+        """Upload profile picture to Cloudinary and store URL in DB."""
+        img = self._validate_image(image_bytes)
+        public_id = f"profiles/user_{user_id}"
+        url = self._upload_to_cloudinary(img, "mocoach", public_id)
+        session = self._session()
+        try:
+            user = session.query(User).filter_by(id=user_id).first()
+            if user:
+                user.profile_pic_url = url
+                session.commit()
+        finally:
+            session.close()
+        return url
 
-        os.makedirs(dest_dir, exist_ok=True)
-        dest_path = os.path.join(dest_dir, filename)
-        img.save(dest_path, "JPEG", quality=85)
-        url = f"static/uploads/coach_pics/{os.path.basename(dest_dir)}/{filename}"
-        return Db_Management._cache_bust(url, dest_path)
+    def get_profile_pic_path(self, user_id: int) -> str | None:
+        """Return the Cloudinary URL for the user's profile picture, or None."""
+        session = self._session()
+        try:
+            user = session.query(User).filter_by(id=user_id).first()
+            if user and user.profile_pic_url:
+                return user.profile_pic_url
+        finally:
+            session.close()
+        return None
 
-    @staticmethod
-    def save_coach_picture(user_id: int, numero: int, image_bytes: bytes) -> str:
-        """Save (or replace) one of a coach's up‑to‑7 pictures.
+    def remove_profile_picture(self, user_id: int) -> None:
+        """Remove profile picture from Cloudinary and DB."""
+        session = self._session()
+        try:
+            user = session.query(User).filter_by(id=user_id).first()
+            if user and user.profile_pic_url:
+                public_id = self._extract_public_id(user.profile_pic_url)
+                if public_id:
+                    try:
+                        cloudinary.uploader.destroy(public_id)
+                    except Exception as e:
+                        log.warning(f"Cloudinary delete failed: {e}")
+                user.profile_pic_url = None
+                session.commit()
+        finally:
+            session.close()
 
-        *numero* must be between 1 and 7 (inclusive).
-        """
+    def save_coach_picture(self, user_id: int, numero: int, image_bytes: bytes) -> str:
+        """Upload a gallery picture to Cloudinary and store URL in DB."""
         if not 1 <= numero <= 7:
             raise DbError("Picture number must be between 1 and 7", 400)
-        dest_dir = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id))
-        return Db_Management._save_image(image_bytes, dest_dir, f"{numero}.jpg")
+        img = self._validate_image(image_bytes)
+        public_id = f"gallery/coach_{user_id}_{numero}"
+        url = self._upload_to_cloudinary(img, "mocoach", public_id)
+        session = self._session()
+        try:
+            coach = session.query(Coach).filter_by(id=user_id).first()
+            if coach:
+                urls = json.loads(coach.gallery_urls) if coach.gallery_urls else []
+                while len(urls) < numero:
+                    urls.append(None)
+                urls[numero - 1] = url
+                coach.gallery_urls = json.dumps(urls)
+                session.commit()
+        finally:
+            session.close()
+        return url
 
-    @staticmethod
-    def remove_coach_picture(user_id: int, numero: int) -> None:
-        """Remove a single coach picture (1‑7)."""
-        path = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id), f"{numero}.jpg")
-        if os.path.isfile(path):
-            os.remove(path)
+    def get_coach_picture_paths(self, user_id: int) -> list:
+        """Return a list of Cloudinary URLs for the coach's gallery."""
+        session = self._session()
+        try:
+            coach = session.query(Coach).filter_by(id=user_id).first()
+            if coach and coach.gallery_urls:
+                urls = json.loads(coach.gallery_urls)
+                return [u for u in urls if u]
+        finally:
+            session.close()
+        return []
 
-    @staticmethod
-    def remove_all_coach_pictures(user_id: int) -> None:
-        """Remove the entire coach pictures directory for *user_id*."""
-        dest_dir = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id))
-        if os.path.isdir(dest_dir):
-            import shutil
-            shutil.rmtree(dest_dir)
+    def remove_coach_picture(self, user_id: int, numero: int) -> None:
+        """Remove a single gallery picture from Cloudinary and DB."""
+        if not 1 <= numero <= 7:
+            return
+        session = self._session()
+        try:
+            coach = session.query(Coach).filter_by(id=user_id).first()
+            if coach and coach.gallery_urls:
+                urls = json.loads(coach.gallery_urls)
+                idx = numero - 1
+                if idx < len(urls) and urls[idx]:
+                    public_id = self._extract_public_id(urls[idx])
+                    if public_id:
+                        try:
+                            cloudinary.uploader.destroy(public_id)
+                        except Exception as e:
+                            log.warning(f"Cloudinary delete failed: {e}")
+                    urls[idx] = None
+                    coach.gallery_urls = json.dumps(urls)
+                    session.commit()
+        finally:
+            session.close()
 
-    @staticmethod
-    def get_coach_picture_paths(user_id: int) -> list:
-        """Return a list of up to 7 relative URLs, one per existing picture."""
-        paths = []
-        for i in range(1, 8):
-            full = os.path.join(Db_Management.COACH_PICS_BASE, str(user_id), f"{i}.jpg")
-            if os.path.isfile(full):
-                url = f"static/uploads/coach_pics/{user_id}/{i}.jpg"
-                paths.append(Db_Management._cache_bust(url, full))
-        return paths
+    def remove_all_coach_pictures(self, user_id: int) -> None:
+        """Remove all gallery pictures from Cloudinary and DB."""
+        session = self._session()
+        try:
+            coach = session.query(Coach).filter_by(id=user_id).first()
+            if coach and coach.gallery_urls:
+                urls = json.loads(coach.gallery_urls)
+                for url in urls:
+                    if url:
+                        public_id = self._extract_public_id(url)
+                        if public_id:
+                            try:
+                                cloudinary.uploader.destroy(public_id)
+                            except Exception as e:
+                                log.warning(f"Cloudinary delete failed: {e}")
+                coach.gallery_urls = None
+                session.commit()
+        finally:
+            session.close()
 
     # ------------------------------------------------------------------
     # Availability checks
@@ -392,7 +449,7 @@ class Db_Management:
         Email and phone are only included when the request is made by a
         registered user (i.e. *current_user_id* is not ``None``).
         """
-        pic_url = Db_Management.get_profile_pic_path(coach.id)
+        pic_url = self.get_profile_pic_path(coach.id)
         thumbs_up = 0
         thumbs_down = 0
         session = self._session()
@@ -416,7 +473,7 @@ class Db_Management:
             "tags": [{"name": t.name, "description": t.description}
                      for t in coach.tags],
             "profile_pic": pic_url or DEFAULT_PIC,
-            "pictures": Db_Management.get_coach_picture_paths(coach.id),
+            "pictures": self.get_coach_picture_paths(coach.id),
             "thumbs_up": thumbs_up,
             "thumbs_down": thumbs_down,
             "is_vetted": coach.user.is_vetted,

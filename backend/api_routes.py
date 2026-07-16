@@ -143,34 +143,28 @@ def register_routes(app: Flask, db: Db_Management, limiter) -> None:
     @app.get("/api/v1/profile/picture/<int:user_id>")
     def serve_profile_picture(user_id: int) -> tuple:
         """Serve a user's profile picture, falling back to the default."""
-        pic_path = db.get_profile_pic_path(user_id)
-        if pic_path:
-            full_dir = os.path.join(
-                os.path.dirname(__file__), "static", "uploads", "profile_pics",
-                str(user_id)
-            )
+        pic_url = db.get_profile_pic_path(user_id)
+        if pic_url:
+            if pic_url.startswith("http"):
+                return "", 302, {"Location": pic_url}
+            full_dir = os.path.join(db.UPLOAD_BASE, str(user_id))
             return send_from_directory(full_dir, "profile.jpg")
 
-        default_path = os.path.join(
-            os.path.dirname(__file__), "static", "uploads", "profile_pics",
-            "default", "profile.jpg"
-        )
-        if os.path.isfile(default_path):
-            return send_from_directory(
-                os.path.join(os.path.dirname(__file__), "static", "uploads", "profile_pics", "default"),
-                "profile.jpg"
-            )
+        default_dir = os.path.join(db.UPLOAD_BASE, "default")
+        if os.path.isfile(os.path.join(default_dir, "profile.jpg")):
+            return send_from_directory(default_dir, "profile.jpg")
         return "", 204
 
     @app.get("/api/v1/coach/picture/<int:user_id>/<int:numero>")
     def serve_coach_picture(user_id: int, numero: int) -> tuple:
         """Serve one of a coach's pictures (numero 1‑7), or 204 if absent."""
-        pic_path = db.get_coach_picture_paths(user_id)
-        if f"static/uploads/coach_pics/{user_id}/{numero}.jpg" in pic_path:
-            full_dir = os.path.join(
-                os.path.dirname(__file__), "static", "uploads", "coach_pics",
-                str(user_id)
-            )
+        pics = db.get_coach_picture_paths(user_id)
+        idx = numero - 1
+        if idx < len(pics) and pics[idx]:
+            pic_url = pics[idx]
+            if pic_url.startswith("http"):
+                return "", 302, {"Location": pic_url}
+            full_dir = os.path.join(db.COACH_PICS_BASE, str(user_id))
             return send_from_directory(full_dir, f"{numero}.jpg")
         return "", 204
 

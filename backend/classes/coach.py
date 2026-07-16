@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, Text
 from sqlalchemy.orm import relationship
 
 from . import Base
@@ -23,6 +23,7 @@ class Coach(Base):
     description = Column(String(500), nullable=False)
     city_id     = Column(Integer, ForeignKey('cities.id'), nullable=False)
     price       = Column(Integer, nullable=True)
+    gallery_urls = Column(Text, nullable=True)
 
     user = relationship("User", back_populates="coach")
     tags = relationship("Tag", secondary=coach_tags)
