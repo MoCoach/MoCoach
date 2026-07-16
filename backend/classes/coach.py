@@ -31,6 +31,8 @@ class Coach(Base):
     def __init__(self, description: str, city_id: int, price: int | None = None) -> None:
         if not isinstance(description, str):
             raise TypeError("description must be a string")
+        if len(description) > 500:
+            raise ValueError("description must be at most 500 characters")
         if not isinstance(city_id, int):
             raise TypeError("city_id must be an int")
         self.description = description

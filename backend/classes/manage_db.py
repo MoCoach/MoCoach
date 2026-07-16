@@ -588,7 +588,7 @@ class Db_Management:
 
             # Admins can view any non-admin profile.
             if current_user.is_admin:
-                return user.to_dict()
+                return user.to_admin_dict()
 
             # Users can always view their own profile.
             if current_id == profile_id:
@@ -753,6 +753,11 @@ class Db_Management:
         Creates a new chat if none exists between the pair.
         Only a non-coach (customer) can start a new chat.
         """
+        if not isinstance(text, str) or not text.strip():
+            raise DbError("Message text cannot be empty", 400)
+        if len(text) > 250:
+            raise DbError("Message text must be at most 250 characters", 400)
+
         session = self._session()
         try:
             sender = session.query(User).filter_by(id=sender_id).first()
@@ -1228,7 +1233,7 @@ class Db_Management:
             if "ip_blocked" in data:
                 target.ip_blocked = bool(data["ip_blocked"])
             session.commit()
-            return target.to_dict()
+            return target.to_admin_dict()
         except DbError:
             session.rollback()
             raise
@@ -1253,7 +1258,7 @@ class Db_Management:
             if "is_certified" in data:
                 target.is_certified = bool(data["is_certified"])
             session.commit()
-            return target.to_dict()
+            return target.to_admin_dict()
         except DbError:
             session.rollback()
             raise
@@ -1296,7 +1301,7 @@ class Db_Management:
                 raise DbError("Admins only", 403)
 
             users = session.query(User).filter_by(is_admin=False).all()
-            return [u.to_dict() for u in users]
+            return [u.to_admin_dict() for u in users]
         finally:
             session.close()
 
@@ -1407,6 +1412,6 @@ class Db_Management:
 
             target.is_admin = True
             session.commit()
-            return target.to_dict()
+            return target.to_admin_dict()
         finally:
             session.close()

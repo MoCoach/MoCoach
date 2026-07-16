@@ -30,6 +30,10 @@ class Message(Base):
         :param sender_id: id of the sending user
         :param text: message body
         """
+        if not isinstance(text, str) or not text.strip():
+            raise ValueError("message text must be a non-empty string")
+        if len(text) > 250:
+            raise ValueError("message text must be at most 250 characters")
         self.id        = msg_id
         self.chat_id   = chat_id
         self.sender_id = sender_id

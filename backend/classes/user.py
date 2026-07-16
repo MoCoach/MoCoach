@@ -100,6 +100,11 @@ class User(Base):
         self.last_name  = last_name
         self.email      = email
         self.is_coach   = is_coach
+        if phone is not None:
+            if not isinstance(phone, str):
+                raise TypeError("phone must be a string")
+            if len(phone) > 16:
+                raise ValueError("phone must be at most 16 characters")
         self.phone      = phone
         self.is_admin   = is_admin
         self.ip_address = ip_address
@@ -180,14 +185,19 @@ class User(Base):
             self.password = generate_password_hash(pwd, method='pbkdf2:sha256')
 
         if phone is not _UNSET:
-            if phone is not None and not isinstance(phone, str):
-                raise TypeError("phone must be a string")
+            if phone is not None:
+                if not isinstance(phone, str):
+                    raise TypeError("phone must be a string")
+                if len(phone) > 16:
+                    raise ValueError("phone must be at most 16 characters")
             self.phone = phone
 
         if self.is_coach:
             if description is not None:
                 if not isinstance(description, str):
                     raise TypeError("description must be a string")
+                if len(description) > 500:
+                    raise ValueError("description must be at most 500 characters")
                 self.coach.description = description
             if tags is not None:
                 self.coach.set_tags(tags)
@@ -213,7 +223,11 @@ class User(Base):
         return None
 
     def to_dict(self) -> dict:
-        """Serialize user data to a dictionary."""
+        """Serialize user data to a public-facing dictionary.
+
+        Sensitive admin-only fields (ip_address, email_blocked, ip_blocked)
+        are excluded.  Use :meth:`to_admin_dict` for admin contexts.
+        """
         d = {
             "id": self.id,
             "username": self.username,
@@ -227,15 +241,25 @@ class User(Base):
             "is_messaging_blocked": self.is_messaging_blocked,
             "is_vetted": self.is_vetted,
             "is_certified": self.is_certified,
-            "email_blocked": self.email_blocked,
-            "ip_blocked": self.ip_blocked,
-            "ip_address": self.ip_address,
         }
         if self.coach:
             d["coach"] = self.coach.to_dict()
         pic = self._profile_pic_path()
         if pic:
             d["profile_pic"] = pic
+        return d
+
+    def to_admin_dict(self) -> dict:
+        """Serialize user data including sensitive admin-only fields.
+
+        Returns everything :meth:`to_dict` returns plus ip_address,
+        email_blocked, and ip_blocked.  Must only be used in admin
+        endpoints.
+        """
+        d = self.to_dict()
+        d["email_blocked"] = self.email_blocked
+        d["ip_blocked"] = self.ip_blocked
+        d["ip_address"] = self.ip_address
         return d
 
     def __repr__(self):
