@@ -215,7 +215,7 @@ const api = {
 
   async uploadProfilePicture(file) {
     const fd = new FormData();
-    fd.append('file', file);
+    fd.append('file', file, 'profile.jpg');
     return this.upload('POST', '/profile/picture', fd);
   },
 
