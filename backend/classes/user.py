@@ -219,7 +219,7 @@ class User(Base):
         )
         if os.path.isfile(path):
             mtime = int(os.path.getmtime(path))
-            return f"static/uploads/profile_pics/{self.id}/profile.jpg?t={mtime}"
+            return f"/static/uploads/profile_pics/{self.id}/profile.jpg?t={mtime}"
         return None
 
     def to_dict(self) -> dict:

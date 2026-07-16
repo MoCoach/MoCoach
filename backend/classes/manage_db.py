@@ -22,7 +22,7 @@ from backend.classes.user_badge import UserBadge
 from backend.classes.coach_rating import CoachRating
 
 
-DEFAULT_PIC = "static/uploads/profile_pics/default/profile.jpg"
+DEFAULT_PIC = "/static/uploads/profile_pics/default/profile.jpg"
 
 
 class DbError(Exception):
@@ -121,7 +121,7 @@ class Db_Management:
         dest_path = os.path.join(dest_dir, "profile.jpg")
         img.save(dest_path, "JPEG", quality=85)
 
-        url = f"static/uploads/profile_pics/{user_id}/profile.jpg"
+        url = f"/static/uploads/profile_pics/{user_id}/profile.jpg"
         return Db_Management._cache_bust(url, dest_path)
 
     @staticmethod
@@ -135,7 +135,7 @@ class Db_Management:
     @staticmethod
     def get_profile_pic_path(user_id: int) -> str | None:
         """Return the relative URL to the user's profile picture, or ``None``."""
-        candidate = f"static/uploads/profile_pics/{user_id}/profile.jpg"
+        candidate = f"/static/uploads/profile_pics/{user_id}/profile.jpg"
         full = os.path.join(Db_Management.UPLOAD_BASE, str(user_id), "profile.jpg")
         return Db_Management._cache_bust(candidate, full) if os.path.isfile(full) else None
 
