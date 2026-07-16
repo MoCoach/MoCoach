@@ -878,9 +878,6 @@ const runAppInit = () => {
     const seeAllBtn = document.getElementById('see-all-coaches');
     const searchInput = document.getElementById('search-input');
 
-    attachSearchAutocomplete('hero-search-input');
-    attachSearchAutocomplete('search-input');
-
     if (searchInput) {
         searchInput.addEventListener('input', () => {
             const raw = searchInput.value.toLowerCase().trim();
