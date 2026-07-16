@@ -65,34 +65,13 @@ class Coach(Base):
         self.tags = list(tags)
 
     def to_dict(self) -> dict:
-        import os
-        from datetime import datetime
-        
-        d = {
+        return {
             "id": self.id,
             "description": self.description,
             "city": self.city.name if self.city else None,
             "price": self.price,
             "tags": [tag.to_dict() for tag in self.tags],
         }
-        
-        # Add gallery pictures (1-7)
-        pictures = []
-        for i in range(1, 8):
-            pic_path = f"static/uploads/coach_pics/{self.id}/{i}.jpg"
-            full_path = os.path.join(os.path.dirname(__file__), "..", pic_path)
-            if os.path.isfile(full_path):
-                try:
-                    mtime = int(os.path.getmtime(full_path))
-                    pictures.append({
-                        "numero": i,
-                        "src": f"/api/v1/coach/picture/{self.id}/{i}?t={mtime}"
-                    })
-                except:
-                    pass
-        
-        d["pictures"] = pictures
-        return d
 
     def __repr__(self):
         return f"Coach(id={self.id!r}, description={self.description!r})"
