@@ -215,7 +215,7 @@ const CoachProfileApp = {
 
     const avatarEl = document.getElementById('cp-avatar');
     if (avatarEl) {
-      avatarEl.style.backgroundImage = `url(${this._esc(d.avatarUrl || (d.gallery && d.gallery.length > 0 ? d.gallery[0].src : ''))})`;
+      avatarEl.style.backgroundImage = `url(${escapeHtml(d.avatarUrl || (d.gallery && d.gallery.length > 0 ? d.gallery[0].src : ''))})`;
     }
 
     this._setText('cp-name', d.name);
@@ -419,7 +419,7 @@ const CoachProfileApp = {
         this._syncAndRender();
         const avatarEl = document.getElementById('cp-avatar');
         if (avatarEl) {
-          avatarEl.style.backgroundImage = `url(${this._esc(res.data.profile_pic || '')})`;
+          avatarEl.style.backgroundImage = `url(${escapeHtml(res.data.profile_pic || '')})`;
         }
         if (window.updateHeaderProfilePic) window.updateHeaderProfilePic();
         this.showToast('Profile photo updated!', 'success');
@@ -460,7 +460,7 @@ const CoachProfileApp = {
       view.classList.remove('hidden');
       if (bioWrapper) bioWrapper.classList.add('hidden');
       view.innerHTML = d.description
-        ? d.description.replace(/\n/g, '<br>')
+        ? escapeHtml(d.description).replace(/\n/g, '<br>')
         : '<span class="text-slate-500 italic">No description available.</span>';
       if (tagsEl) tagsEl.classList.remove('hidden');
       if (tagsEdit) tagsEdit.classList.add('hidden');
@@ -470,7 +470,7 @@ const CoachProfileApp = {
           tagsEl.innerHTML = '<span class="text-slate-500 italic text-sm">No specialties listed.</span>';
         } else {
           tagsEl.innerHTML = tags.map((t, i) =>
-            `<span class="inline-flex items-center px-3 py-1 rounded-full ${TAG_COLORS[i % TAG_COLORS.length]} border text-xs font-semibold">${this._esc(t)}</span>`
+            `<span class="inline-flex items-center px-3 py-1 rounded-full ${TAG_COLORS[i % TAG_COLORS.length]} border text-xs font-semibold">${escapeHtml(t)}</span>`
           ).join('');
         }
       }
@@ -912,7 +912,7 @@ const CoachProfileApp = {
     const icon = type === 'success' ? 'check-circle' : 'alert-circle';
     const toast = document.createElement('div');
     toast.className = `${bg} text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg flex items-center space-x-2 animate-toast-in`;
-    toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i><span>${this._esc(message)}</span>`;
+    toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i><span>${escapeHtml(message)}</span>`;
     container.appendChild(toast);
     if (window.lucide) lucide.createIcons();
     setTimeout(() => {
@@ -928,11 +928,6 @@ const CoachProfileApp = {
     if (el) el.textContent = text || '';
   },
 
-  _esc(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  },
 };
 
 const runCoachProfileInit = () => {

@@ -331,15 +331,15 @@ const ChatApp = {
         <button onclick="ChatApp.selectConversation(${JSON.stringify(conv.id)})"
           class="w-full text-left px-4 py-3 flex items-center space-x-3 hover:bg-slate-900/60 transition ${isActive ? 'bg-slate-900/80 border-l-2 border-teal-500' : 'border-l-2 border-transparent'}">
           <div class="w-10 h-10 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden">
-            <div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${this._esc((conv.otherPerson.name || '?').charAt(0))}</div>
+            <div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${escapeHtml((conv.otherPerson.name || '?').charAt(0))}</div>
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-semibold text-white truncate">${this._esc(conv.otherPerson.name)}</span>
+              <span class="text-sm font-semibold text-white truncate">${escapeHtml(conv.otherPerson.name)}</span>
               <span class="text-[10px] text-slate-500 flex-shrink-0 ml-2">${conv.lastActivity ? this._formatTime(conv.lastActivity) : ''}</span>
             </div>
             <div class="flex items-center justify-between mt-0.5">
-              <span class="text-xs text-slate-500 truncate">${this._esc(preview)}</span>
+              <span class="text-xs text-slate-500 truncate">${escapeHtml(preview)}</span>
               ${conv.unread > 0
                 ? `<span class="bg-teal-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0 ml-2 min-w-[18px] text-center">${conv.unread}</span>`
                 : ''}
@@ -390,12 +390,12 @@ const ChatApp = {
           <i data-lucide="arrow-left" class="w-5 h-5"></i>
         </button>
         <div class="w-9 h-9 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden">
-          <div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${this._esc((conv.otherPerson.name || '?').charAt(0))}</div>
+          <div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${escapeHtml((conv.otherPerson.name || '?').charAt(0))}</div>
         </div>
         <div class="min-w-0">
-          <p class="text-sm font-semibold text-white truncate">${this._esc(conv.otherPerson.name)}</p>
+          <p class="text-sm font-semibold text-white truncate">${escapeHtml(conv.otherPerson.name)}</p>
           ${conv.otherPerson.tags && conv.otherPerson.tags.length > 0
-            ? `<p class="text-[10px] text-teal-400 truncate">${this._esc(conv.otherPerson.tags.join(', '))}</p>`
+            ? `<p class="text-[10px] text-teal-400 truncate">${escapeHtml(conv.otherPerson.tags.join(', '))}</p>`
             : ''}
         </div>
       `;
@@ -413,11 +413,11 @@ const ChatApp = {
             <div class="flex ${isUser ? 'justify-end' : 'justify-start'} items-end space-x-2 group">
               ${showAvatar
                 ? `<div class="w-6 h-6 rounded-full bg-slate-800 flex-shrink-0 overflow-hidden hidden sm:block">
-                    <div class="w-full h-full flex items-center justify-center text-[8px] font-bold text-teal-400">${this._esc((conv.otherPerson.name || '?').charAt(0))}</div>
+                    <div class="w-full h-full flex items-center justify-center text-[8px] font-bold text-teal-400">${escapeHtml((conv.otherPerson.name || '?').charAt(0))}</div>
                   </div>`
                 : '<div class="w-6 flex-shrink-0 hidden sm:block"></div>'}
               <div class="max-w-[85%] sm:max-w-[70%] ${isUser ? 'bg-teal-600 text-white rounded-2xl rounded-br-md' : 'bg-slate-800 text-slate-200 rounded-2xl rounded-bl-md'} px-4 py-2.5 relative">
-                <p class="text-sm leading-relaxed whitespace-pre-wrap break-words">${this._esc(msg.text)}</p>
+                <p class="text-sm leading-relaxed whitespace-pre-wrap break-words">${escapeHtml(msg.text)}</p>
                 <p class="text-[10px] ${isUser ? 'text-teal-200' : 'text-slate-500'} text-right mt-1 opacity-80">${time}</p>
                 ${isAdmin ? `
                   <button onclick="ChatApp.adminDeleteMessage(${JSON.stringify(conv.id)}, ${JSON.stringify(msg.id)})" class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-700" title="Delete message">
@@ -514,12 +514,6 @@ const ChatApp = {
     } else {
       return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
     }
-  },
-
-  _esc(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
   },
 
   bindEvents() {

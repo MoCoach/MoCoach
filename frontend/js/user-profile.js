@@ -65,7 +65,7 @@ const UserProfileApp = {
         <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-teal-500/30">
 
           <img 
-          src="${d.avatar || 'assets/img/default-user.png'}"
+          src="${sanitizeUrl(d.avatar) || 'assets/img/default-user.png'}"
           class="w-full h-full object-cover"
           >
 
@@ -78,12 +78,12 @@ const UserProfileApp = {
       <div>
 
         <p class="text-teal-400 text-xl font-bold">
-        @${d.username || 'username'}
+        @${escapeHtml(d.username || 'username')}
         </p>
 
 
         <p class="text-slate-300">
-        ${d.firstName || ''} ${d.lastName || ''}
+        ${escapeHtml(d.firstName || '')} ${escapeHtml(d.lastName || '')}
         </p>
 
 
@@ -251,7 +251,7 @@ const UserProfileApp = {
 
     type="${type}"
 
-    value="${value || ''}"
+    value="${escapeHtml(value || '')}"
 
     class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
 

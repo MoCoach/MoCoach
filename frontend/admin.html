@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" href="assets/img/favicon_MoCoach_4.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="js/sanitize.js"></script>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/style-mobile.css">
   <link rel="stylesheet" href="css/style-desktop.css" media="(min-width: 769px)">
@@ -219,10 +220,10 @@
           const msgBlocked = c.is_messaging_blocked || false;
           return `
             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-              <td class="py-3 px-2 text-white font-semibold">${this._esc(c.first_name || '')} ${this._esc(c.last_name || '')}</td>
-              <td class="py-3 px-2 text-slate-300">${this._esc(c.username)}</td>
-              <td class="py-3 px-2 text-slate-300">${this._esc(c.email)}</td>
-              <td class="py-3 px-2 text-slate-300">${this._esc(c.coach?.city || '')}</td>
+              <td class="py-3 px-2 text-white font-semibold">${escapeHtml(c.first_name || '')} ${escapeHtml(c.last_name || '')}</td>
+              <td class="py-3 px-2 text-slate-300">${escapeHtml(c.username)}</td>
+              <td class="py-3 px-2 text-slate-300">${escapeHtml(c.email)}</td>
+              <td class="py-3 px-2 text-slate-300">${escapeHtml(c.coach?.city || '')}</td>
               <td class="py-3 px-2 text-center">
                 <input type="checkbox" ${isVetted ? 'checked' : ''} onchange="AdminApp.toggleFlag(${c.id}, 'is_vetted', this.checked)" class="w-4 h-4 rounded accent-teal-600">
               </td>
@@ -265,8 +266,8 @@
           const msgBlocked = u.is_messaging_blocked || false;
           return `
             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-              <td class="py-3 px-2 text-white font-semibold">${this._esc(u.username)}</td>
-              <td class="py-3 px-2 text-slate-300">${this._esc(u.email)}</td>
+              <td class="py-3 px-2 text-white font-semibold">${escapeHtml(u.username)}</td>
+              <td class="py-3 px-2 text-slate-300">${escapeHtml(u.email)}</td>
               <td class="py-3 px-2 text-center">
                 <button onclick="AdminApp.toggleBlock(${u.id}, 'is_blocked')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${isBlocked ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}">${isBlocked ? 'Blocked' : 'Active'}</button>
               </td>
@@ -395,7 +396,7 @@
               <button onclick="AdminApp.toggleConv(${conv.id})" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-800/30 transition">
                 <div class="flex items-center space-x-3">
                   <i data-lucide="message-circle" class="w-5 h-5 text-teal-400"></i>
-                  <span class="font-semibold text-white">${this._esc(conv.coachName)}</span>
+                  <span class="font-semibold text-white">${escapeHtml(conv.coachName)}</span>
                   <span class="text-xs text-slate-500">(${msgCount} messages)</span>
                 </div>
                 <i id="chevron-${conv.id}" data-lucide="chevron-down" class="w-4 h-4 text-slate-500 transition-transform"></i>
@@ -404,8 +405,8 @@
                 ${conv.messages.map(msg => `
                   <div class="flex items-start justify-between gap-2 group">
                     <div class="flex-1">
-                      <p class="text-xs text-slate-500">${this._esc(msg.senderName)} <span class="text-slate-600">· ${new Date(msg.timestamp).toLocaleString()}</span></p>
-                      <p class="text-sm text-slate-200 mt-0.5">${this._esc(msg.text)}</p>
+                      <p class="text-xs text-slate-500">${escapeHtml(msg.senderName)} <span class="text-slate-600">· ${new Date(msg.timestamp).toLocaleString()}</span></p>
+                      <p class="text-sm text-slate-200 mt-0.5">${escapeHtml(msg.text)}</p>
                     </div>
                     <button onclick="AdminApp.deleteMessage(${conv.id}, ${JSON.stringify(msg.id)})" class="opacity-100 sm:opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 p-1 transition flex-shrink-0" title="Delete message">
                       <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -443,16 +444,10 @@
       showToast(msg, type) {
         const toast = document.createElement('div');
         toast.className = `fixed bottom-6 right-6 z-50 ${type === 'success' ? 'bg-amber-600' : 'bg-red-600'} text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg flex items-center space-x-2`;
-        toast.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i><span>${msg}</span>`;
+        toast.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i><span>${escapeHtml(msg)}</span>`;
         document.body.appendChild(toast);
         if (window.lucide) lucide.createIcons();
         setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
-      },
-
-      _esc(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
       },
     };
 

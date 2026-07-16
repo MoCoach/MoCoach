@@ -137,7 +137,7 @@ const ProfileApp = {
       <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
         <div class="relative flex-shrink-0 group">
           <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-teal-500/30 shadow-xl">
-            <img src="${this._esc(avatarUrl)}" alt="User avatar" class="w-full h-full object-cover" loading="lazy" onerror="fallbackImg(this)">
+            <img src="${escapeHtml(avatarUrl)}" alt="User avatar" class="w-full h-full object-cover" loading="lazy" onerror="fallbackImg(this)">
           </div>
           <div class="absolute -bottom-1 -right-1 bg-amber-500 w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center">
             <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
@@ -148,8 +148,8 @@ const ProfileApp = {
           </button>
         </div>
         <div class="text-center md:text-left flex-1 min-w-0 flex flex-col justify-center">
-          <p class="text-teal-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${this._esc(d.username || 'user')}</p>
-          <p class="text-slate-400 text-sm mt-1">${this._esc(d.email || '')}</p>
+          <p class="text-teal-400 text-lg sm:text-xl font-bold font-mono tracking-wider mt-4 md:mt-2">@${escapeHtml(d.username || 'user')}</p>
+          <p class="text-slate-400 text-sm mt-1">${escapeHtml(d.email || '')}</p>
         </div>
         <div class="flex-shrink-0 mt-4 md:mt-0 flex items-center space-x-3">
           <button onclick="ProfileApp.toggleEdit()" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-lg hover:shadow-teal-600/25 flex items-center space-x-2">
@@ -184,11 +184,11 @@ const ProfileApp = {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Username</label>
-            <p class="text-base text-white">${this._esc(d.username)}</p>
+            <p class="text-base text-white">${escapeHtml(d.username)}</p>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Email</label>
-            <p class="text-base text-white">${this._esc(d.email)}</p>
+            <p class="text-base text-white">${escapeHtml(d.email)}</p>
           </div>
         </div>
       `;
@@ -199,12 +199,12 @@ const ProfileApp = {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label for="pf-username" class="block text-base font-semibold text-slate-200 mb-2">Username *</label>
-          <input id="pf-username" type="text" value="${this._esc(d.username)}" required
+          <input id="pf-username" type="text" value="${escapeHtml(d.username)}" required
             class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-teal-500 transition text-base">
         </div>
         <div>
           <label for="pf-email" class="block text-base font-semibold text-slate-200 mb-2">Email *</label>
-          <input id="pf-email" type="email" value="${this._esc(d.email)}" required
+          <input id="pf-email" type="email" value="${escapeHtml(d.email)}" required
             class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 placeholder-slate-500 focus:outline-none focus:border-teal-500 transition text-base">
         </div>
       </div>
@@ -341,7 +341,7 @@ const ProfileApp = {
     const icon = type === 'success' ? 'check-circle' : 'alert-circle';
     const toast = document.createElement('div');
     toast.className = `${bg} text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg flex items-center space-x-2 animate-toast-in`;
-    toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i><span>${this._esc(message)}</span>`;
+    toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i><span>${escapeHtml(message)}</span>`;
     container.appendChild(toast);
     if (window.lucide) lucide.createIcons();
     setTimeout(() => {
@@ -381,12 +381,6 @@ const ProfileApp = {
     if (!bg) bg = colors[0];
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="${bg}" width="100" height="100" rx="50"/><text x="50" y="50" dominant-baseline="central" text-anchor="middle" fill="white" font-size="48" font-weight="bold" font-family="sans-serif">${initial}</text></svg>`;
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
-  },
-
-  _esc(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
   },
 };
 

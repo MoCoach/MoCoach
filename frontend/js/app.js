@@ -222,7 +222,7 @@ function updateHeaderProfilePic() {
     if (user) {
         const avatarUrl = user.avatar || '';
         if (avatarUrl) {
-            btn.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full" alt="Profile">`;
+            btn.innerHTML = `<img src="${sanitizeUrl(avatarUrl)}" class="w-full h-full object-cover rounded-full" alt="Profile">`;
         } else {
             btn.innerHTML = `<i data-lucide="user" class="w-6 h-6"></i>`;
             if (window.lucide) lucide.createIcons();
@@ -231,7 +231,7 @@ function updateHeaderProfilePic() {
             const roleLabel = user.role === 'admin' ? 'Admin Panel' : user.role === 'coach' ? 'My Coach Profile' : 'My Profile';
             const roleLink = user.role === 'admin' ? 'admin.html' : '#';
             dropdown.innerHTML = `
-                <a href="${roleLink}" id="dropdown-profile-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition font-semibold">${roleLabel}</a>
+                <a href="${escapeHtml(roleLink)}" id="dropdown-profile-link" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition font-semibold">${escapeHtml(roleLabel)}</a>
                 <hr class="border-slate-800 my-1">
                 <a href="#" id="dropdown-logout-link" class="block px-4 py-2 text-sm text-red-400 hover:bg-red-950/30 hover:text-red-300 transition font-bold">Logout</a>
             `;
@@ -468,7 +468,7 @@ function updateMobileTabBarProfile() {
     if (user) {
         var avatarUrl = user.avatar || '';
         if (avatarUrl) {
-            avatarEl.innerHTML = '<img src="' + avatarUrl + '" alt="Profile">';
+            avatarEl.innerHTML = '<img src="' + sanitizeUrl(avatarUrl) + '" alt="Profile">';
         } else {
             avatarEl.innerHTML = '<i data-lucide="user" class="w-4 h-4"></i>';
             if (window.lucide) lucide.createIcons();
