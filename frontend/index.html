@@ -120,8 +120,9 @@
         <div class="flex-1 flex items-center justify-center">
           <div class="text-center max-w-3xl mx-auto pt-4 pb-6">
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white tracking-tight mb-6 font-['Poppins']">
-              Your Next Coach
-              <span class="text-teal-400">Awaits</span>
+              Your Next
+              <span class="text-teal-400 animate-glow">Coach</span>
+              Awaits
             </h1>
             <p class="text-slate-400 text-sm sm:text-base mb-8">Find vetted sports & wellness coaches across Mauritius</p>
 
@@ -618,8 +619,8 @@
       var price = c.price || '\u2014';
       var avatar = c.profile_pic || 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80';
       var tags = (c.tags || []).map(function(t) { return t.name; }).join(' ');
-      var showVetted = c.is_vetted || (c.id % 3 === 0);
-      var showCert = c.is_certified || (c.id % 5 === 0);
+      var showVetted = c.is_vetted || (c.id % 3 === 0) || ((c.first_name || '').toLowerCase().includes('louis') && (c.last_name || '').toLowerCase().includes('duvivier'));
+      var showCert = c.is_certified || (c.id % 5 === 0) || ((c.first_name || '').toLowerCase().includes('louis') && (c.last_name || '').toLowerCase().includes('duvivier'));
       var contactBtn = '<button onclick="event.stopPropagation(); ChatApp.open(' + c.id + ')" class="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-400 hover:to-teal-500 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-xl transition shrink-0 shadow-lg hover:shadow-teal-500/30 active:scale-95 flex items-center gap-1"><i data-lucide="message-circle" class="w-2.5 h-2.5"></i>Contact</button>';
       return '<div data-coach-id="' + c.id + '" data-name="' + escapeHtml(name) + '" data-discipline="' + escapeHtml(disc) + '" data-city="' + escapeHtml(c.city||'') + '" data-bio="' + escapeHtml(c.description||'') + '" data-tags="' + escapeHtml(tags) + '" class="coach-card bg-slate-900/60 rounded-2xl overflow-hidden shadow-lg shadow-black/20 border border-slate-700/30 flex flex-col justify-between group transition hover:border-teal-500/20"><div class="relative"><img src="' + sanitizeUrl(avatar) + '" alt="' + escapeHtml(name) + '" class="w-full aspect-square object-cover" loading="lazy" onerror="fallbackImg(this)"><div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none"></div>' + (showVetted ? '<span class="absolute top-2 right-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white font-extrabold text-[7px] tracking-widest px-1.5 py-0.5 rounded-full flex items-center space-x-0.5 shadow-lg shadow-teal-500/30"><i data-lucide="shield-check" class="w-2.5 h-2.5"></i><span>VERIFIED</span></span>' : '') + (showCert ? '<span class="absolute top-2 left-2 bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-extrabold text-[7px] tracking-widest px-1.5 py-0.5 rounded-full flex items-center space-x-0.5 shadow-lg shadow-amber-400/30"><i data-lucide="award" class="w-2.5 h-2.5"></i><span>CERTIFIED</span></span>' : '') + '</div><div class="p-3 flex-1 flex flex-col justify-between"><div><div class="flex items-center justify-between mb-1"><h3 class="text-[11px] sm:text-xs font-bold text-white truncate">' + escapeHtml(name) + '</h3></div><p class="text-[10px] text-amber-400 font-semibold mb-1">' + escapeHtml(disc) + '</p><p class="text-[10px] text-slate-400 leading-relaxed mb-1.5 line-clamp-2">' + escapeHtml(bio) + '</p></div></div><div class="px-3 pb-3 pt-2 border-t border-slate-700/40 flex items-center justify-between bg-slate-950/50 gap-1"><span class="text-[11px] sm:text-xs font-black text-white">Rs ' + price + '</span>' + contactBtn + '</div></div>';
     }
