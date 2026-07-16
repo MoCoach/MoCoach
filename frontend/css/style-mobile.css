@@ -157,7 +157,7 @@
 
   /* ── Hero section: video behind header, content below it ── */
   #view-home.mobile-view.view-active section:first-child {
-    padding-top: 32px !important;
+    padding-top: 96px !important;
   }
 
   /* ── Hide categories heading on mobile ── */
