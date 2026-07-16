@@ -337,6 +337,31 @@ class Db_Management:
         finally:
             session.close()
 
+    def seed_admin(self):
+        """Create a default admin if none exists."""
+        session = self._session()
+        try:
+            if session.query(User).filter_by(is_admin=True).count() > 0:
+                return
+            email = "admin@mocoach.mu"
+            if session.query(User).filter_by(email=email).first():
+                return
+            admin = User(
+                username="mocoach_admin",
+                email=email,
+                pwd="Mocoach2026!",
+                is_admin=True,
+                is_coach=False,
+            )
+            session.add(admin)
+            session.commit()
+            log.info("Seeded default admin: admin@mocoach.mu / Mocoach2026!")
+        except Exception as e:
+            session.rollback()
+            log.warning(f"Admin seed skipped: {e}")
+        finally:
+            session.close()
+
     def authenticate(self, login: str, password: str) -> User:
         """Authenticate a user by email or username and return the User object."""
         session = self._session()
