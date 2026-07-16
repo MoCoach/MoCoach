@@ -199,14 +199,19 @@ function showToast(msg) {
     setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
 }
 
+function closeAuthModal() {
+    var modal = document.getElementById('coach-modal');
+    if (modal && !modal.classList.contains('hidden')) {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+}
+
 function handleHomeNavigation() {
+    closeAuthModal();
     var path = window.location.pathname.split('/').pop();
     if (path === '' || path === 'index.html') {
-        if (currentView === 'profile' || currentView === 'coach-profile') {
-            showMainView();
-        } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        showMainView();
     } else {
         window.location.href = 'index.html';
     }
@@ -375,19 +380,7 @@ function initMobileTabBar() {
     if (homeBtn) {
         homeBtn.addEventListener('click', () => {
             setActiveTab('home');
-            if (currentView === 'coach-profile' || currentView === 'profile') {
-                var main = document.querySelector('main');
-                var coachView = document.getElementById('coach-profile-view');
-                var profileView = document.getElementById('profile-view');
-                if (main) main.classList.remove('hidden');
-                if (coachView) coachView.classList.add('hidden');
-                if (profileView) profileView.classList.add('hidden');
-            }
-            if (isOnIndexPage()) {
-                switchMobileView('home');
-            } else {
-                window.location.href = 'index.html';
-            }
+            handleHomeNavigation();
         });
     }
 
