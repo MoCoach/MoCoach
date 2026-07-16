@@ -600,15 +600,7 @@
       if (locSel) locSel.value = '';
       if (tagSel) tagSel.value = '';
       if (badgeSel) badgeSel.value = '';
-      var kws = keywords.split(',').map(function(k) { return k.trim().toLowerCase(); });
-      filteredCoaches = allCoaches.filter(function(c) {
-        var coachTags = (c.tags || []).map(function(t) { return (t.name || t).toLowerCase(); }).join(' ');
-        var disc = (c.discipline || '').toLowerCase();
-        var city = (c.city || '').toLowerCase();
-        var bio = (c.description || '').toLowerCase();
-        var all = coachTags + ' ' + disc + ' ' + city + ' ' + bio;
-        return kws.some(function(kw) { return all.indexOf(kw) !== -1; });
-      });
+      filteredCoaches = allCoaches;
       currentPage = 1;
       renderPage();
       var clearBtn = document.getElementById('clear-filters');
