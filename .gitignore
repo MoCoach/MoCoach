@@ -4,3 +4,7 @@ venv/
 * copy.*
 TODO.txt
 .env
+backend/static/uploads/*
+!backend/static/uploads/profile_pics
+backend/static/uploads/profile_pics/*
+!backend/static/uploads/profile_pics/default
