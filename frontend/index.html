@@ -12,7 +12,7 @@
   <meta property="og:image" content="https://mocoach.mu/assets/img/mocoach-og.png">
   <meta name="twitter:card" content="summary_large_image">
 
-  <link rel="icon" type="image/png" href="assets/img/favicon_MoCoach_4.png">
+  <link rel="icon" type="image/png" href="assets/img/favicon-logo121.png">
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -130,13 +130,16 @@
               <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-6">
                 <i data-lucide="search" class="w-7 h-7 text-teal-400"></i>
               </div>
-              <input
-                id="hero-search-input"
-                type="text"
-                placeholder=" Search by name, activity or location .."
-                aria-label="Search coaches"
-                class="relative w-full bg-transparent py-5 sm:py-6 pl-14 sm:pl-16 pr-14 sm:pr-40 text-sm sm:text-xl text-white placeholder-white/40 focus:outline-none rounded-2xl"
-              >
+              <div class="relative">
+                <input
+                  id="hero-search-input"
+                  type="text"
+                  placeholder=" Search by name, activity or location .."
+                  aria-label="Search coaches"
+                  class="relative w-full bg-transparent py-5 sm:py-6 pl-14 sm:pl-16 pr-14 sm:pr-40 text-sm sm:text-xl text-white placeholder-white/40 focus:outline-none rounded-2xl"
+                >
+                <div class="search-suggestions hidden" aria-live="polite"></div>
+              </div>
               <button type="submit" class="absolute inset-y-2 right-1.5 sm:inset-y-2.5 sm:right-2.5 bg-teal-600 hover:bg-teal-500 text-white text-xs sm:text-base font-bold px-3 sm:px-7 py-2.5 rounded-xl transition active:scale-95">
                 Search
               </button>
@@ -250,6 +253,7 @@
                 aria-label="Search coaches"
                 class="relative w-full bg-transparent py-3 pl-11 pr-4 text-base text-white placeholder-white/40 focus:outline-none rounded-xl"
               >
+              <div class="search-suggestions hidden" aria-live="polite"></div>
             </div>
             <button id="see-all-coaches" onclick="location.href='all-coaches.html'" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap">
               See All Coaches
@@ -583,18 +587,7 @@
       e.preventDefault();
       var query = (document.getElementById('hero-search-input').value || '').trim();
       if (!query) return false;
-      activeCategoryFilter = '';
-      var input = document.getElementById('search-input');
-      if (input) {
-        input.value = query;
-        input.dispatchEvent(new Event('input'));
-      }
-      if (window.innerWidth <= 768 && typeof switchMobileView === 'function') {
-        switchMobileView('explore');
-      } else {
-        var explore = document.getElementById('explore');
-        if (explore) explore.scrollIntoView({ behavior: 'smooth' });
-      }
+      window.location.href = 'all-coaches.html?q=' + encodeURIComponent(query);
       return false;
     }
     var activeCategoryFilter = '';

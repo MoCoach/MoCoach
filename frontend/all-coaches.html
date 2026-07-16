@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://mocoach.mu/all-coaches">
   <meta name="twitter:card" content="summary_large_image">
 
-  <link class="rounded-full" rel="icon" type="image/png" href="assets/img/favicon_MoCoach.png">
+  <link class="rounded-full" rel="icon" type="image/png" href="assets/img/favicon-logo121.png">
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -51,6 +51,7 @@
                 aria-label="Search coaches"
                 class="relative w-full bg-transparent py-3 pl-11 pr-4 text-base text-white placeholder-white/40 focus:outline-none rounded-xl"
               >
+              <div class="search-suggestions hidden" aria-live="polite"></div>
             </div>
             <button onclick="window.location.href='index.html'" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition active:scale-95 whitespace-nowrap">
               Back to Explore
@@ -259,7 +260,18 @@
         if (window.lucide) { try { lucide.createIcons(); } catch(e) {} }
       });
     }
-    document.addEventListener('DOMContentLoaded', renderCoachCards);
+    document.addEventListener('DOMContentLoaded', async () => {
+      await renderCoachCards();
+      const urlParams = new URLSearchParams(window.location.search);
+      const query = (urlParams.get('q') || '').trim();
+      if (query) {
+        const input = document.getElementById('search-input');
+        if (input) {
+          input.value = query;
+          input.dispatchEvent(new Event('input'));
+        }
+      }
+    });
   </script>
   <button id="back-to-top" aria-label="Back to top">
     <i data-lucide="arrow-up" class="w-5 h-5"></i>

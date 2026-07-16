@@ -3,6 +3,129 @@ function fallbackImg(img) {
     img.onerror = null;
     img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect fill="%231e293b" width="100" height="100"/%3E%3Ccircle cx="50" cy="36" r="22" fill="%23334155"/%3E%3Cpath d="M14 94Q50 68 86 94" fill="%23334155"/%3E%3C/svg%3E';
 }
+
+const SEARCH_SUGGESTIONS = [
+    'Yoga',
+    'Pilates',
+    'Meditation',
+    'HIIT',
+    'Cardio',
+    'Strength training',
+    'Personal training',
+    'Swimming',
+    'Running',
+    'Tennis',
+    'Martial arts',
+    'Prenatal fitness',
+    'Outdoor hiking',
+    'Beach workouts',
+    'Nutrition coaching',
+    'Weight loss'
+];
+
+function getSearchSuggestions(query) {
+    const value = (query || '').trim().toLowerCase();
+    if (!value) return [];
+    const matches = [];
+    SEARCH_SUGGESTIONS.forEach(item => {
+        const lower = item.toLowerCase();
+        if (lower.startsWith(value) || lower.includes(value)) {
+            matches.push(item);
+        }
+    });
+    return matches.slice(0, 6);
+}
+
+function closeSearchSuggestions(menu) {
+    menu.classList.add('hidden');
+    menu.querySelectorAll('.search-suggestion-item.active').forEach(item => item.classList.remove('active'));
+}
+
+function setActiveSuggestion(items, index) {
+    if (!items.length) return null;
+    items.forEach(item => item.classList.remove('active'));
+    const targetIndex = Math.max(0, Math.min(index, items.length - 1));
+    const item = items[targetIndex];
+    if (item) {
+        item.classList.add('active');
+        item.scrollIntoView({ block: 'nearest' });
+    }
+    return item;
+}
+
+function updateSearchSuggestionMenu(input, menu) {
+    const suggestions = getSearchSuggestions(input.value);
+    if (!suggestions.length) {
+        menu.innerHTML = '';
+        menu.classList.add('hidden');
+        menu.style.display = 'none';
+        return;
+    }
+    menu.innerHTML = suggestions.map(item => '<button type="button" class="search-suggestion-item">' + escapeHtml(item) + '</button>').join('');
+    menu.classList.remove('hidden');
+    menu.style.display = 'block';
+}
+
+function attachSearchAutocomplete(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.setAttribute('autocomplete', 'off');
+    const wrapper = input.parentElement || input.closest('.relative') || document.body;
+    if (wrapper && getComputedStyle(wrapper).position === 'static') {
+        wrapper.style.position = 'relative';
+    }
+    let menu = wrapper ? wrapper.querySelector('.search-suggestions') : null;
+    if (!menu) {
+        menu = document.createElement('div');
+        menu.className = 'search-suggestions hidden';
+        menu.setAttribute('aria-live', 'polite');
+        wrapper.appendChild(menu);
+    }
+    input.addEventListener('input', () => updateSearchSuggestionMenu(input, menu));
+    input.addEventListener('keydown', (e) => {
+        const items = Array.from(menu.querySelectorAll('.search-suggestion-item'));
+        if (!items.length) return;
+        const active = menu.querySelector('.search-suggestion-item.active');
+        const currentIndex = active ? items.indexOf(active) : -1;
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setActiveSuggestion(items, currentIndex + 1);
+            return;
+        }
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setActiveSuggestion(items, currentIndex - 1);
+            return;
+        }
+        if (e.key === 'Enter') {
+            const chosen = active || items[0];
+            if (chosen) {
+                e.preventDefault();
+                input.value = chosen.textContent || '';
+                input.dispatchEvent(new Event('input'));
+                closeSearchSuggestions(menu);
+            }
+        }
+        if (e.key === 'Escape') {
+            closeSearchSuggestions(menu);
+        }
+    });
+    input.addEventListener('focus', () => {
+        if (input.value.trim().length > 0) updateSearchSuggestionMenu(input, menu);
+    });
+    input.addEventListener('blur', () => {
+        setTimeout(() => closeSearchSuggestions(menu), 150);
+    });
+    menu.addEventListener('click', (e) => {
+        const button = e.target.closest('.search-suggestion-item');
+        if (!button) return;
+        input.value = button.textContent || '';
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+        closeSearchSuggestions(menu);
+    });
+}
+
 async function loadComponent(id, url) {
     const element = document.getElementById(id);
     if (element) {
@@ -578,6 +701,10 @@ const runAppInit = () => {
         window.history.replaceState({}, '', window.location.pathname);
         setTimeout(() => { switchMobileView('explore'); setActiveTab('explore'); }, 500);
     }
+    if (urlParams.get('modal') === 'login') {
+        window.history.replaceState({}, '', window.location.pathname);
+        setTimeout(() => { showLoginModal(); }, 500);
+    }
 
     document.addEventListener('click', (e) => {
         if (e.target.id === 'tab-register-btn') {
@@ -751,6 +878,9 @@ const runAppInit = () => {
     const seeAllBtn = document.getElementById('see-all-coaches');
     const searchInput = document.getElementById('search-input');
 
+    attachSearchAutocomplete('hero-search-input');
+    attachSearchAutocomplete('search-input');
+
     if (searchInput) {
         searchInput.addEventListener('input', () => {
             const raw = searchInput.value.toLowerCase().trim();
@@ -784,11 +914,28 @@ const runAppInit = () => {
                 noResults.classList.toggle('hidden', !(keywords.length > 0 && visibleCount === 0));
             }
         });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (!query) return;
+                if (!window.location.pathname.includes('all-coaches.html')) {
+                    e.preventDefault();
+                    window.location.href = 'all-coaches.html?q=' + encodeURIComponent(query);
+                }
+            }
+        });
     }
 
     if (seeAllBtn) {
         seeAllBtn.addEventListener('click', () => {
-            window.location.href = 'all-coaches.html';
+            const searchInput = document.getElementById('search-input');
+            const query = searchInput ? searchInput.value.trim() : '';
+            if (query) {
+                window.location.href = 'all-coaches.html?q=' + encodeURIComponent(query);
+            } else {
+                window.location.href = 'all-coaches.html';
+            }
         });
     }
 
