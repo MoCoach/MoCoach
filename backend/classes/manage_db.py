@@ -114,14 +114,17 @@ class Db_Management:
         buf = io.BytesIO()
         img.save(buf, format="JPEG", quality=85)
         buf.seek(0)
-        result = cloudinary.uploader.upload(
-            buf,
-            folder=folder,
-            public_id=public_id,
-            overwrite=True,
-            resource_type="image",
-        )
-        return result["secure_url"]
+        try:
+            result = cloudinary.uploader.upload(
+                buf,
+                folder=folder,
+                public_id=public_id,
+                overwrite=True,
+                resource_type="image",
+            )
+            return result["secure_url"]
+        except Exception as e:
+            raise DbError(f"Cloudinary upload failed: {e}", 500)
 
     @staticmethod
     def _extract_public_id(url: str) -> str | None:

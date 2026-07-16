@@ -390,7 +390,7 @@ const CoachProfileApp = {
       if (res.success) {
         gallery.push({ type: 'image', src: res.data.picture || '' });
       } else {
-        this.showToast('Failed to upload gallery photo', 'error');
+        this.showToast(res.error || 'Failed to upload gallery photo', 'error');
       }
     }
 
@@ -424,7 +424,7 @@ const CoachProfileApp = {
         if (window.updateHeaderProfilePic) window.updateHeaderProfilePic();
         this.showToast('Profile photo updated!', 'success');
       } else {
-        this.showToast('Failed to update profile photo', 'error');
+        this.showToast(res.error || 'Failed to update profile photo', 'error');
       }
     } catch (err) {
       this.showToast('Failed to read file', 'error');
