@@ -68,7 +68,89 @@ const ProfileApp = {
     this.renderHeader();
     this.renderPersonalInfo();
     this.renderSecurity();
+    this.renderMessages();
     if (window.lucide) lucide.createIcons();
+  },
+
+  async renderMessages() {
+    const el = document.getElementById('profile-messages-list');
+    if (!el) return;
+    el.innerHTML = '<p class="text-slate-500 text-sm py-2">Loading messages...</p>';
+
+    try {
+      const res = await api.getChats();
+      if (!res.success || !Array.isArray(res.data) || res.data.length === 0) {
+        el.innerHTML = `
+          <div class="text-center py-6">
+            <div class="w-12 h-12 rounded-full bg-slate-800/60 flex items-center justify-center mx-auto mb-3">
+              <i data-lucide="message-circle" class="w-6 h-6 text-slate-500"></i>
+            </div>
+            <p class="text-slate-400 text-sm">No conversations yet</p>
+            <p class="text-slate-500 text-xs mt-1">Start a chat from a coach's profile</p>
+          </div>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      const auth = this._getAuth();
+      const userId = auth ? auth.userId : null;
+      const chats = res.data.slice(0, 5);
+
+      let html = '';
+      for (const chat of chats) {
+        const isCustomer = chat.customer && chat.customer.id === userId;
+        const other = isCustomer ? chat.coach : chat.customer;
+        const otherName = `${(other.first_name || '').trim()} ${(other.last_name || '').trim()}`.trim() || other.username || 'Unknown';
+        const lastTime = chat.last_message_time ? this._formatChatTime(chat.last_message_time) : '';
+
+        html += `
+          <div onclick="ProfileApp.openMessages(${other.id})" class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/40 border border-slate-800/50 hover:bg-slate-800/50 cursor-pointer transition">
+            <div class="w-10 h-10 rounded-full flex-shrink-0 bg-slate-800 border border-slate-700 flex items-center justify-center">
+              <span class="text-sm font-bold text-slate-300">${escapeHtml((otherName[0] || '?').toUpperCase())}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-semibold text-slate-200 truncate">${escapeHtml(otherName)}</p>
+                ${lastTime ? `<span class="text-[10px] text-slate-500 flex-shrink-0 ml-2">${lastTime}</span>` : ''}
+              </div>
+              <p class="text-xs text-slate-500 truncate mt-0.5">@${escapeHtml(other.username || '')}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      if (res.data.length > 5) {
+        html += `
+          <div class="text-center pt-2">
+            <button onclick="ProfileApp.openMessages()" class="text-teal-400 hover:text-teal-300 text-xs font-semibold transition">
+              View all ${res.data.length} conversations
+            </button>
+          </div>
+        `;
+      }
+
+      el.innerHTML = html;
+      if (window.lucide) lucide.createIcons();
+    } catch (err) {
+      el.innerHTML = '<p class="text-slate-500 text-sm py-2">Could not load messages</p>';
+    }
+  },
+
+  _formatChatTime(ts) {
+    const now = Date.now();
+    const ms = typeof ts === 'number' ? ts * 1000 : new Date(ts).getTime();
+    const diff = Math.floor((now - ms) / 1000);
+    if (diff < 60) return 'now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h';
+    return Math.floor(diff / 86400) + 'd';
+  },
+
+  openMessages(coachId) {
+    if (window.ChatApp) {
+      ChatApp.open(coachId ? String(coachId) : undefined);
+    }
   },
 
   generateTwinklingStars() {
