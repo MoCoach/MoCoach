@@ -367,12 +367,20 @@ class Db_Management:
         session = self._session()
         try:
             coach = session.query(User).filter(
-                User.first_name.ilike('%arveeno%'),
                 User.is_coach == True,
+                or_(
+                    User.first_name.ilike('%arveeno%'),
+                    User.last_name.ilike('%arveeno%'),
+                    User.username.ilike('%arveeno%'),
+                    User.first_name.ilike('%narainasawmy%'),
+                    User.last_name.ilike('%narainasawmy%'),
+                    User.username.ilike('%narainasawmy%'),
+                ),
             ).first()
             if not coach:
                 log.warning("Mock conversation seed: coach Arveeno not found, skipping")
                 return
+            log.info(f"Mock conversation seed: found coach {coach.first_name} {coach.last_name} (id={coach.id})")
 
             zoey = session.query(User).filter_by(email='zoey@gmail.com').first()
             if not zoey:
