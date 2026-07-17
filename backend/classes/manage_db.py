@@ -362,6 +362,79 @@ class Db_Management:
         finally:
             session.close()
 
+    def seed_mock_conversations(self):
+        """Create mock conversations for coach Arveeno (showcase screenshots)."""
+        session = self._session()
+        try:
+            coach = session.query(User).filter(
+                User.first_name.ilike('%arveeno%'),
+                User.is_coach == True,
+            ).first()
+            if not coach:
+                log.warning("Mock conversation seed: coach Arveeno not found, skipping")
+                return
+
+            zoey = session.query(User).filter_by(email='zoey@gmail.com').first()
+            if not zoey:
+                log.warning("Mock conversation seed: Zoey not found, skipping")
+                return
+
+            existing = session.query(Chat).filter(
+                (Chat.id_coach == coach.id) & (Chat.id_cust == zoey.id)
+            ).first()
+            if existing:
+                log.info("Mock conversations already seeded, skipping")
+                return
+
+            chat1 = Chat(id_coach=coach.id, id_cust=zoey.id)
+            session.add(chat1)
+            session.flush()
+            for sender_id, text in [
+                (zoey.id, "Hi Arveeno! I'm looking for a personal trainer. Are you available next week?"),
+                (coach.id, "Hey Zoey! Yes, I have slots open on Tuesday and Thursday afternoons. What time works for you?"),
+                (zoey.id, "Thursday at 4pm would be perfect. How much per session?"),
+                (coach.id, "It's Rs 600 per session. I can also do a trial session at Rs 500 if you'd like."),
+                (zoey.id, "That sounds great! Let's do the trial first. Can you send me the location?"),
+                (coach.id, "Absolutely! I train at the Rock Climbing Gym in Curepipe. See you Thursday at 4!"),
+            ]:
+                msg = chat1.new_msg(sender_id, text)
+                session.add(msg)
+
+            mock_customers = [
+                {"username": "sarah_j", "email": "sarah.jones@email.com", "first_name": "Sarah", "last_name": "Jones",
+                 "msg": "Hi, do you offer group sessions?"},
+                {"username": "mike_chen", "email": "mike.chen@email.com", "first_name": "Mike", "last_name": "Chen",
+                 "msg": "What are your rates for weekly training?"},
+                {"username": "priya_p", "email": "priya.patel@email.com", "first_name": "Priya", "last_name": "Patel",
+                 "msg": "Are you available on weekends?"},
+            ]
+            for cust in mock_customers:
+                if session.query(User).filter_by(email=cust["email"]).first():
+                    continue
+                customer = User(
+                    username=cust["username"],
+                    email=cust["email"],
+                    pwd="password123",
+                    is_coach=False,
+                    first_name=cust["first_name"],
+                    last_name=cust["last_name"],
+                )
+                session.add(customer)
+                session.flush()
+                chat = Chat(id_coach=coach.id, id_cust=customer.id)
+                session.add(chat)
+                session.flush()
+                msg = chat.new_msg(customer.id, cust["msg"])
+                session.add(msg)
+
+            session.commit()
+            log.info("Mock conversations seeded successfully")
+        except Exception as e:
+            session.rollback()
+            log.warning(f"Mock conversation seed failed: {e}")
+        finally:
+            session.close()
+
     def authenticate(self, login: str, password: str) -> User:
         """Authenticate a user by email or username and return the User object."""
         session = self._session()

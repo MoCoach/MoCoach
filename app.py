@@ -62,6 +62,7 @@ except Exception as e:
     log.warning(f"DB migration check failed (may already exist): {e}")
 
 db.seed_admin()
+db.seed_mock_conversations()
 
 # Ensure upload directories exist (local fallback)
 upload_base = db.UPLOAD_BASE
