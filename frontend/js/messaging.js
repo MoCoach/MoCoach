@@ -144,6 +144,28 @@ const ChatApp = {
     };
   },
 
+  _isCoach() {
+    return this.currentUser.role === 'coach';
+  },
+
+  _roleLabel() {
+    return this._isCoach() ? 'Client' : 'Coach';
+  },
+
+  _updatePanelHeader() {
+    const headerEl = document.querySelector('#messaging-overlay .messaging-panel > .flex');
+    if (!headerEl) return;
+    const titleEl = headerEl.querySelector('.msg-panel-title');
+    const iconEl = headerEl.querySelector('.msg-panel-icon');
+    if (this._isCoach()) {
+      if (titleEl) titleEl.textContent = 'Client Messages';
+      if (iconEl) { iconEl.setAttribute('data-lucide', 'users'); if (window.lucide) lucide.createIcons(); }
+    } else {
+      if (titleEl) titleEl.textContent = 'Coach Messages';
+      if (iconEl) { iconEl.setAttribute('data-lucide', 'graduation-cap'); if (window.lucide) lucide.createIcons(); }
+    }
+  },
+
   async open(coachId) {
     const user = this._getAuthUser();
 
@@ -172,6 +194,7 @@ const ChatApp = {
     }
 
     this._syncCurrentUser();
+    this._updatePanelHeader();
     this._hideBadge();
 
     if (this.conversations.length === 0) {
@@ -308,11 +331,12 @@ const ChatApp = {
     });
 
     if (sorted.length === 0) {
+      const isCoach = this._isCoach();
       list.innerHTML = `
         <div class="flex flex-col items-center justify-center py-16 text-slate-600">
           <i data-lucide="inbox" class="w-12 h-12 mb-3"></i>
-          <p class="text-sm font-medium text-slate-500">No conversations yet</p>
-          <p class="text-xs text-slate-600 mt-1">Click "Contact" on a coach card to start chatting</p>
+          <p class="text-sm font-medium text-slate-500">${isCoach ? 'No client messages yet' : 'No coach conversations yet'}</p>
+          <p class="text-xs text-slate-600 mt-1">${isCoach ? 'Clients will message you here' : 'Click "Contact" on a coach card to start chatting'}</p>
         </div>
       `;
       if (window.lucide) lucide.createIcons();
@@ -326,6 +350,7 @@ const ChatApp = {
           lastMsg.text.substring(0, 55) + (lastMsg.text.length > 55 ? '...' : '')
         : '';
       const isActive = conv.id === this.activeChatId;
+      const roleLabel = this._roleLabel();
 
       return `
         <button onclick="ChatApp.selectConversation(${JSON.stringify(conv.id)})"
@@ -335,7 +360,10 @@ const ChatApp = {
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-semibold text-white truncate">${escapeHtml(conv.otherPerson.name)}</span>
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span class="text-sm font-semibold text-white truncate">${escapeHtml(conv.otherPerson.name)}</span>
+                <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-slate-800 text-slate-400 flex-shrink-0">${roleLabel}</span>
+              </div>
               <span class="text-[10px] text-slate-500 flex-shrink-0 ml-2">${conv.lastActivity ? this._formatTime(conv.lastActivity) : ''}</span>
             </div>
             <div class="flex items-center justify-between mt-0.5">
@@ -364,7 +392,14 @@ const ChatApp = {
     if (!conv) {
       if (header) header.innerHTML = '';
       if (messagesEl) { messagesEl.innerHTML = ''; messagesEl.classList.add('hidden'); }
-      if (emptyState) emptyState.classList.remove('hidden');
+      if (emptyState) {
+        emptyState.classList.remove('hidden');
+        const isCoach = this._isCoach();
+        const titleEl = emptyState.querySelector('.msg-empty-title');
+        const subEl = emptyState.querySelector('.msg-empty-subtitle');
+        if (titleEl) titleEl.textContent = isCoach ? 'Select a client' : 'Select a coach';
+        if (subEl) subEl.textContent = isCoach ? 'Choose a conversation from the sidebar' : 'Choose a conversation from the sidebar to start messaging';
+      }
       if (inputArea) inputArea.classList.add('hidden');
       return;
     }
@@ -385,6 +420,7 @@ const ChatApp = {
     }
 
     if (header) {
+      const roleLabel = this._roleLabel();
       header.innerHTML = `
         <button onclick="ChatApp._goBackToList()" class="md:hidden text-slate-400 hover:text-white p-1 -ml-1" aria-label="Back to conversations">
           <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -393,7 +429,10 @@ const ChatApp = {
           <div class="w-full h-full flex items-center justify-center text-sm font-bold text-teal-400">${escapeHtml((conv.otherPerson.name || '?').charAt(0))}</div>
         </div>
         <div class="min-w-0">
-          <p class="text-sm font-semibold text-white truncate">${escapeHtml(conv.otherPerson.name)}</p>
+          <div class="flex items-center gap-2">
+            <p class="text-sm font-semibold text-white truncate">${escapeHtml(conv.otherPerson.name)}</p>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-teal-500/15 text-teal-400 border border-teal-500/20 flex-shrink-0">${roleLabel}</span>
+          </div>
           ${conv.otherPerson.tags && conv.otherPerson.tags.length > 0
             ? `<p class="text-[10px] text-teal-400 truncate">${escapeHtml(conv.otherPerson.tags.join(', '))}</p>`
             : ''}
